@@ -1,0 +1,351 @@
+{
+  "meta": {
+    "dataset": "NASA7 polynomials distributed with Cantera 3.2.0 (gri30.yaml = GRI-Mech 3.0, 1999; graphite.yaml = NASA SP-273 (Gordon & McBride, 1971) and NASA TM-4513 (McBride, Gordon & Reno, 1993))",
+    "source_files": [
+      "/home/user/SynGAS/.venv/lib/python3.11/site-packages/cantera/data/gri30.yaml",
+      "/home/user/SynGAS/.venv/lib/python3.11/site-packages/cantera/data/graphite.yaml"
+    ],
+    "generated": "2026-10-26",
+    "cantera_version": "3.2.0",
+    "units": "NASA7: cp/R, h/(RT), s/R with T in K; a[0..6]",
+    "note": "Second, independent thermochemical dataset used ONLY for cross-checking (verification loop 4). GRI-Mech 3.0 header states: 'GRI-Mech Version 3.0 7/30/99 CHEMKIN-II format ... http://combustion.berkeley.edu/gri-mech/version30/text30.html'. The upstream URL returned 404 at retrieval time; the coefficients were read from the installed, version-pinned Cantera data files. | C3H8 low-T polynomial lower bound relaxed 300 -> 273.15 K (27 K extrapolation) so that the 298.15 K reference state is defined; all reported equilibria are >= 400 K, inside the original GRI-Mech range."
+  },
+  "species": {
+    "H2": {
+      "source_name": "H2",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        3500.0
+      ],
+      "data": [
+        [
+          2.34433112,
+          0.00798052075,
+          -1.9478151e-05,
+          2.01572094e-08,
+          -7.37611761e-12,
+          -917.935173,
+          0.683010238
+        ],
+        [
+          3.3372792,
+          -4.94024731e-05,
+          4.99456778e-07,
+          -1.79566394e-10,
+          2.00255376e-14,
+          -950.158922,
+          -3.20502331
+        ]
+      ],
+      "elements": {
+        "H": 2
+      }
+    },
+    "O2": {
+      "source_name": "O2",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        3500.0
+      ],
+      "data": [
+        [
+          3.78245636,
+          -0.00299673416,
+          9.84730201e-06,
+          -9.68129509e-09,
+          3.24372837e-12,
+          -1063.94356,
+          3.65767573
+        ],
+        [
+          3.28253784,
+          0.00148308754,
+          -7.57966669e-07,
+          2.09470555e-10,
+          -2.16717794e-14,
+          -1088.45772,
+          5.45323129
+        ]
+      ],
+      "elements": {
+        "O": 2
+      }
+    },
+    "H2O": {
+      "source_name": "H2O",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        3500.0
+      ],
+      "data": [
+        [
+          4.19864056,
+          -0.0020364341,
+          6.52040211e-06,
+          -5.48797062e-09,
+          1.77197817e-12,
+          -30293.7267,
+          -0.849032208
+        ],
+        [
+          3.03399249,
+          0.00217691804,
+          -1.64072518e-07,
+          -9.7041987e-11,
+          1.68200992e-14,
+          -30004.2971,
+          4.9667701
+        ]
+      ],
+      "elements": {
+        "H": 2,
+        "O": 1
+      }
+    },
+    "CH4": {
+      "source_name": "CH4",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        3500.0
+      ],
+      "data": [
+        [
+          5.14987613,
+          -0.0136709788,
+          4.91800599e-05,
+          -4.84743026e-08,
+          1.66693956e-11,
+          -10246.6476,
+          -4.64130376
+        ],
+        [
+          0.074851495,
+          0.0133909467,
+          -5.73285809e-06,
+          1.22292535e-09,
+          -1.0181523e-13,
+          -9468.34459,
+          18.437318
+        ]
+      ],
+      "elements": {
+        "C": 1,
+        "H": 4
+      }
+    },
+    "CO": {
+      "source_name": "CO",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        3500.0
+      ],
+      "data": [
+        [
+          3.57953347,
+          -0.00061035368,
+          1.01681433e-06,
+          9.07005884e-10,
+          -9.04424499e-13,
+          -14344.086,
+          3.50840928
+        ],
+        [
+          2.71518561,
+          0.00206252743,
+          -9.98825771e-07,
+          2.30053008e-10,
+          -2.03647716e-14,
+          -14151.8724,
+          7.81868772
+        ]
+      ],
+      "elements": {
+        "C": 1,
+        "O": 1
+      }
+    },
+    "CO2": {
+      "source_name": "CO2",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        3500.0
+      ],
+      "data": [
+        [
+          2.35677352,
+          0.00898459677,
+          -7.12356269e-06,
+          2.45919022e-09,
+          -1.43699548e-13,
+          -48371.9697,
+          9.90105222
+        ],
+        [
+          3.85746029,
+          0.00441437026,
+          -2.21481404e-06,
+          5.23490188e-10,
+          -4.72084164e-14,
+          -48759.166,
+          2.27163806
+        ]
+      ],
+      "elements": {
+        "C": 1,
+        "O": 2
+      }
+    },
+    "C2H6": {
+      "source_name": "C2H6",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        3500.0
+      ],
+      "data": [
+        [
+          4.29142492,
+          -0.0055015427,
+          5.99438288e-05,
+          -7.08466285e-08,
+          2.68685771e-11,
+          -11522.2055,
+          2.66682316
+        ],
+        [
+          1.0718815,
+          0.0216852677,
+          -1.00256067e-05,
+          2.21412001e-09,
+          -1.9000289e-13,
+          -11426.3932,
+          15.1156107
+        ]
+      ],
+      "elements": {
+        "C": 2,
+        "H": 6
+      }
+    },
+    "N2": {
+      "source_name": "N2",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        300.0,
+        1000.0,
+        5000.0
+      ],
+      "data": [
+        [
+          3.298677,
+          0.0014082404,
+          -3.963222e-06,
+          5.641515e-09,
+          -2.444854e-12,
+          -1020.8999,
+          3.950372
+        ],
+        [
+          2.92664,
+          0.0014879768,
+          -5.68476e-07,
+          1.0097038e-10,
+          -6.753351e-15,
+          -922.7977,
+          5.980528
+        ]
+      ],
+      "elements": {
+        "N": 2
+      }
+    },
+    "C3H8": {
+      "source_name": "C3H8",
+      "source_file": "gri30.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        273.15,
+        1000.0,
+        5000.0
+      ],
+      "data": [
+        [
+          0.93355381,
+          0.026424579,
+          6.1059727e-06,
+          -2.1977499e-08,
+          9.5149253e-12,
+          -13958.52,
+          19.201691
+        ],
+        [
+          7.5341368,
+          0.018872239,
+          -6.2718491e-06,
+          9.1475649e-10,
+          -4.7838069e-14,
+          -16467.516,
+          -17.892349
+        ]
+      ],
+      "elements": {
+        "C": 3,
+        "H": 8
+      }
+    },
+    "C_GR": {
+      "source_name": "C(gr)",
+      "source_file": "graphite.yaml",
+      "model": "NASA7",
+      "temperature_ranges": [
+        200.0,
+        1000.0,
+        5000.0
+      ],
+      "data": [
+        [
+          -0.310872072,
+          0.00440353686,
+          1.90394118e-06,
+          -6.38546966e-09,
+          2.98964248e-12,
+          -108.650794,
+          1.11382953
+        ],
+        [
+          1.45571829,
+          0.00171702216,
+          -6.97562786e-07,
+          1.35277032e-10,
+          -9.67590652e-15,
+          -695.138814,
+          -8.52583033
+        ]
+      ],
+      "elements": {
+        "C": 1
+      }
+    }
+  }
+}

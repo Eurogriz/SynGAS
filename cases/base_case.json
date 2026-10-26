@@ -1,0 +1,67 @@
+{
+  "meta": {
+    "created": "2026-10-26",
+    "status": "G0 base case; ALL values not backed by an opened primary source are [ASSUMPTION] and are listed in docs/00_G0_questions_and_assumptions.md",
+    "units": "SI; pressures ABSOLUTE; compositions MOLAR; normal cubic metre defined below"
+  },
+  "normal_conditions": {
+    "T_K": 273.15,
+    "p_kPa": 101.325,
+    "dry_gas": true,
+    "molar_volume_Nm3_per_mol": 0.02241397,
+    "status": "[ASSUMPTION] 0 C, 101325 Pa, dry, ideal gas. NOTE: ISO 13443 for natural gas uses 288.15 K; the user must confirm the contractual standard."
+  },
+  "target": {
+    "product": "methanol synthesis gas",
+    "SN_target": 2.0,
+    "SN_tolerance": 0.05,
+    "capacity_dry_Nm3_per_h": 100000.0,
+    "product_T_C": 40.0,
+    "product_p_bar_abs": 24.0,
+    "status": "[ASSUMPTION] user did not answer the G0 questionnaire"
+  },
+  "feed": {
+    "T_C": 25.0,
+    "p_bar_abs": 30.0,
+    "dry_mol_fraction": {"CH4": 0.945, "C2H6": 0.045, "CO2": 0.005, "N2": 0.005},
+    "C3plus": "lumped into C2H6 [ASSUMPTION]; thermodynamic data available for C2H6 only",
+    "H2S_ppmv": 5.0,
+    "H2S_after_guard_ppmv": 0.02,
+    "chlorine": "not quantified [ASSUMPTION: <0.01 ppmv]",
+    "H2_recycle_mol_per_100_mol_feed": 1.0,
+    "status": "[ASSUMPTION] composition, pressure, sulfur"
+  },
+  "utilities": {
+    "steam": "available; imported at 623.15 K / 30 bar(a) [ASSUMPTION]",
+    "oxygen": "ASU at 99.5 mol% O2, 30 bar(a) [ASSUMPTION]",
+    "cooling_water_C": 25.0,
+    "power": "grid [ASSUMPTION]",
+    "fuel": "natural gas, same composition as feed [ASSUMPTION]"
+  },
+  "process": {
+    "S_C_molar_per_hydrocarbon_C": 3.0,
+    "CO2_C_molar": "adjusted by solver to reach SN target; bounded 0..1.5",
+    "T_feed_preheat_K": 623.15,
+    "pre_reformer": "adiabatic equilibrium, inlet 623.15 K",
+    "SMR_T_out_K": 1123.15,
+    "SMR_p_out_bar_abs": 25.0,
+    "SMR_approach_to_equilibrium_K": 10.0,
+    "WHB_T_out_K": 623.15,
+    "condenser_T_out_K": 313.15,
+    "condenser_p_bar_abs": 24.0,
+    "pinch_dT_min_K": 20.0,
+    "furnace_efficiency_LHV": 0.85,
+    "status": "Operating window is consistent with the opened sources quoted in docs/01; exact values are [ASSUMPTION]."
+  },
+  "catalyst": {
+    "basis": "Ni/MgAl2O4",
+    "Ni_wt_pct": 15.0,
+    "support_BET_m2_per_g": 86.0,
+    "Ni_particle_nm": 6.6,
+    "status": "[PARTIAL] 15 wt% Ni, 86 m2/g, 6.6 nm are from Catalysts 2019, 9, 801 (opened) Table 1; they are laboratory catalyst values, NOT a commercial vendor specification.",
+    "T_wall_normal_K": 1178.15,
+    "T_wall_peak_K": 1223.15,
+    "design_life_h": 26280,
+    "status_T": "905 C maximum tube skin temperature from S0263876217304173 / S0098135407001706 (opened abstracts); 950 C peak = [ASSUMPTION]."
+  }
+}

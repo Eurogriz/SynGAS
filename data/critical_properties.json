@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "source": "/home/user/SynGAS/.venv/lib/python3.11/site-packages/cantera/data/critical-properties.yaml",
+    "citation": "Initial database of critical properties compiled from various sources by\nC. Karakaya (https://orcid.org/0000-0001-5102-5476)\n\nAdditional data sources:\n\nLemmon, E W; Bell, I H; Huber, M L; and McLinden, M O. (2022). \"Thermophysical\n    Properties of Fluid Systems\" in NIST Chemistry WebBook, NIST Standard Reference\n    Database Number 69, Eds. P J  Linstrom and W G Mallard, National Institute of\n    Standards and Technology, Gaithersburg MD, 20899, https://doi.org/10.18434/T4D303.\n\nYaws, C L. (2001). Matheson Gas Data Book. 7th Edition McGraw-Hill.\n    ISBN 978-0-07-135854-5.",
+    "cantera_version": "3.2.0",
+    "note": "Used ONLY for the Peng-Robinson sensitivity check on the ideal-gas assumption (verification loop 4).",
+    "retrieved": "2026-10-26"
+  },
+  "species": {
+    "CO": {
+      "critical-temperature": 133.4,
+      "critical-pressure": 3500000.0,
+      "acentric-factor": 0.066,
+      "critical-volume": null
+    },
+    "CO2": {
+      "critical-temperature": 304.2,
+      "critical-pressure": 7390000.0,
+      "acentric-factor": 0.228,
+      "critical-volume": null
+    },
+    "CH4": {
+      "critical-temperature": 190.7,
+      "critical-pressure": 4630000.0,
+      "acentric-factor": 0.011,
+      "critical-volume": null
+    },
+    "C2H6": {
+      "critical-temperature": 305.4,
+      "critical-pressure": 4880000.0,
+      "acentric-factor": 0.099,
+      "critical-volume": null
+    },
+    "C3H8": {
+      "critical-temperature": 369.7,
+      "critical-pressure": 4250000.0,
+      "acentric-factor": 0.153,
+      "critical-volume": null
+    },
+    "O2": {
+      "critical-temperature": 154.58,
+      "critical-pressure": 5043000.0,
+      "acentric-factor": 0.022,
+      "critical-volume": null
+    },
+    "N2": {
+      "critical-temperature": 126.2,
+      "critical-pressure": 3390000.0,
+      "acentric-factor": 0.038,
+      "critical-volume": null
+    },
+    "H2": {
+      "critical-temperature": 32.98,
+      "critical-pressure": "1.293e6",
+      "acentric-factor": -0.217,
+      "critical-volume": null
+    }
+  }
+}

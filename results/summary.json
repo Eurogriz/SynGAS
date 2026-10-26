@@ -1,0 +1,74 @@
+{
+  "generated": "2026-10-26",
+  "software": {
+    "python": "3.11.2",
+    "platform": "Linux-6.1.158+-x86_64-with-glibc2.36",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "pandas": "3.1.0",
+    "matplotlib": "3.11.2",
+    "pint": "0.25.3",
+    "cantera": "3.2.0",
+    "yaml": "6.0.3",
+    "pytest": "9.1.1"
+  },
+  "runtime_s": 10.1,
+  "log": [
+    "START L0 thermodynamic screening maps",
+    "DONE  L0 thermodynamic screening maps in 0.82 s",
+    "START SN tuning (find CO2/C)",
+    "DONE  SN tuning (find CO2/C) in 0.05 s",
+    "START route comparison (7+1 routes)",
+    "DONE  route comparison (7+1 routes) in 0.37 s",
+    "START L1 plant material and heat balance",
+    "DONE  L1 plant material and heat balance in 0.17 s",
+    "START L2 kinetic PFR diagnostic (blocked)",
+    "DONE  L2 kinetic PFR diagnostic (blocked) in 3.63 s",
+    "START G3 catalyst sintering / degradation",
+    "DONE  G3 catalyst sintering / degradation in 0.00 s",
+    "START G6 equipment sizing",
+    "DONE  G6 equipment sizing in 0.00 s",
+    "START G7 economics",
+    "DONE  G7 economics in 0.00 s",
+    "START five verification loops",
+    "DONE  five verification loops in 4.07 s",
+    "START plots (optional)",
+    "DONE  plots (optional) in 0.77 s"
+  ],
+  "plots": {
+    "available": true,
+    "files": [
+      "equilibrium_map.png",
+      "carbon_boundary.png",
+      "sn_tuning.png"
+    ]
+  },
+  "verification_loop_status": {
+    "loop_1_sources": "passed",
+    "loop_2_arithmetic_dimensions": "passed",
+    "loop_3_conservation": "passed",
+    "loop_4_thermodynamic_consistency": "passed",
+    "loop_5_validation_falsification": "failed"
+  },
+  "key_results": {
+    "SN_target": 2.0,
+    "SN_achieved": 1.9999999999999434,
+    "CO2_C_used": 0.24676251304342856,
+    "dry_syngas_Nm3_h": 100000.0,
+    "SMR_CH4_conversion": 0.7836493151793017,
+    "plant_energy_closure_pct": 5.087863200847496e-14,
+    "max_element_imbalance_pct": 4.3881005034532424e-14,
+    "activity_EOR_power_law": 0.0719631626432642,
+    "activity_EOR_gple_bounded": 0.22,
+    "model_disagreement_factor": 3.057119669553491,
+    "catalyst_reserve_range": {
+      "power_law": 13.895998497970414,
+      "gple_bounded": 4.545454545454546
+    },
+    "kinetics_L2_validation_mean_abs_deviation": 0.3556438310303041,
+    "fuel_Nm3_h": 10512.148902854227,
+    "CO2_from_fuel_t_h": 20.64044955624386,
+    "levelised_cost_USD_per_1000Nm3": 227.5729829438962
+  },
+  "disclaimer": "No Aspen HYSYS run was performed. This is a front-end (G0-G4 partial, G5-G8 blocked) model. See docs/09 and docs/10."
+}

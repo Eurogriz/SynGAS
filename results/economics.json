@@ -1,0 +1,85 @@
+{
+  "prices": {
+    "natural_gas_USD_per_MMBtu": 8.0,
+    "electricity_USD_per_MWh": 80.0,
+    "CO2_USD_per_t": 80.0,
+    "steam_USD_per_t": 25.0,
+    "cooling_water_USD_per_m3": 0.05,
+    "catalyst_USD_per_kg": 40.0,
+    "operating_hours_per_year": 8000.0,
+    "CAPEX_USD": 120000000.0,
+    "CAPEX_class": "screening / AACE-like class 5, +/-50% [ASSUMPTION]; AACE 18R-97 text was NOT opened",
+    "discount_rate": 0.1,
+    "plant_life_years": 20.0
+  },
+  "status": "[ASSUMPTION] no cost database, vendor quote or licence fee was opened in this session",
+  "LHV_CH4_MMBtu_per_Nm3": 0.03392696421333211,
+  "annual": {
+    "feed_plus_fuel_Nm3_h": 70512.14890285423,
+    "gas_cost_USD_y": 153104841.75566596,
+    "CO2_cost_USD_y": 13209887.715996068,
+    "cooling_water_cost_USD_y": 1648501.9107494608,
+    "steam_credit_USD_y": 0.0,
+    "annualised_CAPEX_USD_y": 14095154.97270549,
+    "total_OPEX_plus_annual_CAPEX_USD_y": 182058386.35511696
+  },
+  "levelised_cost_USD_per_1000Nm3_dry_syngas": 227.5729829438962,
+  "sensitivity": [
+    {
+      "parameter": "natural_gas_USD_per_MMBtu",
+      "value": 4,
+      "USD_per_1000Nm3_syngas": 131.882456846605
+    },
+    {
+      "parameter": "natural_gas_USD_per_MMBtu",
+      "value": 8,
+      "USD_per_1000Nm3_syngas": 227.5729829438962
+    },
+    {
+      "parameter": "natural_gas_USD_per_MMBtu",
+      "value": 12,
+      "USD_per_1000Nm3_syngas": 323.26350904118743
+    },
+    {
+      "parameter": "natural_gas_USD_per_MMBtu",
+      "value": 16,
+      "USD_per_1000Nm3_syngas": 418.9540351384787
+    },
+    {
+      "parameter": "CO2_USD_per_t",
+      "value": 0,
+      "USD_per_1000Nm3_syngas": 211.06062329890113
+    },
+    {
+      "parameter": "CO2_USD_per_t",
+      "value": 40,
+      "USD_per_1000Nm3_syngas": 219.31680312139866
+    },
+    {
+      "parameter": "CO2_USD_per_t",
+      "value": 80,
+      "USD_per_1000Nm3_syngas": 227.5729829438962
+    },
+    {
+      "parameter": "CO2_USD_per_t",
+      "value": 160,
+      "USD_per_1000Nm3_syngas": 244.0853425888913
+    },
+    {
+      "parameter": "CAPEX_USD",
+      "value": 60000000.0,
+      "USD_per_1000Nm3_syngas": 218.76351108595526
+    },
+    {
+      "parameter": "CAPEX_USD",
+      "value": 120000000.0,
+      "USD_per_1000Nm3_syngas": 227.5729829438962
+    },
+    {
+      "parameter": "CAPEX_USD",
+      "value": 240000000.0,
+      "USD_per_1000Nm3_syngas": 245.19192665977806
+    }
+  ],
+  "warning": "This is NOT a project cost estimate. No vendor quotes, no licence fees, no location factors, no AACE class definition was opened."
+}

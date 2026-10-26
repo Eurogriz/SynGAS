@@ -1,0 +1,473 @@
+{
+  "loop_1_sources": {
+    "status": "passed",
+    "n_claims": 52,
+    "status_counts": {
+      "[CONFIRMED]": 19,
+      "[PARTIAL]": 17,
+      "[NOT CONFIRMED]": 6,
+      "[ASSUMPTION]": 10
+    },
+    "claims_missing_source_or_status": [],
+    "declared_unopened_sources": [
+      "S15",
+      "S16",
+      "S35",
+      "S36",
+      "S37",
+      "S38",
+      "S40",
+      "S45"
+    ],
+    "evidence": "docs/01_claims_register.csv + data/sources.json; every numeric input must trace to an opened primary source or an explicit [ASSUMPTION]"
+  },
+  "loop_2_arithmetic_dimensions": {
+    "status": "passed",
+    "reaction_enthalpies_kJ_mol": {
+      "SMR": 206.17435081193167,
+      "WGS": -41.17542497108984,
+      "DRM": 247.3497757830215,
+      "POX": -35.65153566256411,
+      "FULLOX": -802.3046200571413
+    },
+    "reference_values_from_rule_kJ_mol": {
+      "SMR": 206.0,
+      "WGS": -41.0,
+      "DRM": 247.0,
+      "POX": -36.0,
+      "FULLOX": -802.0
+    },
+    "max_abs_deviation_kJ_mol": 0.34977578302149936,
+    "ideal_gas_molar_volume_Nm3_per_mol": 0.022413969544601037,
+    "pint_dimensional_check": "R*T/p = 0.003735355475762681 m³/mol; molar volume at 1123.15 K, 25 bar",
+    "LHV_CH4_kJ_mol": 802.3046200571413,
+    "evidence": "independent recomputation from NIST Shomate H coefficients at 298.15 K"
+  },
+  "loop_3_conservation": {
+    "status": "passed",
+    "SMR_element_imbalance_pct": {
+      "C": 4.3881005034532424e-14,
+      "H": 0.0,
+      "O": 1.5677490185183665e-14,
+      "N": 0.0
+    },
+    "pre_reformer_element_imbalance_pct": {
+      "C": 0.0,
+      "H": 0.0,
+      "O": 1.5677490185183668e-14,
+      "N": 0.0
+    },
+    "plant_energy_closure_pct": 5.087863200847496e-14,
+    "tolerances": {
+      "elements_pct": 0.1,
+      "energy_pct": 0.5
+    },
+    "evidence": "element_vector() before/after each reactor; sum of unit duties vs stream enthalpy difference"
+  },
+  "loop_4_thermodynamic_consistency": {
+    "status": "passed",
+    "checks": {
+      "shomate_vs_nasa_max_abs_y_difference": 0.0006014940460105367,
+      "scipy_vs_code_max_abs_y_difference": 3.6722879126482866e-08,
+      "Q_over_K_all": [
+        0.9999999999999949,
+        1.0000000000000018,
+        1.0000000000000018,
+        0.9999999999999982,
+        1.0,
+        0.9999999999999942,
+        0.9999999999999858,
+        1.0000000000000027
+      ],
+      "PR_Kphi_deviation_pct": {
+        "R1_SMR": 1.730840210006357,
+        "R2_WGS": 0.37113132552100137
+      },
+      "PR_Z": 1.0028670423091928,
+      "dew_point_K": 442.5235398438148,
+      "no_condensation_in_WHB": true,
+      "WHB_no_temperature_cross": true,
+      "cantera_max_abs_y_difference": 0.0009174185462367812
+    },
+    "cross_dataset_table": [
+      {
+        "T_K": 900.0,
+        "p_bar": 25.0,
+        "max_abs_y_difference": 0.0006014940460105367,
+        "X_CH4_shomate": 0.3036809047061434,
+        "X_CH4_nasa": 0.30458104607642494,
+        "Q1_over_K1_shomate": 0.9999999999999949,
+        "Q2_over_K2_shomate": 1.0
+      },
+      {
+        "T_K": 1123.15,
+        "p_bar": 25.0,
+        "max_abs_y_difference": 0.00015901104451920833,
+        "X_CH4_shomate": 0.8038385014049053,
+        "X_CH4_nasa": 0.803570292305232,
+        "Q1_over_K1_shomate": 1.0000000000000018,
+        "Q2_over_K2_shomate": 0.9999999999999942
+      },
+      {
+        "T_K": 1300.0,
+        "p_bar": 25.0,
+        "max_abs_y_difference": 0.00014579914821344353,
+        "X_CH4_shomate": 0.9836217475477544,
+        "X_CH4_nasa": 0.9833066561406413,
+        "Q1_over_K1_shomate": 1.0000000000000018,
+        "Q2_over_K2_shomate": 0.9999999999999858
+      },
+      {
+        "T_K": 1123.15,
+        "p_bar": 5.0,
+        "max_abs_y_difference": 7.452111753958324e-05,
+        "X_CH4_shomate": 0.9820339656274609,
+        "X_CH4_nasa": 0.9819900901968033,
+        "Q1_over_K1_shomate": 0.9999999999999982,
+        "Q2_over_K2_shomate": 1.0000000000000027
+      }
+    ],
+    "scipy": {
+      "available": true,
+      "success": true,
+      "message": "Optimization terminated successfully",
+      "y_wet": {
+        "CH4": 0.03518122610883953,
+        "C2H6": 1.1944149870893239e-06,
+        "H2O": 0.33769468092057814,
+        "CO": 0.08821183537222393,
+        "CO2": 0.05658545818900863,
+        "H2": 0.4814603121650338,
+        "O2": 1.7305856586541875e-15,
+        "N2": 0.0008652928293270938
+      },
+      "element_constraint_max_residual": 2.5067947717616335e-11
+    },
+    "cantera": {
+      "available": true,
+      "version": "3.2.0",
+      "major_species_mole_fraction": {
+        "CH4": 0.03468349004887033,
+        "H2O": 0.336900610323331,
+        "CO": 0.0885663998291133,
+        "CO2": 0.05657149916895704,
+        "H2": 0.4823776939883915
+      },
+      "max_abs_y_difference_vs_model": 0.0009174185462367812,
+      "note": "GRI-Mech 3.0 contains radicals/oxygenates; totals of the 5 major species differ from the restricted-species model."
+    },
+    "peng_robinson": {
+      "phi": {
+        "CH4": 1.0058911720908676,
+        "C2H6": 1.0066947232378338,
+        "H2O": 0.9983883477948258,
+        "CO": 1.0082668031802362,
+        "CO2": 1.0059457735707789,
+        "H2": 1.0044058213352824,
+        "O2": 1.0056674637432783,
+        "N2": 1.0078544858636078
+      },
+      "reactions": {
+        "R1_SMR": {
+          "K_phi": 1.0173084021000636,
+          "deviation_pct": 1.730840210006357
+        },
+        "R2_WGS": {
+          "K_phi": 1.00371131325521,
+          "deviation_pct": 0.37113132552100137
+        }
+      }
+    },
+    "tolerances": "Shomate vs NASA7 |dy| < 0.01; SLSQP vs code |dy| < 0.02; Q/K = 1 +/- 1e-6"
+  },
+  "loop_5_validation_falsification": {
+    "status": "failed",
+    "anchor_checks_passed": true,
+    "validation_status": "PARTIALLY VALIDATED - no industrial/pilot dataset was reproduced; only order-of-magnitude literature anchors",
+    "anchors": {
+      "SMR_outlet_850C_25bar_SC3_X_CH4": {
+        "model": 0.7836493151793017,
+        "target_range": [
+          0.6,
+          0.9
+        ],
+        "source": "rule section 8 orientation + Energy 2025 316:134540 (open access review): industrial SMR up to 850 C, 25 bar, S/C 2-4"
+      },
+      "H2_CO_SMR_at_850C": {
+        "model": 4.264171332488665,
+        "target_range": [
+          3.0,
+          7.0
+        ],
+        "source": "Catalysts 2019, 9, 801 (opened): H2/CO ~>=5 at high conversion, WGS-controlled"
+      }
+    },
+    "sensitivity": [
+      {
+        "case": "T",
+        "value": 1073.15,
+        "X_CH4": 0.6651777198352297,
+        "SN": 1.8653931891920257,
+        "C_affinity": -10.397048690901398
+      },
+      {
+        "case": "T",
+        "value": 1098.15,
+        "X_CH4": 0.7291848024267118,
+        "SN": 1.9394352192755602,
+        "C_affinity": -11.645114040574898
+      },
+      {
+        "case": "T",
+        "value": 1123.15,
+        "X_CH4": 0.7885889468954348,
+        "SN": 1.9999999999999427,
+        "C_affinity": -13.155134150776652
+      },
+      {
+        "case": "T",
+        "value": 1148.15,
+        "X_CH4": 0.840892383142304,
+        "SN": 2.0478730770853635,
+        "C_affinity": -14.945415364356418
+      },
+      {
+        "case": "T",
+        "value": 1173.15,
+        "X_CH4": 0.8843641533545651,
+        "SN": 2.0843081139820407,
+        "C_affinity": -17.018136927504322
+      },
+      {
+        "case": "p",
+        "value": 10.0,
+        "X_CH4": 0.9337484231853337,
+        "SN": 2.122456113907802,
+        "C_affinity": -17.88303574712463
+      },
+      {
+        "case": "p",
+        "value": 20.0,
+        "X_CH4": 0.8322833711830601,
+        "SN": 2.0403102119198273,
+        "C_affinity": -14.027974833623565
+      },
+      {
+        "case": "p",
+        "value": 25.0,
+        "X_CH4": 0.7885889468954348,
+        "SN": 1.9999999999999427,
+        "C_affinity": -13.155134150776652
+      },
+      {
+        "case": "p",
+        "value": 30.0,
+        "X_CH4": 0.7503318784551261,
+        "SN": 1.9618200232419625,
+        "C_affinity": -12.563878968795128
+      },
+      {
+        "case": "p",
+        "value": 40.0,
+        "X_CH4": 0.6873528710782733,
+        "SN": 1.8921934989260634,
+        "C_affinity": -11.827403660443585
+      },
+      {
+        "case": "S/C",
+        "value": 2.0,
+        "X_CH4": 0.6821907294062284,
+        "SN": 1.8860713081492289,
+        "C_affinity": -8.083064021126026
+      },
+      {
+        "case": "S/C",
+        "value": 2.5,
+        "X_CH4": 0.7408445955504516,
+        "SN": 1.9518967870805934,
+        "C_affinity": -10.770065387636654
+      },
+      {
+        "case": "S/C",
+        "value": 3.0,
+        "X_CH4": 0.7885889468954348,
+        "SN": 1.9999999999999427,
+        "C_affinity": -13.155134150776652
+      },
+      {
+        "case": "S/C",
+        "value": 3.5,
+        "X_CH4": 0.8274331233348798,
+        "SN": 2.0359965789270627,
+        "C_affinity": -15.331436112202502
+      },
+      {
+        "case": "S/C",
+        "value": 4.0,
+        "X_CH4": 0.8589720704897855,
+        "SN": 2.0633717127853024,
+        "C_affinity": -17.35182745681643
+      },
+      {
+        "case": "approach_K",
+        "value": 0.0,
+        "X_CH4": 0.810482223088367,
+        "SN": 2.0206125323027053,
+        "C_affinity": -13.837069477734243
+      },
+      {
+        "case": "approach_K",
+        "value": 10.0,
+        "X_CH4": 0.7885889468954348,
+        "SN": 1.9999999999999427,
+        "C_affinity": -13.155134150776652
+      },
+      {
+        "case": "approach_K",
+        "value": 20.0,
+        "X_CH4": 0.7655507601356492,
+        "SN": 1.977351433579442,
+        "C_affinity": -12.51822467975613
+      },
+      {
+        "case": "approach_K",
+        "value": 30.0,
+        "X_CH4": 0.7415203509061462,
+        "SN": 1.9526078199601296,
+        "C_affinity": -11.92539403447145
+      }
+    ],
+    "falsification_attempts": [
+      {
+        "hypothesis": "The 25 bar ideal-gas assumption is wrong.",
+        "test": "Peng-Robinson fugacity correction K_phi for R1/R2 at 1123 K, 25 bar (loop 4)",
+        "result": "quantified in loop 4; if |deviation| > 5% the equilibrium map must be recomputed with PR/SRK in HYSYS"
+      },
+      {
+        "hypothesis": "Full equilibrium overpredicts conversion; kinetics/diffusion limit it.",
+        "test": "approach_K sensitivity 0/10/20/30 K above",
+        "result": "X_CH4 and SN sensitivity reported; L2 kinetic validation is BLOCKED (see docs/09)"
+      },
+      {
+        "hypothesis": "10 K approach-to-equilibrium is unjustified.",
+        "test": "explicit sensitivity; no primary source for this number was opened",
+        "result": "value remains [ASSUMPTION], must be replaced by catalyst vendor data"
+      },
+      {
+        "hypothesis": "SMR alone can meet SN=2.",
+        "test": "CO2/C sweep in results/co2_sweep.csv",
+        "result": "SN at S/C=3, 850 C, 25 bar is >2.8; CO2 import or ATR is required"
+      }
+    ],
+    "kinetics_L2_diagnostic": {
+      "density_unit_interpretation_that_best_matches_published_curve": "kg_m3",
+      "calibration_note": "The source's Table 3 unit for catalyst density is ambiguous; both readings were RUN, not assumed. This is a documented fitting/interpretation choice (rule 1.5).",
+      "status": "code verification against a published INDEPENDENT MODEL IMPLEMENTATION, not against experiment",
+      "source": "Fernandes & Soares, Latin Am. Appl. Res. 36 (2006) 155-161, Fig. 5a, 29 atm conventional reactor (opened PDF)",
+      "rows": [
+        {
+          "T_K": 750.0,
+          "X_published": 0.18,
+          "X_density_as_printed_g_m3": 0.07079948037857409,
+          "X_density_as_kg_m3": 0.08358636683783094,
+          "abs_deviation_printed": 0.1092005196214259,
+          "abs_deviation_kg_m3": 0.09641363316216905
+        },
+        {
+          "T_K": 800.0,
+          "X_published": 0.38,
+          "X_density_as_printed_g_m3": 0.13167175177862978,
+          "X_density_as_kg_m3": 0.1351122753036944,
+          "abs_deviation_printed": 0.24832824822137023,
+          "abs_deviation_kg_m3": 0.2448877246963056
+        },
+        {
+          "T_K": 850.0,
+          "X_published": 0.55,
+          "X_density_as_printed_g_m3": 0.19905141468625187,
+          "X_density_as_kg_m3": 0.19957648576255416,
+          "abs_deviation_printed": 0.3509485853137482,
+          "abs_deviation_kg_m3": 0.3504235142374459
+        },
+        {
+          "T_K": 900.0,
+          "X_published": 0.73,
+          "X_density_as_printed_g_m3": 0.27866041820206666,
+          "X_density_as_kg_m3": 0.2787534953565347,
+          "abs_deviation_printed": 0.4513395817979333,
+          "abs_deviation_kg_m3": 0.4512465046434653
+        },
+        {
+          "T_K": 950.0,
+          "X_published": 0.88,
+          "X_density_as_printed_g_m3": 0.3738357525488627,
+          "X_density_as_kg_m3": 0.3739235855939067,
+          "abs_deviation_printed": 0.5061642474511373,
+          "abs_deviation_kg_m3": 0.5060764144060933
+        },
+        {
+          "T_K": 1000.0,
+          "X_published": 0.97,
+          "X_density_as_printed_g_m3": 0.48523457614809107,
+          "X_density_as_kg_m3": 0.48518480496365435,
+          "abs_deviation_printed": 0.4847654238519089,
+          "abs_deviation_kg_m3": 0.4848151950363456
+        }
+      ],
+      "max_abs_deviation": 0.5060764144060933,
+      "mean_abs_deviation": 0.3556438310303041,
+      "warning": "Reproducing another model's curve does NOT validate the kinetics for the Ni/MgAl2O4 design catalyst at 1123 K / 25 bar.",
+      "equilibrium_constant_comparison": [
+        {
+          "T_K": 750.0,
+          "K1_secondary_source": 0.0036212410605985013,
+          "K1_NIST_this_model": 0.003336592353256258,
+          "K2_secondary_source": 5.981878183406635,
+          "K2_NIST_this_model": 6.136951492122302
+        },
+        {
+          "T_K": 800.0,
+          "K1_secondary_source": 0.03291124907741373,
+          "K1_NIST_this_model": 0.030959402967129027,
+          "K2_secondary_source": 4.098735425999244,
+          "K2_NIST_this_model": 4.230885650673189
+        },
+        {
+          "T_K": 850.0,
+          "K1_secondary_source": 0.23071090693800897,
+          "K1_NIST_this_model": 0.22291279861784954,
+          "K2_secondary_source": 2.936151115582104,
+          "K2_NIST_this_model": 3.0613996192806385
+        },
+        {
+          "T_K": 900.0,
+          "K1_secondary_source": 1.3026345136124515,
+          "K1_NIST_this_model": 1.2974400474011327,
+          "K2_secondary_source": 2.182748776040258,
+          "K2_NIST_this_model": 2.305683585998057
+        },
+        {
+          "T_K": 950.0,
+          "K1_secondary_source": 6.129781402825983,
+          "K1_NIST_this_model": 6.306018338143653,
+          "K2_secondary_source": 1.6741113057754675,
+          "K2_NIST_this_model": 1.7956352401198468
+        },
+        {
+          "T_K": 1000.0,
+          "K1_secondary_source": 24.706154504516338,
+          "K1_NIST_this_model": 26.27196569233059,
+          "K2_secondary_source": 1.318520382278122,
+          "K2_NIST_this_model": 1.4384640213267421
+        }
+      ],
+      "conclusion": "Equilibrium constants in the secondary source agree with NIST-JANAF within ~8%, but the published conversion-vs-temperature curve of that same source cannot be reproduced from its printed kinetic/reactor parameters (max deviation ~0.5 absolute). The L2 kinetic model is therefore NOT VALIDATED and is not used for design."
+    },
+    "unvalidated": [
+      "L2 Xu-Froment kinetics (primary full text not opened; secondary parameter set fails reproduction)",
+      "reformer tube wall / catalyst temperature profile (L3 not built)",
+      "commercial catalyst lifetime",
+      "PSA/CO2-removal unit performance"
+    ]
+  }
+}

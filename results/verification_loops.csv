@@ -1,0 +1,6 @@
+loop,status
+loop_1_sources,passed
+loop_2_arithmetic_dimensions,passed
+loop_3_conservation,passed
+loop_4_thermodynamic_consistency,passed
+loop_5_validation_falsification,failed

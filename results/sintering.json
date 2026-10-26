@@ -1,0 +1,317 @@
+{
+  "melting_points": {
+    "Ni": {
+      "K": 1728.0,
+      "status": "[CONFIRMED]",
+      "sources": [
+        "NIST WebBook C7440020 Mask=2 (Chase 1998)",
+        "NASA TM-4513 via Cantera nasa_condensed.yaml Ni(cr)"
+      ]
+    },
+    "NiO": {
+      "K": null,
+      "status": "[NOT CONFIRMED]",
+      "sources": [
+        "not found in the opened databases this session"
+      ]
+    },
+    "Al2O3_alpha": {
+      "K": 2327.0,
+      "status": "[CONFIRMED]",
+      "sources": [
+        "NIST WebBook C1344281 Mask=2 (Chase 1998)",
+        "NASA TM-4513 AL2O3(a)"
+      ]
+    },
+    "MgAl2O4": {
+      "K": 2408.0,
+      "status": "[CONFIRMED]",
+      "sources": [
+        "NASA TM-4513 MgAL2O4(s) upper fit bound",
+        "US7541005B2 states 2135 C = 2408.15 K (patent, opened)"
+      ]
+    },
+    "ZrO2": {
+      "K": 2950.0,
+      "status": "[PARTIAL]",
+      "sources": [
+        "NASA TM-4513 ZrO2(b) upper fit bound; single source"
+      ]
+    },
+    "CeO2": {
+      "K": null,
+      "status": "[NOT CONFIRMED]",
+      "sources": [
+        "not found in the opened databases this session"
+      ]
+    },
+    "CaAl2O4": {
+      "K": null,
+      "status": "[NOT CONFIRMED]",
+      "sources": [
+        "not found in the opened databases this session"
+      ]
+    }
+  },
+  "temperature_checks": {
+    "Ni": {
+      "T_melt_K": 1728.0,
+      "Tamman_K": 864.0,
+      "Huttig_K": 518.4,
+      "T_wall_normal_K": 1178.15,
+      "T_wall_peak_K": 1223.15,
+      "wall_normal_over_Tamman": 1.363599537037037,
+      "wall_peak_over_Tamman": 1.4156828703703705,
+      "wall_normal_over_Huttig": 2.2726658950617287,
+      "above_Huttig": true,
+      "above_Tamman": true
+    },
+    "NiO": {
+      "status": "[NOT CONFIRMED]",
+      "reason": "no melting point from an opened source"
+    },
+    "Al2O3_alpha": {
+      "T_melt_K": 2327.0,
+      "Tamman_K": 1163.5,
+      "Huttig_K": 698.1,
+      "T_wall_normal_K": 1178.15,
+      "T_wall_peak_K": 1223.15,
+      "wall_normal_over_Tamman": 1.01259131929523,
+      "wall_peak_over_Tamman": 1.0512677266867212,
+      "wall_normal_over_Huttig": 1.6876521988253832,
+      "above_Huttig": true,
+      "above_Tamman": true
+    },
+    "MgAl2O4": {
+      "T_melt_K": 2408.0,
+      "Tamman_K": 1204.0,
+      "Huttig_K": 722.4,
+      "T_wall_normal_K": 1178.15,
+      "T_wall_peak_K": 1223.15,
+      "wall_normal_over_Tamman": 0.978529900332226,
+      "wall_peak_over_Tamman": 1.015905315614618,
+      "wall_normal_over_Huttig": 1.6308831672203767,
+      "above_Huttig": true,
+      "above_Tamman": false
+    },
+    "ZrO2": {
+      "T_melt_K": 2950.0,
+      "Tamman_K": 1475.0,
+      "Huttig_K": 885.0,
+      "T_wall_normal_K": 1178.15,
+      "T_wall_peak_K": 1223.15,
+      "wall_normal_over_Tamman": 0.7987457627118645,
+      "wall_peak_over_Tamman": 0.8292542372881356,
+      "wall_normal_over_Huttig": 1.3312429378531074,
+      "above_Huttig": true,
+      "above_Tamman": false
+    },
+    "CeO2": {
+      "status": "[NOT CONFIRMED]",
+      "reason": "no melting point from an opened source"
+    },
+    "CaAl2O4": {
+      "status": "[NOT CONFIRMED]",
+      "reason": "no melting point from an opened source"
+    }
+  },
+  "empirical_model": {
+    "n": 4.0,
+    "k_ref": 754.1795655714286,
+    "T_ref_K": 773.0,
+    "Ea_kJ_per_mol": 23.781709702802043,
+    "k_A": 754.1795655714286,
+    "k_B": 2122.1375999999996,
+    "warning": "Ea is fitted from TWO DIFFERENT catalysts/atmospheres; this is an [ASSUMPTION], not a measured activation energy."
+  },
+  "anchors": {
+    "A": {
+      "T_K": 773.0,
+      "t_h": 700.0,
+      "d0_nm": 7.7,
+      "d_nm": 27.0,
+      "system": "7.6wt%Ni/MgAl2O4, 30 bar, steam:H2=10:1"
+    },
+    "B": {
+      "T_K": 1073.0,
+      "t_h": 1.0,
+      "d0_nm": 2.0,
+      "d_nm": 6.8,
+      "system": "20wt%Ni/MgAl2O4, N2, 800 C"
+    },
+    "C": {
+      "T_K": 773.0,
+      "t_h": 20.0,
+      "d0_nm": 10.5,
+      "d_nm": 16.0,
+      "system": "20wt%Ni/Al2O3, CO methanation"
+    }
+  },
+  "T_wall_normal_K": 1178.15,
+  "T_wall_peak_K": 1223.15,
+  "design_life_h": 26280,
+  "d0_nm": 6.6,
+  "predictions": {
+    "gas_outlet": {
+      "T_K": 1123.15,
+      "k_nm4_per_h": 2390.3744338630436,
+      "d_EOR_nm": 89.02789470427852,
+      "dispersion_ratio": 0.07413406800108029,
+      "activity_A_EOR": 0.07413406800108029,
+      "loss_of_active_surface_pct": 92.58659319989198
+    },
+    "wall_normal": {
+      "T_K": 1178.15,
+      "k_nm4_per_h": 2692.1407869319473,
+      "d_EOR_nm": 91.71359008660473,
+      "dispersion_ratio": 0.0719631626432642,
+      "activity_A_EOR": 0.0719631626432642,
+      "loss_of_active_surface_pct": 92.80368373567359
+    },
+    "wall_peak": {
+      "T_K": 1223.15,
+      "k_nm4_per_h": 2943.664228752565,
+      "d_EOR_nm": 93.78450075699293,
+      "dispersion_ratio": 0.07037410176230936,
+      "activity_A_EOR": 0.07037410176230936,
+      "loss_of_active_surface_pct": 92.96258982376906
+    }
+  },
+  "sensitivity": [
+    {
+      "case": "n=2.0",
+      "A_EOR": 0.0040525158106310966
+    },
+    {
+      "case": "n=3.0",
+      "A_EOR": 0.027368746057050725
+    },
+    {
+      "case": "n=4.0",
+      "A_EOR": 0.0719631626432642
+    },
+    {
+      "case": "n=6.0",
+      "A_EOR": 0.19017199706401686
+    },
+    {
+      "case": "n=13.0",
+      "A_EOR": 0.542550367050693
+    },
+    {
+      "case": "Ea x0.5",
+      "A_EOR": 0.08436951018126518
+    },
+    {
+      "case": "Ea x0.75",
+      "A_EOR": 0.07791984659482289
+    },
+    {
+      "case": "Ea x1.0",
+      "A_EOR": 0.0719631626432642
+    },
+    {
+      "case": "Ea x1.25",
+      "A_EOR": 0.06646179966407627
+    },
+    {
+      "case": "Ea x1.5",
+      "A_EOR": 0.061380968449809455
+    },
+    {
+      "case": "T_wall -50 K",
+      "A_EOR": 0.07392518335749072
+    },
+    {
+      "case": "T_wall +0 K",
+      "A_EOR": 0.0719631626432642
+    },
+    {
+      "case": "T_wall +50 K",
+      "A_EOR": 0.07020681047464489
+    }
+  ],
+  "gple_model": {
+    "Ea_kJ_per_mol": 100.0,
+    "D_lim_nm": 30.0,
+    "status": "[ASSUMPTION] both parameters; only the QUALITATIVE asymptotic behaviour is sourced",
+    "predictions": {
+      "gas_outlet": {
+        "T_K": 1123.15,
+        "k_ref_per_h": 0.002865677699711376,
+        "k_per_h": 0.36631206043430686,
+        "d_lim_nm": 30.0,
+        "d_EOR_nm": 30.0,
+        "activity_A_EOR": 0.22,
+        "loss_of_active_surface_pct": 78.0
+      },
+      "wall_normal": {
+        "T_K": 1178.15,
+        "k_ref_per_h": 0.002865677699711376,
+        "k_per_h": 0.6038909729170878,
+        "d_lim_nm": 30.0,
+        "d_EOR_nm": 30.0,
+        "activity_A_EOR": 0.22,
+        "loss_of_active_surface_pct": 78.0
+      },
+      "wall_peak": {
+        "T_K": 1223.15,
+        "k_ref_per_h": 0.002865677699711376,
+        "k_per_h": 0.8791625765649406,
+        "d_lim_nm": 30.0,
+        "d_EOR_nm": 30.0,
+        "activity_A_EOR": 0.22,
+        "loss_of_active_surface_pct": 78.0
+      }
+    },
+    "sensitivity": [
+      {
+        "case": "Ea=50.0 kJ/mol",
+        "T_K": 1178.15,
+        "k_ref_per_h": 0.002865677699711376,
+        "k_per_h": 0.04159996267000134,
+        "d_lim_nm": 30.0,
+        "d_EOR_nm": 30.0,
+        "activity_A_EOR": 0.22,
+        "loss_of_active_surface_pct": 78.0
+      },
+      {
+        "case": "Ea=100.0 kJ/mol",
+        "T_K": 1178.15,
+        "k_ref_per_h": 0.002865677699711376,
+        "k_per_h": 0.6038909729170878,
+        "d_lim_nm": 30.0,
+        "d_EOR_nm": 30.0,
+        "activity_A_EOR": 0.22,
+        "loss_of_active_surface_pct": 78.0
+      },
+      {
+        "case": "Ea=150.0 kJ/mol",
+        "T_K": 1178.15,
+        "k_ref_per_h": 0.002865677699711376,
+        "k_per_h": 8.766457558235478,
+        "d_lim_nm": 30.0,
+        "d_EOR_nm": 30.0,
+        "activity_A_EOR": 0.22,
+        "loss_of_active_surface_pct": 78.0
+      },
+      {
+        "case": "Ea=200.0 kJ/mol",
+        "T_K": 1178.15,
+        "k_ref_per_h": 0.002865677699711376,
+        "k_per_h": 127.25935900170381,
+        "d_lim_nm": 30.0,
+        "d_EOR_nm": 30.0,
+        "activity_A_EOR": 0.22,
+        "loss_of_active_surface_pct": 78.0
+      }
+    ]
+  },
+  "catalyst_reserve_factor": 4.545454545454546,
+  "catalyst_reserve_range": {
+    "power_law": 13.895998497970414,
+    "gple_bounded": 4.545454545454546
+  },
+  "model_disagreement_factor": 3.057119669553491,
+  "note": "A(t) proportional to Ni dispersion (1/d). The unbounded power law and the bounded GPLE disagree by a large factor; NEITHER was fitted to ageing data at the design temperature. Therefore the 3-year life, the catalyst reserve and the admissible wall temperature are NOT VALIDATED. Vendor ageing data at 850-950 C in steam/H2 at 25 bar are a hard blocker for G3/G6. Coke, sulfur and NiAl2O4 formation are listed separately as risks."
+}

@@ -1,0 +1,149 @@
+{
+  "smr": {
+    "Q_kW": 88844.06796749815,
+    "assumed_heat_flux_kW_m2": 80.0,
+    "dP_criterion_bar": 3.0,
+    "dP_criterion_met_by_base_case": false,
+    "alternative_low_dP": {
+      "n_tubes_factor": 1.5,
+      "pellet_d_m": 0.016,
+      "voidage": 0.5,
+      "ergun_dP_bar": 0.8389935815315088,
+      "status": "[ASSUMPTION] parametric alternative, not a vendor pellet"
+    },
+    "tube_ID_m": 0.1,
+    "tube_heated_length_m": 12.0,
+    "tube_wall_thickness_m": 0.012,
+    "area_per_tube_m2": 3.7699111843077517,
+    "number_of_tubes": 294.5827621129094,
+    "catalyst_volume_m3_at_GHSV": 27.179957539434785,
+    "geometric_tube_volume_m3": 27.76377123984318,
+    "superficial_velocity_m_s": 2.719144119164409,
+    "gas_density_kg_m3": 4.818818481077702,
+    "ergun_dP_bar": 7.097075782245144,
+    "alternatives": [
+      {
+        "type": "A: conventional top-fired radiant box",
+        "pro": "mature, high TRL, easy catalyst replacement",
+        "con": "large footprint, NOx, 50% furnace efficiency",
+        "n_tubes": 294.5827621129094
+      },
+      {
+        "type": "B: side-fired / terrace-wall",
+        "pro": "flatter heat-flux profile, lower peak TWT",
+        "con": "more burners, more piping, higher maintenance",
+        "n_tubes": 346.56795542695227
+      },
+      {
+        "type": "C: gas-heated / heat-exchange reformer",
+        "pro": "no fired NOx, compact",
+        "con": "needs a hot secondary reformer stream; lower TRL for this duty",
+        "n_tubes": null,
+        "status": "[NOT CONFIRMED] no vendor data opened"
+      }
+    ],
+    "status": "[ASSUMPTION] heat flux, tube size, GHSV, pellet size, voidage; final selection requires vendor + API 530/560 creep check"
+  },
+  "whb": {
+    "Q_kW": -34737.40213712997,
+    "LMTD_K": 340.2595056036274,
+    "U_W_m2K": 60.0,
+    "area_m2": 1701.5151457956135,
+    "dT_hot_in_minus_cold_out_K": 450.0000000000001,
+    "dT_hot_out_minus_cold_in_K": 250.0,
+    "temperature_cross": false,
+    "alternatives": [
+      {
+        "type": "A: fire-tube waste-heat boiler + steam drum",
+        "pro": "mature for syngas, handles high T",
+        "con": "metal dusting / tube-sheet thermal stress"
+      },
+      {
+        "type": "B: water-tube WHB",
+        "pro": "better for very high pressure steam",
+        "con": "more complex, higher cost, fouling"
+      }
+    ],
+    "status": "[ASSUMPTION] U and temperatures; TEMA/ASME VIII check not performed (standards not opened)"
+  },
+  "condenser": {
+    "Q_kW": -47850.63137178678,
+    "alternatives": [
+      {
+        "type": "A: shell-and-tube trim cooler + separator (TEMA)",
+        "pro": "mature, high pressure"
+      },
+      {
+        "type": "B: air cooler (API 661) + trim cooler",
+        "pro": "less cooling water",
+        "con": "large plot area, climate sensitivity"
+      }
+    ],
+    "status": "[ASSUMPTION] no thermal rating performed"
+  },
+  "zno": {
+    "S_in_kg_h": 0.42917430513202254,
+    "ZnO_mass_kg": 30076.53530365214,
+    "bed_volume_m3": 30.07653530365214,
+    "bed_diameter_m": 2.3370727049325395,
+    "bed_length_m": 7.011218114797618,
+    "design_life_years": 2.0,
+    "capacity_kgS_per_kg_ZnO": 0.25,
+    "alternatives": [
+      {
+        "type": "A: single ZnO vessel (lead-lag)",
+        "pro": "simple",
+        "con": "sulfur breakthrough risk"
+      },
+      {
+        "type": "B: two vessels in lead-lag + ultra-purification",
+        "pro": "<10 ppbv slip (JM webinar, opened)",
+        "con": "extra vessel and adsorbent cost"
+      }
+    ],
+    "status": "[ASSUMPTION] capacity/bulk density/life; vendor ZnO spec not opened"
+  },
+  "compressor": {
+    "power_kW": 1044.6428259158345,
+    "p_in_bar": 20.0,
+    "p_out_bar": 30.0,
+    "T_out_K": 337.76662903455264,
+    "alternatives": [
+      {
+        "type": "A: centrifugal (API 617)",
+        "pro": "high flow, reliable",
+        "con": "surge control needed"
+      },
+      {
+        "type": "B: reciprocating (API 618)",
+        "pro": "flexible at low flow / high ratio",
+        "con": "pulsation, maintenance"
+      }
+    ],
+    "status": "[ASSUMPTION] k, eta; catalogue curves not opened"
+  },
+  "asu": {
+    "O2_t_h": 0.0,
+    "specific_power_kWh_per_t": 245.0,
+    "power_MW": 0.0,
+    "source": "IEAGHG/Linde, Enhanced Cryogenic Air Separation (2009), opened PDF: 0.35 kWh/Nm3 O2, 245 kWh/t for >99.5% O2",
+    "status": "[PARTIAL] presentation value, delivery pressure effects not included"
+  },
+  "assumptions": {
+    "heat_flux_kW_m2": 80.0,
+    "tube_ID_m": 0.1,
+    "tube_heated_length_m": 12.0,
+    "tube_wall_thickness_m": 0.012,
+    "GHSV_Nm3_per_m3cat_h": 5000.0,
+    "bed_voidage": 0.4,
+    "pellet_d_m": 0.01,
+    "gas_viscosity_Pa_s": 3e-05,
+    "U_WHB_W_m2K": 60.0,
+    "ZnO_capacity_kgS_per_kg": 0.25,
+    "ZnO_bulk_density_kg_m3": 1000.0,
+    "ZnO_L_over_D": 3.0,
+    "polytropic_efficiency": 0.75,
+    "ASU_kWh_per_t_O2": 245.0
+  },
+  "standards_status": "API 530/560/617/618/661/941, TEMA, ASME VIII, ASTM A608 were NOT opened (paywalled). Their applicability and formulas are therefore [NOT CONFIRMED]; no code compliance is claimed."
+}

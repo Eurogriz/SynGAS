@@ -1,0 +1,323 @@
+{
+  "meta": {
+    "generated": "2026-10-26",
+    "note": "Only sources with opened=true were actually read in this session. opened=false entries are declared gaps."
+  },
+  "sources": [
+    {
+      "id": "S01",
+      "title": "NIST WebBook methane, Shomate coefficients, Chase 1998 (NIST-JANAF 4th ed.)",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C74828&Units=SI&Mask=1",
+      "opened": true,
+      "used_for": "CH4 g(T), h(T)"
+    },
+    {
+      "id": "S02",
+      "title": "NIST WebBook water gas, Shomate coefficients",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=1",
+      "opened": true,
+      "used_for": "H2O(g) g(T), h(T)"
+    },
+    {
+      "id": "S03",
+      "title": "NIST WebBook carbon monoxide, Shomate coefficients",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C630080&Units=SI&Mask=1",
+      "opened": true,
+      "used_for": "CO g(T), h(T)"
+    },
+    {
+      "id": "S04",
+      "title": "NIST WebBook carbon dioxide, Shomate coefficients",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1",
+      "opened": true,
+      "used_for": "CO2 g(T), h(T)"
+    },
+    {
+      "id": "S05",
+      "title": "NIST WebBook hydrogen, Shomate coefficients",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C1333740&Units=SI&Mask=1",
+      "opened": true,
+      "used_for": "H2 g(T), h(T)"
+    },
+    {
+      "id": "S06",
+      "title": "NIST WebBook oxygen, Shomate coefficients",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1",
+      "opened": true,
+      "used_for": "O2 g(T), h(T)"
+    },
+    {
+      "id": "S07",
+      "title": "NIST WebBook nitrogen, Shomate coefficients",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1",
+      "opened": true,
+      "used_for": "N2 g(T), h(T)"
+    },
+    {
+      "id": "S08",
+      "title": "NIST WebBook water liquid Shomate + CODATA formation enthalpies",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=2",
+      "opened": true,
+      "used_for": "liquid water enthalpy; 44.004 kJ/mol gas-liquid difference"
+    },
+    {
+      "id": "S09",
+      "title": "NIST WebBook water Antoine coefficients (Bridgeman & Aldrich 1964; Liu & Lindsay 1970; Stull 1947)",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=4",
+      "opened": true,
+      "used_for": "water psat, dew point"
+    },
+    {
+      "id": "S10",
+      "title": "NIST WebBook nickel condensed Shomate (solid fit ends 1728 K)",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7440020&Units=SI&Mask=2",
+      "opened": true,
+      "used_for": "Ni melting point, Tamman/Huettig"
+    },
+    {
+      "id": "S11",
+      "title": "NIST WebBook aluminium oxide condensed Shomate (solid fit ends 2327 K)",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C1344281&Units=SI&Mask=2",
+      "opened": true,
+      "used_for": "Al2O3 melting point, gamma/delta/kappa phase data"
+    },
+    {
+      "id": "S12",
+      "title": "NASA TM-4513 (McBride, Gordon & Reno 1993) condensed & graphite NASA7, distributed with Cantera 3.2.0",
+      "url": "https://ntrs.nasa.gov/citations/19940013151",
+      "opened": true,
+      "used_for": "independent melting points, graphite thermo, MgAl2O4 Tm"
+    },
+    {
+      "id": "S13",
+      "title": "GRI-Mech 3.0 NASA7 gas polynomials, distributed with Cantera 3.2.0 (gri30.yaml); upstream page returned 404",
+      "url": "https://combustion.berkeley.edu/gri-mech/version30/text30.html",
+      "opened": true,
+      "used_for": "independent gas thermochemistry, C2H6"
+    },
+    {
+      "id": "S14",
+      "title": "Cantera 3.2.0 critical-properties.yaml (NIST WebBook + Yaws)",
+      "url": "https://github.com/Cantera/cantera",
+      "opened": true,
+      "used_for": "Peng-Robinson Tc, pc, omega"
+    },
+    {
+      "id": "S15",
+      "title": "Xu & Froment, AIChE J. 35 (1989) 88-96, DOI 10.1002/aic.690350109 (Crossref record opened; abstract only; FULL TEXT NOT READ)",
+      "url": "https://api.crossref.org/works/10.1002/aic.690350109",
+      "opened": false,
+      "used_for": "bibliographic verification of the LHHW kinetics candidate"
+    },
+    {
+      "id": "S16",
+      "title": "Xu & Froment, AIChE J. 35 (1989) 97-103, DOI 10.1002/aic.690350110 (Crossref/Wiley abstract only)",
+      "url": "https://doi.org/10.1002/aic.690350110",
+      "opened": false,
+      "used_for": "diffusional limitations reference"
+    },
+    {
+      "id": "S17",
+      "title": "Saavedra Lopez et al., Catalysts 2019, 9(10), 801, DOI 10.3390/catal9100801 (open access, opened)",
+      "url": "https://www.mdpi.com/2073-4344/9/10/801",
+      "opened": true,
+      "used_for": "15 wt% Ni/MgAl2O4, 86 m2/g, 6.6 nm; reduction 850 C/16 h; S/C 1.5-2.0 tests; C2+ effects; H2/CO ~5 at high conversion"
+    },
+    {
+      "id": "S18",
+      "title": "Mei et al., J. Catal. 316 (2014) 11-23, DOI 10.1016/j.jcat.2014.04.021 (abstract/introduction opened; paywalled full text)",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0021951714001109",
+      "opened": true,
+      "used_for": "7.7 -> 27.0 nm in 700 h at 773 K, 30 bar, steam:H2=10:1 (quoting Sehested); Rh/Ir 1-2 nm stable at 1123 K in steam"
+    },
+    {
+      "id": "S19",
+      "title": "PNNL-23207 (2014) DOE report (opened PDF)",
+      "url": "https://www.pnnl.gov/main/publications/external/technical_reports/pnnl-23207.pdf",
+      "opened": true,
+      "used_for": "20wt%Ni/MgAl2O4 4.6 nm reduced vs 8.6 nm Ni/Al2O3; TPR 400-800 C; BET 107 vs 122 m2/g; deactivation data"
+    },
+    {
+      "id": "S20",
+      "title": "EP1013603A1 (Haldor Topsoe AS, priority 1998-12-22, legal status Ceased) (opened)",
+      "url": "https://patents.google.com/patent/EP1013603A1/en",
+      "opened": true,
+      "used_for": "Ni 10-60 wt% on high-surface MgAl2O4; promoters Zr/Y/W/La/Ce 0.01-10 wt%; spinel BET 183-192 m2/g after 550 C/4 h; activity test 400-750 C"
+    },
+    {
+      "id": "S21",
+      "title": "US3436358A (Haldor Topsoe, priority 1962-12-29, Expired) (opened)",
+      "url": "https://patents.google.com/patent/US3436358A/en",
+      "opened": true,
+      "used_for": "historical Ni/Mg-aluminate spinel support; >=50-70 wt% spinel; axial crush strength 600 kg/cm2"
+    },
+    {
+      "id": "S22",
+      "title": "US7541005B2 (Siemens Energy, Expired - Fee Related) (opened)",
+      "url": "https://patents.google.com/patent/US7541005B2/en",
+      "opened": true,
+      "used_for": "MgAl2O4 melting temperature 2135 C = 2408 K"
+    },
+    {
+      "id": "S23",
+      "title": "US9393552B2 (opened)",
+      "url": "https://patents.google.com/patent/US9393552",
+      "opened": true,
+      "used_for": "2-16 wt% Ni + 0.01-0.5 wt% Rh/Ir on MgAl2O4/alumina"
+    },
+    {
+      "id": "S24",
+      "title": "Farrokhnemoun et al., J. Am. Ceram. Soc. 2024, DOI 10.1111/jace.19630 (abstract opened)",
+      "url": "https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.19630",
+      "opened": true,
+      "used_for": "gamma->delta 800 C, ->theta 1000 C, theta->alpha 1050-1200 C"
+    },
+    {
+      "id": "S25",
+      "title": "Control of gamma->alpha alumina transformation, Bol. Soc. Esp. Ceram. Vidr. 2017 (opened)",
+      "url": "https://www.elsevier.es/en-revista-boletin-sociedad-espanola-ceramica-vidrio-26-articulo-control-alumina-alumina-phase-transformation-S0366317516300899",
+      "opened": true,
+      "used_for": "theta->alpha 1050-1200 C, max at 1192 C"
+    },
+    {
+      "id": "S26",
+      "title": "Morphology-dependent phase transformation of gamma-Al2O3, Appl. Surf. Sci. 2015 (abstract opened)",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0926860X15002264",
+      "opened": true,
+      "used_for": "200 -> 25 m2/g after 1100 C (>85% surface loss)"
+    },
+    {
+      "id": "S27",
+      "title": "Review of steam methane reforming as a method of hydrogen production, Energy 316 (2025) 134540 (open access review, opened)",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0360544225001823",
+      "opened": true,
+      "used_for": "industrial <=850 C, <=2500 kPa, S/C 2-6, 5-35 bar"
+    },
+    {
+      "id": "S28",
+      "title": "Zecevic & Bolf, Processes 2020, 8(4), 408, DOI 10.3390/pr8040408 (open access, opened)",
+      "url": "https://www.mdpi.com/2227-9717/8/4/408",
+      "opened": true,
+      "used_for": "~50% of fired heat to tubes; 100,000 h tube design life; approach-to-equilibrium monitoring"
+    },
+    {
+      "id": "S29",
+      "title": "Linde / IEAGHG 2009, Enhanced Cryogenic Air Separation (opened PDF)",
+      "url": "https://publications.ieaghg.org/docs/oxyfuel/OCC1/Plenary%201/Beysel_ASU_1stOxyfuel%20Cottbus.pdf",
+      "opened": true,
+      "used_for": "0.35 kWh/Nm3 O2 and 245 kWh/t O2 at >99.5% purity"
+    },
+    {
+      "id": "S30",
+      "title": "NIST WebBook nickel tetracarbonyl reaction thermochemistry (opened)",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C13463393&Units=SI&Mask=8",
+      "opened": true,
+      "used_for": "Ni(CO)4 decomposition enthalpy 160.4 +/- 2.5 kJ/mol; formation -152.7 +/- 4.2 kJ/mol"
+    },
+    {
+      "id": "S31",
+      "title": "Becht engineering note, Preventing Nickel Carbonyl Formation during Shutdowns (secondary, opened)",
+      "url": "https://becht.com/becht-blog/entry/preventing-nickel-carbonyl-formation-during-hydroprocessing-unit-shutdowns/",
+      "opened": true,
+      "used_for": "purge CO below 10 ppm before cooling <200 C"
+    },
+    {
+      "id": "S32",
+      "title": "Johnson Matthey purification webinar Q&A (secondary manufacturer document, opened)",
+      "url": "https://matthey.com/documents/161599/162780/Purufication-webinar-QAs.pdf/23a7b33e-6a88-d530-7cb4-e7a818788619",
+      "opened": true,
+      "used_for": "ZnO 350-400 C; 0.1 ppmv sulfur slip design; <10 ppbv ultra-purification"
+    },
+    {
+      "id": "S33",
+      "title": "SMR tube skin temperature papers, Chem. Eng. Res. Des. 2017, S0263876217304173 (abstract opened)",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0263876217304173",
+      "opened": true,
+      "used_for": "maximum tube skin temperature 905 C at 2.6 m"
+    },
+    {
+      "id": "S34",
+      "title": "Gas-heated / enhanced heat transfer reformer patent US4919844A (opened)",
+      "url": "https://patents.google.com/patent/US4919844A/en",
+      "opened": true,
+      "used_for": "alternative reformer configuration, CPC C01B3/38, B01J8/067"
+    },
+    {
+      "id": "S35",
+      "title": "Scopus / Web of Science / ScienceDirect / ACS / RSC / Wiley / Springer / CNKI / eLibrary.ru / Espacenet / WIPO / USPTO / FIPS / CNIPA / J-PlatPat / KIPRIS / The Lens / Derwent",
+      "url": "",
+      "opened": false,
+      "used_for": "NOT accessible through this session's tool set; see docs/02_search_log.md"
+    },
+    {
+      "id": "S36",
+      "title": "API 530, 560, 520, 521, 610, 617, 618, 661, RP 941; TEMA; ASME BPVC VIII; ASTM A608; NFPA 86; API 556",
+      "url": "",
+      "opened": false,
+      "used_for": "paywalled standards NOT opened; all code-compliance claims are [NOT CONFIRMED]"
+    },
+    {
+      "id": "S37",
+      "title": "Aspen HYSYS (any version) / DWSIM / COCO",
+      "url": "",
+      "opened": false,
+      "used_for": "NOT installed in the sandbox; no vendor documentation of the installed version could be checked"
+    },
+    {
+      "id": "S38",
+      "title": "Commercial catalyst datasheets (Topsoe, Johnson Matthey, Clariant, BASF)",
+      "url": "",
+      "opened": false,
+      "used_for": "NOT obtained; no brand names or performance data are asserted"
+    },
+    {
+      "id": "S39",
+      "title": "Integrated Modeling of SMR and Carbon Capture, MDPI Carbon Capture Util. 2025 (open access, opened)",
+      "url": "https://www.mdpi.com/2673-4141/6/4/94",
+      "opened": true,
+      "used_for": "S/C 2.5-3.0 optimum, 850-1000 C max conversion (secondary modelling study)"
+    },
+    {
+      "id": "S40",
+      "title": "AACE International Recommended Practice 18R-97 cost estimate classification",
+      "url": "",
+      "opened": false,
+      "used_for": "NOT opened; AACE class is used only as an analogy with an explicit [ASSUMPTION]"
+    },
+    {
+      "id": "S41",
+      "title": "Sehested et al., Sintering of Nickel Steam-Reforming Catalysts on MgAl2O4 Spinel Supports, J. Catal. 197 (2001) 200-209, DOI 10.1006/jcat.2000.3085 (abstract opened, full text paywalled)",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0021951700930859",
+      "opened": true,
+      "used_for": "most sintering in first 200 h; limiting Ni particle size; particle migration/coalescence"
+    },
+    {
+      "id": "S42",
+      "title": "WO2019228797A1, Steam reforming heated by resistance heating (Topsoe) (opened)",
+      "url": "https://patents.google.com/patent/WO2019228797A1/en",
+      "opened": true,
+      "used_for": "electrified SMR configuration; SMR maximum tube wall temperature ca. 1000 C"
+    },
+    {
+      "id": "S43",
+      "title": "Abbas, Dupont & Mahmud, Int. J. Hydrogen Energy 42 (2017), DOI 10.1016/j.ijhydene.2016.11.093, open-access PDF (opened)",
+      "url": "https://eprints.whiterose.ac.uk/id/eprint/108413/17/1-s2.0-S0360319916333821-main.pdf",
+      "opened": true,
+      "used_for": "own LHHW parameters for 18 wt% NiO/alpha-Al2O3 at 1 bar, 550-700 C; experimental CH4 conversion vs W/F; Table 3 reproduces Xu-Froment Ea/k0; Appendix A rate equations and K expressions"
+    },
+    {
+      "id": "S44",
+      "title": "Fernandes & Soares Jr., Latin American Applied Research 36 (2006) 155-161, open-access PDF (opened)",
+      "url": "https://www.scielo.org.ar/pdf/laar/v36n3/v36n3a04.pdf",
+      "opened": true,
+      "used_for": "complete secondary Xu-Froment parameter set: k0/Ea, adsorption K0/dH, equilibrium constants, reactor geometry; Fig. 5a conversion curve"
+    },
+    {
+      "id": "S45",
+      "title": "Hou & Hughes, Chem. Eng. J. 82 (2001) 311-328 (PDF located but NOT opened)",
+      "url": "https://terpconnect.umd.edu/~nsw/chbe446/Hou-MethaneSteamReform.pdf",
+      "opened": false,
+      "used_for": "alternative kinetics candidate for Ni/alpha-Al2O3"
+    }
+  ]
+}

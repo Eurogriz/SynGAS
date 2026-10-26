@@ -1,0 +1,520 @@
+{
+  "config": {
+    "product": "methanol",
+    "normal": "0C",
+    "climate": "russia",
+    "feed": "russia_h",
+    "route": "bi_reforming",
+    "Vm_m3_per_mol": 0.022413969545014137,
+    "capacity": 100000.0,
+    "capacity_unit": "dry_syngas_Nm3_h",
+    "target": 2.05,
+    "metric": "SN",
+    "eos_kset": "base",
+    "use_iapws": true,
+    "overrides": {},
+    "product_T_C": 40.0,
+    "ambient_C": 30.0
+  },
+  "product": "methanol",
+  "normal": "0C",
+  "climate": "russia",
+  "feed": "russia_h",
+  "Vm_m3_per_mol": 0.022413969545014137,
+  "knobs": {
+    "SC": 3.0,
+    "CO2C": 0.23708560466766354,
+    "O2C": 0.0,
+    "T_K": 1123.15,
+    "p_bar": 25.0,
+    "approach_K": 10.0,
+    "MDEA_CO2_recovery": 0.95,
+    "MDEA_reboiler_GJ_per_tCO2": 2.8
+  },
+  "tuning": {
+    "tuned_knob": "CO2C",
+    "hit": true,
+    "trace_last": {
+      "CO2C": 0.23708567619323728,
+      "SN": 2.0499999274229537
+    }
+  },
+  "spec": {
+    "metric": "SN",
+    "target": 2.05,
+    "achieved": 2.0500001381882607,
+    "within_tolerance": true,
+    "carbon_stable": false,
+    "CO2_molpct": 11.581759823830069,
+    "CH4_molpct": 5.674454543072809,
+    "N2_molpct": 0.22317416289144693,
+    "H2O_molpct": 0.29537709948278223,
+    "H2_purity_molpct": 67.04629229426027,
+    "CO_ppm": 154741.07850134268,
+    "CO2_ppm": 115817.59823830069,
+    "CH4_ppm": 56744.545430728096,
+    "N2_ppm": 2231.7416289144694,
+    "H2O_ppm": 2953.7709948278225,
+    "non_H2_ppm": 329537.07705739734,
+    "limit_checks": {
+      "max_H2O_molpct": {
+        "limit": 0.5,
+        "value": 0.29537709948278223,
+        "pass": true
+      }
+    }
+  },
+  "reformer": {
+    "carbon_per_100mol_NG": 101.80999999999997,
+    "T_out_K": 1123.15,
+    "p_bar": 25.0,
+    "equilibrium": {
+      "T_K": 1123.15,
+      "T_equilibrium_K": 1113.15,
+      "p_bar": 25.0,
+      "dataset": "shomate",
+      "approach_K": 10.0,
+      "n_mol": {
+        "CH4": 21.866468966733787,
+        "C2H6": 0.0008142437218526972,
+        "C3H8": 9.874150492376296e-08,
+        "H2O": 205.1755566181498,
+        "CO": 59.62936111734592,
+        "CO2": 44.63022654346689,
+        "H2": 258.3623956555843,
+        "O2": 4.8021438607643666e-17,
+        "N2": 0.86,
+        "C_GR": 1e-300
+      },
+      "y_wet": {
+        "CH4": 0.03702887348007083,
+        "C2H6": 1.3788475772789169e-06,
+        "C3H8": 1.6720974468334343e-10,
+        "H2O": 0.3474461166443834,
+        "CO": 0.10097689169068749,
+        "CO2": 0.07557722349132373,
+        "H2": 0.43751318401215294,
+        "O2": 8.131993223225167e-20,
+        "N2": 0.0014563316665945265
+      },
+      "y_dry": {
+        "CH4": 0.05674454543072809,
+        "C2H6": 2.113001872256882e-06,
+        "C3H8": 2.5623898493026145e-10,
+        "CO": 0.1547410785013427,
+        "CO2": 0.11581759823830069,
+        "H2": 0.6704629229426027,
+        "O2": 1.246179576988824e-19,
+        "N2": 0.0022317416289144693
+      },
+      "gas_total_mol": 590.5248232437441,
+      "carbon_solid_mol": 1e-300,
+      "carbon_stable": false,
+      "carbon_affinity_kJ_per_mol": -13.08009288171879,
+      "CH4_conversion": 0.785206779781927,
+      "H2_CO_dry": 4.3328050278309584,
+      "stoichiometric_number_SN": 2.0500001381882607,
+      "K1": 417.5036621225502,
+      "Q1": 410.81613009732354,
+      "Q1_over_K1": 0.9839820997228435,
+      "K2": 0.9464910071952344,
+      "Q2": 0.9424810301387639,
+      "Q2_over_K2": 0.9957633226031875,
+      "elements_in": {
+        "C": 126.1276854112148,
+        "H": 1014.5466666666666,
+        "O": 354.0653708224296,
+        "N": 1.72
+      },
+      "elements_out": {
+        "C": 126.12768541121481,
+        "H": 1014.5466666666665,
+        "O": 354.0653708224295,
+        "N": 1.72
+      },
+      "max_element_imbalance_pct": 3.2108996555506723e-14,
+      "residual_gradient_kJ_per_mol": 1.1368683772161603e-13,
+      "iterations": 18,
+      "eos": {
+        "used": true,
+        "kset": "base",
+        "iterations": 5,
+        "Z": 1.002952273976701,
+        "lnphi_last": {
+          "CH4": 0.007079814758681055,
+          "C2H6": 0.0088113582791328,
+          "C3H8": 0.011824448943344003,
+          "H2O": -0.0017090955080357089,
+          "CO": 0.008283754069175964,
+          "CO2": 0.006408823233310886,
+          "H2": 0.004411512871801879,
+          "O2": 0.005644329523161652,
+          "N2": 0.00817122155324342
+        },
+        "Kphi_R1": 1.0162786500706493,
+        "Kphi_R2": 1.0042547032016997,
+        "Q1_over_K1_real": 1.0000000000000144,
+        "Q2_over_K2_real": 1.0000000000000024
+      }
+    },
+    "Q_total_kJ_per_100mol_NG": 23322.841551375503,
+    "H_in_kJ_per_100mol_NG": -72655.94460895346,
+    "H_out_kJ_per_100mol_NG": -49333.10305757796
+  },
+  "reformer_feed_mol_per_100mol_NG": {
+    "CH4": 96.96,
+    "C2H6": 1.37,
+    "C3H8": 0.7033333333333334,
+    "CO2": 24.317685411214818,
+    "N2": 0.86,
+    "H2O": 305.42999999999995,
+    "H2": 1.0
+  },
+  "reformer_units": [
+    {
+      "unit": "R-101 fired tubular / CO2 reformer",
+      "T_out_K": 1123.15,
+      "Q_kJ_per_100mol_NG": 23322.841551375503
+    }
+  ],
+  "downstream": {
+    "n": {
+      "CH4": 21.866468966733787,
+      "C2H6": 0.0008142437218526972,
+      "C3H8": 9.874150492376296e-08,
+      "H2O": 1.1416055279327963,
+      "CO": 59.62936111734592,
+      "CO2": 44.63022654346689,
+      "H2": 258.3623956555843,
+      "O2": 4.8021438607643666e-17,
+      "N2": 0.86,
+      "C_GR": 1e-300
+    },
+    "y_dry": {
+      "CH4": 0.05674454543072809,
+      "C2H6": 2.113001872256882e-06,
+      "C3H8": 2.5623898493026145e-10,
+      "CO": 0.1547410785013427,
+      "CO2": 0.11581759823830069,
+      "H2": 0.6704629229426027,
+      "O2": 1.246179576988824e-19,
+      "N2": 0.0022317416289144693
+    },
+    "dry_mol_per_100mol_NG": 385.3492666255943,
+    "T_K": 313.15,
+    "p_bar": 25.0,
+    "units": [
+      {
+        "unit": "E-101 WHB / syngas cooler",
+        "T_in_K": 1123.15,
+        "T_out_K": 623.15,
+        "Q_removed_kJ_per_100mol_NG": 11024.524278283527,
+        "condensed_water_mol_per_100mol_NG": 0.0,
+        "dew_point_K": 447.00497270622475,
+        "psat_bar": 165.29164252604477,
+        "steam_credit": true
+      },
+      {
+        "unit": "E-601 final cooler / knockout",
+        "T_in_K": 623.15,
+        "T_out_K": 313.15,
+        "Q_removed_kJ_per_100mol_NG": 23648.024890390137,
+        "condensed_water_mol_per_100mol_NG": 204.03395109021702,
+        "dew_point_K": 313.1500000000001,
+        "psat_bar": 0.0738442748706953
+      },
+      {
+        "unit": "A-701 molecular-sieve dryer",
+        "H2O_spec_molpct": 0.5,
+        "water_removed_mol_per_100mol_NG": 0.0,
+        "status": "[NOT MODELLED] dryer regeneration duty",
+        "Q_removed_kJ_per_100mol_NG": 0.0
+      }
+    ],
+    "psa": null,
+    "withdrawals": {
+      "H2O": 204.03395109021702
+    }
+  },
+  "flows": {
+    "scale_100mol_NG_per_h": 11577.817130976488,
+    "dry_feed_Nm3_h": 25950.484057144997,
+    "total_feed_Nm3_h": 111753.42891283073,
+    "product_Nm3_h": 100000.0,
+    "product_mol_h": 4461503.340547032,
+    "H2_product_Nm3_h": null
+  },
+  "utilities": {
+    "Q_reformer_kW": 75007.66512682376,
+    "fuel_Nm3_h": 8875.002836991931,
+    "CO2_from_fuel_t_h": 17.42593772023215,
+    "steam_generated_t_h": 45.6926842866972,
+    "MDEA_reboiler_steam_t_h": 0.0,
+    "steam_net_export_t_h": 45.6926842866972,
+    "CO2_captured_t_h": 0.0,
+    "total_CO2_t_h": 17.42593772023215,
+    "cooling_duty_kW": 76053.47435825481,
+    "cooling_water_m3_h": 6550.059992576969,
+    "air_cooler_outlet_C": 42.0,
+    "air_cooler_reaches_product_T": false,
+    "trim_cooling_required": true,
+    "O2_t_h": 0.0,
+    "ASU_power_MW": 0.0,
+    "PSA_power_MW": 0.0,
+    "pump_power_MW": 1.5210694871650965,
+    "total_power_MW": 1.5210694871650965
+  },
+  "equipment": {
+    "reactor_type": "fired tubular reformer",
+    "heat_flux_kW_m2": 80.0,
+    "vessel_diameter_m": null,
+    "vessel_length_m": null,
+    "required_area_m2": 937.595814085297,
+    "tubes_calculated": 191.31154927428807,
+    "tubes_installed": 192,
+    "superficial_velocity_m_s": 6.861363099587808,
+    "gas_density_kg_m3": 5.114015147824057,
+    "Ergun_dP_bar": 1266880.2152957679,
+    "dP_within_limit": false,
+    "tube_thermal_profile": {
+      "method": "1-D constant heat flux, local chemical equilibrium, film+wall conduction",
+      "n_segments": 12,
+      "profile": [
+        {
+          "segment": 1,
+          "length_m": 1.0,
+          "T_gas_K": 756.4833333333333,
+          "T_wall_K": 904.4833333333333,
+          "enthalpy_fraction_cumulative": 0.06604441587885829,
+          "X_CH4_local": 0.0876500902415642,
+          "Z": 0.9900279294544867
+        },
+        {
+          "segment": 2,
+          "length_m": 2.0,
+          "T_gas_K": 789.8166666666666,
+          "T_wall_K": 937.8166666666666,
+          "enthalpy_fraction_cumulative": 0.11373648825884795,
+          "X_CH4_local": 0.11680347870114509,
+          "Z": 0.9926154250338044
+        },
+        {
+          "segment": 3,
+          "length_m": 3.0,
+          "T_gas_K": 823.15,
+          "T_wall_K": 971.15,
+          "enthalpy_fraction_cumulative": 0.1664078668821114,
+          "X_CH4_local": 0.15229346032963928,
+          "Z": 0.9947937844626902
+        },
+        {
+          "segment": 4,
+          "length_m": 4.0,
+          "T_gas_K": 856.4833333333333,
+          "T_wall_K": 1004.4833333333333,
+          "enthalpy_fraction_cumulative": 0.22519320906008705,
+          "X_CH4_local": 0.19476520015240745,
+          "Z": 0.9966192526270634
+        },
+        {
+          "segment": 5,
+          "length_m": 5.0,
+          "T_gas_K": 889.8166666666667,
+          "T_wall_K": 1037.8166666666666,
+          "enthalpy_fraction_cumulative": 0.2914400336755109,
+          "X_CH4_local": 0.2449018926599795,
+          "Z": 0.998138179021257
+        },
+        {
+          "segment": 6,
+          "length_m": 6.0,
+          "T_gas_K": 923.1500000000001,
+          "T_wall_K": 1071.15,
+          "enthalpy_fraction_cumulative": 0.36660244632717365,
+          "X_CH4_local": 0.30335576197764896,
+          "Z": 0.9993899300761747
+        },
+        {
+          "segment": 7,
+          "length_m": 7.0,
+          "T_gas_K": 956.4833333333333,
+          "T_wall_K": 1104.4833333333333,
+          "enthalpy_fraction_cumulative": 0.45196798185597964,
+          "X_CH4_local": 0.37055271287130637,
+          "Z": 1.0004085524512374
+        },
+        {
+          "segment": 8,
+          "length_m": 8.0,
+          "T_gas_K": 989.8166666666667,
+          "T_wall_K": 1137.8166666666666,
+          "enthalpy_fraction_cumulative": 0.5481840430185911,
+          "X_CH4_local": 0.44633235831623574,
+          "Z": 1.0012238379677114
+        },
+        {
+          "segment": 9,
+          "length_m": 9.0,
+          "T_gas_K": 1023.1500000000001,
+          "T_wall_K": 1171.15,
+          "enthalpy_fraction_cumulative": 0.6546260424331845,
+          "X_CH4_local": 0.5294363360061743,
+          "Z": 1.0018622357866889
+        },
+        {
+          "segment": 10,
+          "length_m": 10.0,
+          "T_gas_K": 1056.4833333333333,
+          "T_wall_K": 1204.4833333333333,
+          "enthalpy_fraction_cumulative": 0.7687873425040516,
+          "X_CH4_local": 0.6170034659200384,
+          "Z": 1.0023479464358076
+        },
+        {
+          "segment": 11,
+          "length_m": 11.0,
+          "T_gas_K": 1089.8166666666666,
+          "T_wall_K": 1237.8166666666666,
+          "enthalpy_fraction_cumulative": 0.8860056028088397,
+          "X_CH4_local": 0.7042998322471767,
+          "Z": 1.0027038206176686
+        },
+        {
+          "segment": 12,
+          "length_m": 12.0,
+          "T_gas_K": 1123.15,
+          "T_wall_K": 1271.15,
+          "enthalpy_fraction_cumulative": 1.0,
+          "X_CH4_local": 0.785206779781927,
+          "Z": 1.002952273976701
+        }
+      ],
+      "T_wall_max_K": 1271.15,
+      "T_wall_max_C": 998.0000000000001,
+      "q_flux_kW_m2": 80.0,
+      "dT_film_plus_wall_K": 148.0,
+      "note": "User assumption q=80 kW/m2; electrified-SMR study (opened) reports wall ~1000 C; this is a THERMAL estimate, not a validated tube-metal temperature.",
+      "status": "[PARTIAL] film coefficient, wall conductivity and heat flux are assumptions"
+    },
+    "T_wall_max_K": 1271.15,
+    "creep": {
+      "LMP": 34.82951,
+      "allowable_stress_MPa": 11.479347029995942,
+      "design_life_h": 100000.0,
+      "status": "[ASSUMPTION] master-curve slope is fitted to one opened HP-Nb point (11 MPa at LMP=35.2)",
+      "required_wall_thickness_m": 0.014265776564742755,
+      "specified_wall_thickness_m": 0.015,
+      "applicable": true,
+      "wall_adequate": true,
+      "note": "LMP from opened Eur. J. Materials 2021 (C=22.4, 11 MPa at LMP 35.2), t equation from opened API 530 1996 excerpt"
+    },
+    "status": "[PARTIAL] screening sizing, NOT an API 530 / ASME code calculation",
+    "WHB": {
+      "Q_kW": 35455.53501388256,
+      "LMTD_K": 337.7952963332149,
+      "U_W_m2K": 60.0,
+      "area_m2": 1749.3600117563406,
+      "dT_hot_in_minus_cold_out_K": 450.0000000000001,
+      "dT_hot_out_minus_cold_in_K": 246.0,
+      "temperature_cross": false,
+      "alternatives": [
+        {
+          "type": "A: fire-tube waste-heat boiler + steam drum",
+          "pro": "mature for syngas, handles high T",
+          "con": "metal dusting / tube-sheet thermal stress"
+        },
+        {
+          "type": "B: water-tube WHB",
+          "pro": "better for very high pressure steam",
+          "con": "more complex, higher cost, fouling"
+        }
+      ],
+      "status": "[ASSUMPTION] U and temperatures; TEMA/ASME VIII check not performed (standards not opened)"
+    }
+  },
+  "catalyst": {
+    "basis": "Ni/MgAl2O4",
+    "Ni_wt_pct_metal_used": 15.0,
+    "proxy_NiO_wt_pct": 17.0,
+    "proxy_NiO_as_Ni_metal_wt_pct": 13.358625509422643,
+    "proxy_loaded_density_kg_m3": 900.0,
+    "GHSV_reformer_Nm3_per_m3cat_h": 2500.0,
+    "GHSV_pre_reformer_Nm3_per_m3cat_h": 5000.0,
+    "reformer_catalyst_volume_m3": 44.70137156513229,
+    "pre_reformer_catalyst_volume_m3": 22.350685782566146,
+    "total_catalyst_volume_m3": 67.05205734769844,
+    "reformer_catalyst_mass_t": 40.231234408619066,
+    "pre_reformer_catalyst_mass_t": 20.115617204309533,
+    "total_catalyst_mass_t": 60.3468516129286,
+    "Ni_in_reformer_t": 6.03468516129286,
+    "Ni_in_pre_reformer_t": 3.01734258064643,
+    "total_Ni_inventory_t": 9.05202774193929,
+    "Ni_per_1000Nm3_product_kg": 1.131503467742411e-05,
+    "design_life_years": 4.0,
+    "catalyst_consumption_t_per_y": 15.08671290323215,
+    "Ni_consumption_t_per_y": 2.2630069354848223,
+    "ZnO_guard_mass_kg": 56019.2669704957,
+    "ZnO_guard_life_years": 2.0,
+    "life_sensitivity": [
+      {
+        "life_years": 3.0,
+        "catalyst_consumption_t_per_y": 20.115617204309533,
+        "Ni_consumption_t_per_y": 3.01734258064643,
+        "Ni_consumption_kg_per_1000Nm3": 3.771678225808037e-06
+      },
+      {
+        "life_years": 5.0,
+        "catalyst_consumption_t_per_y": 12.069370322585721,
+        "Ni_consumption_t_per_y": 1.8104055483878578,
+        "Ni_consumption_kg_per_1000Nm3": 2.2630069354848222e-06
+      },
+      {
+        "life_years": 8.0,
+        "catalyst_consumption_t_per_y": 7.543356451616075,
+        "Ni_consumption_t_per_y": 1.1315034677424112,
+        "Ni_consumption_kg_per_1000Nm3": 1.4143793346780138e-06
+      },
+      {
+        "life_years": 10.0,
+        "catalyst_consumption_t_per_y": 6.0346851612928605,
+        "Ni_consumption_t_per_y": 0.9052027741939289,
+        "Ni_consumption_kg_per_1000Nm3": 1.1315034677424111e-06
+      }
+    ],
+    "source": "JM KATALCO brochure https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214 (opened): 16-18% NiO, loaded density 780-1140 kg/m3, QUADRALOBE lives >8-10 y; Catalysts 2019 9,801 (opened): 15 wt% Ni/MgAl2O4 86 m2/g 6.6 nm; Applied Energy 377 (2025) 124556 (opened): GHSV 2500 h-1; Digital Refining (opened): changeout 4-6 y",
+    "status": "[PARTIAL] commercial data are an α-Al2O3/Ca-aluminate PROXY; the MgAl2O4 chemistry basis is from the lab source. Ni price is [ASSUMPTION].",
+    "NiO_to_Ni_conversion": "Ni wt% = NiO wt% * 58.6934/74.6924 = 0.78575"
+  },
+  "economics": {
+    "gas_cost_USD_y": 75617512.38914743,
+    "CO2_cost_USD_y": 11152600.140948577,
+    "power_cost_USD_y": 973484.4717856618,
+    "steam_credit_USD_y": 9138536.85733944,
+    "cooling_water_cost_USD_y": 2620023.997030788,
+    "catalyst_cost_USD_y": 75433564.51616076,
+    "fixed_OPEX_USD_y": 4758775.39315173,
+    "total_OPEX_USD_y": 161417424.05088553,
+    "CAPEX_USD": 158625846.43839103,
+    "annualised_CAPEX_USD_y": 18632132.401880875,
+    "H2_equivalent_MW_LHV": 200.93541128186476,
+    "levelised_cost": 225.061945565958,
+    "unit": "USD/1000 Nm3 dry syngas",
+    "status": "[PARTIAL] CAPEX scaled from opened H2 study to syngas; class-5 +/-50%"
+  },
+  "steam": {
+    "IAPWS_used": true,
+    "dh_steam_kJ_per_mol": 50.32472037186955,
+    "dh_vap_at_MDEA_kJ_per_mol": 39.661718754896405
+  },
+  "eos": {
+    "enabled": true,
+    "kset": "base",
+    "Z": 1.002952273976701,
+    "Q1_over_K1_real": 1.0000000000000144,
+    "Kphi_R1": 1.0162786500706493
+  },
+  "status": {
+    "hysys": "NOT RUN - Python/DWSIM-equivalent (user confirmation #11)",
+    "validation": "no experimental campaign; see docs/13"
+  }
+}

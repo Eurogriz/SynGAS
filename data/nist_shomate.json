@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "dataset": "NIST Chemistry WebBook gas-phase Shomate coefficients (Chase, 1998 = NIST-JANAF Thermochemical Tables, 4th ed., J. Phys. Chem. Ref. Data, Monograph 9, 1998, 1-1951)",
+    "retrieved": "2026-10-26",
+    "standard_state_pressure_bar": 1.0,
+    "units": {
+      "T": "K",
+      "Cp": "J/mol/K",
+      "H": "kJ/mol (H coefficient = delta_f_H at 298.15 K)",
+      "S": "J/mol/K",
+      "coeff_order": ["A", "B", "C", "D", "E", "F", "G", "H"]
+    },
+    "equation": "Cp=A+B*t+C*t^2+D*t^3+E/t^2; H(T)-H(298.15)=A*t+B*t^2/2+C*t^3/3+D*t^4/4-E/t+F-H; S=A*ln(t)+B*t+C*t^2/2+D*t^3/3-E/(2*t^2)+G; t=T/1000",
+    "note": "Values transcribed from the opened NIST WebBook pages listed per species. Ranges are those printed by NIST and are enforced by the code (with one explicit extrapolation: H2O gas 298-500 K, see docs/03)."
+  },
+  "species": {
+    "CH4": {
+      "cas": "74-82-8",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C74828&Units=SI&Mask=1",
+      "elements": {"C": 1, "H": 4},
+      "ranges": [
+        {"Tmin": 298.0, "Tmax": 1300.0, "coeff": [-0.703029, 108.4773, -42.52157, 5.862788, 0.678565, -76.84376, 158.7163, -74.87310]},
+        {"Tmin": 1300.0, "Tmax": 6000.0, "coeff": [85.81217, 11.26467, -2.114146, 0.138190, -26.42221, -153.5327, 224.4143, -74.87310]}
+      ]
+    },
+    "H2O": {
+      "cas": "7732-18-5",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=1",
+      "elements": {"H": 2, "O": 1},
+      "ranges": [
+        {"Tmin": 298.0, "Tmax": 1700.0, "coeff": [30.09200, 6.832514, 6.793435, -2.534480, 0.082139, -250.8810, 223.3967, -241.8264], "note": "NIST prints 500-1700 K; extrapolation to 298 K is an explicit model assumption"},
+        {"Tmin": 1700.0, "Tmax": 6000.0, "coeff": [41.96426, 8.622053, -1.499780, 0.098119, -11.15764, -272.1797, 219.7809, -241.8264]}
+      ]
+    },
+    "CO": {
+      "cas": "630-08-0",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C630080&Units=SI&Mask=1",
+      "elements": {"C": 1, "O": 1},
+      "ranges": [
+        {"Tmin": 298.0, "Tmax": 1300.0, "coeff": [25.56759, 6.096130, 4.054656, -2.671301, 0.131021, -118.0089, 227.3665, -110.5271]},
+        {"Tmin": 1300.0, "Tmax": 6000.0, "coeff": [35.15070, 1.300095, -0.205921, 0.013550, -3.282780, -127.8375, 231.7120, -110.5271]}
+      ]
+    },
+    "CO2": {
+      "cas": "124-38-9",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1",
+      "elements": {"C": 1, "O": 2},
+      "ranges": [
+        {"Tmin": 298.0, "Tmax": 1200.0, "coeff": [24.99735, 55.18696, -33.69137, 7.948387, -0.136638, -403.6075, 228.2431, -393.5224]},
+        {"Tmin": 1200.0, "Tmax": 6000.0, "coeff": [58.16639, 2.720074, -0.492289, 0.038844, -6.447293, -425.9186, 263.6125, -393.5224]}
+      ]
+    },
+    "H2": {
+      "cas": "1333-74-0",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C1333740&Units=SI&Mask=1",
+      "elements": {"H": 2},
+      "ranges": [
+        {"Tmin": 298.0, "Tmax": 1000.0, "coeff": [33.066178, -11.363417, 11.432816, -2.772874, -0.158558, -9.980797, 172.707974, 0.0]},
+        {"Tmin": 1000.0, "Tmax": 2500.0, "coeff": [18.563083, 12.257357, -2.859786, 0.268238, 1.977990, -1.147438, 156.288133, 0.0]},
+        {"Tmin": 2500.0, "Tmax": 6000.0, "coeff": [43.413560, -4.293079, 1.272428, -0.096876, -20.533862, -38.515158, 162.081354, 0.0]}
+      ]
+    },
+    "O2": {
+      "cas": "7782-44-7",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1",
+      "elements": {"O": 2},
+      "ranges": [
+        {"Tmin": 100.0, "Tmax": 700.0, "coeff": [31.32234, -20.23531, 57.86644, -36.50624, -0.007374, -8.903471, 246.7945, 0.0]},
+        {"Tmin": 700.0, "Tmax": 2000.0, "coeff": [30.03235, 8.772972, -3.988133, 0.788313, -0.741599, -11.32468, 236.1663, 0.0]},
+        {"Tmin": 2000.0, "Tmax": 6000.0, "coeff": [20.91111, 10.72071, -2.020498, 0.146449, 9.245722, 5.337651, 237.6185, 0.0]}
+      ]
+    },
+    "N2": {
+      "cas": "7727-37-9",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1",
+      "elements": {"N": 2},
+      "ranges": [
+        {"Tmin": 100.0, "Tmax": 500.0, "coeff": [28.98641, 1.853978, -9.647459, 16.63537, 0.000117, -8.671914, 226.4168, 0.0]},
+        {"Tmin": 500.0, "Tmax": 2000.0, "coeff": [19.50583, 19.88705, -8.598535, 1.369784, 0.527601, -4.935202, 212.3900, 0.0]},
+        {"Tmin": 2000.0, "Tmax": 6000.0, "coeff": [35.51872, 1.128728, -0.196103, 0.014662, -4.553760, -18.97091, 224.9810, 0.0]}
+      ]
+    }
+  },
+  "liquid": {
+    "H2O_L": {
+      "cas": "7732-18-5",
+      "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=2",
+      "note": "Liquid-phase Shomate (Chase 1998); used only for condensate enthalpy. Range 298-500 K.",
+      "elements": {"H": 2, "O": 1},
+      "ranges": [
+        {"Tmin": 298.0, "Tmax": 500.0, "coeff": [-203.6060, 1523.290, -3196.413, 2474.455, 3.855326, -256.5478, -488.7163, -285.8304]}
+      ]
+    }
+  }
+}

@@ -1,0 +1,492 @@
+{
+  "loops": {
+    "1_sources": {
+      "passed": true,
+      "n_claims": 33,
+      "by_status": {
+        "[ПОДТВЕРЖДЕНО]": 8,
+        "[ЧАСТИЧНО]": 17,
+        "[ДОПУЩЕНИЕ]": 6,
+        "[НЕ ПОДТВЕРЖДЕНО]": 2
+      },
+      "problems": [],
+      "note": "Every number used in a RESULT has an opened source or an explicit [ДОПУЩЕНИЕ]. Claims with used_in_result=false are listed as open items, not as inputs."
+    },
+    "2_arithmetic": {
+      "passed": true,
+      "max_relative_error": 1.78686238160664e-16,
+      "worst_check": {
+        "product": "ammonia",
+        "name": "Ni_inventory"
+      },
+      "n_checks": 40,
+      "checks": [
+        {
+          "product": "methanol",
+          "name": "Vm",
+          "rel_error": 0.0
+        },
+        {
+          "product": "methanol",
+          "name": "product_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "methanol",
+          "name": "fuel_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "methanol",
+          "name": "CO2_from_fuel_t_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "methanol",
+          "name": "SN",
+          "rel_error": 0.0
+        },
+        {
+          "product": "methanol",
+          "name": "catalyst_mass",
+          "rel_error": 1.2056896788671304e-16
+        },
+        {
+          "product": "methanol",
+          "name": "Ni_inventory",
+          "rel_error": 0.0
+        },
+        {
+          "product": "methanol",
+          "name": "levelised_cost",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ft",
+          "name": "Vm",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ft",
+          "name": "product_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ft",
+          "name": "fuel_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ft",
+          "name": "CO2_from_fuel_t_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ft",
+          "name": "H2_CO",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ft",
+          "name": "catalyst_mass",
+          "rel_error": 1.6074310905327102e-16
+        },
+        {
+          "product": "ft",
+          "name": "Ni_inventory",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ft",
+          "name": "levelised_cost",
+          "rel_error": 0.0
+        },
+        {
+          "product": "oxo",
+          "name": "Vm",
+          "rel_error": 0.0
+        },
+        {
+          "product": "oxo",
+          "name": "product_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "oxo",
+          "name": "fuel_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "oxo",
+          "name": "CO2_from_fuel_t_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "oxo",
+          "name": "H2_CO",
+          "rel_error": 0.0
+        },
+        {
+          "product": "oxo",
+          "name": "catalyst_mass",
+          "rel_error": 0.0
+        },
+        {
+          "product": "oxo",
+          "name": "Ni_inventory",
+          "rel_error": 1.3773106510472807e-16
+        },
+        {
+          "product": "oxo",
+          "name": "levelised_cost",
+          "rel_error": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "name": "Vm",
+          "rel_error": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "name": "product_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "name": "fuel_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "name": "CO2_from_fuel_t_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "name": "H2_purity",
+          "rel_error": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "name": "catalyst_mass",
+          "rel_error": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "name": "Ni_inventory",
+          "rel_error": 1.5335105768423602e-16
+        },
+        {
+          "product": "hydrogen",
+          "name": "levelised_cost",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ammonia",
+          "name": "Vm",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ammonia",
+          "name": "product_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ammonia",
+          "name": "fuel_Nm3_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ammonia",
+          "name": "CO2_from_fuel_t_h",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ammonia",
+          "name": "H2_N2",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ammonia",
+          "name": "catalyst_mass",
+          "rel_error": 0.0
+        },
+        {
+          "product": "ammonia",
+          "name": "Ni_inventory",
+          "rel_error": 1.78686238160664e-16
+        },
+        {
+          "product": "ammonia",
+          "name": "levelised_cost",
+          "rel_error": 0.0
+        }
+      ]
+    },
+    "3_conservation": {
+      "passed": true,
+      "max_error_pct": 1.9601419469652235e-12,
+      "rows": [
+        {
+          "product": "methanol",
+          "check": "reactor element balance",
+          "error_pct": 3.2108996555506723e-14
+        },
+        {
+          "product": "methanol",
+          "check": "full flowsheet element balance",
+          "error_pct": 3.2108996555506723e-14,
+          "elements_in": {
+            "C": 126.1276854112148,
+            "H": 1014.5466666666666,
+            "O": 354.0653708224296,
+            "N": 1.72
+          },
+          "elements_out": {
+            "C": 126.12768541121481,
+            "H": 1014.5466666666665,
+            "O": 354.0653708224295,
+            "N": 1.72
+          }
+        },
+        {
+          "product": "methanol",
+          "check": "reactor enthalpy closure",
+          "error_pct": 0.0
+        },
+        {
+          "product": "ft",
+          "check": "reactor element balance",
+          "error_pct": 2.161927622915461e-14
+        },
+        {
+          "product": "ft",
+          "check": "full flowsheet element balance",
+          "error_pct": 2.161927622915461e-14,
+          "elements_in": {
+            "C": 101.99,
+            "H": 525.8586666666666,
+            "O": 194.99705712890625,
+            "N": 1.72
+          },
+          "elements_out": {
+            "C": 101.98999999999998,
+            "H": 525.8586666666665,
+            "O": 194.99705712890622,
+            "N": 1.72
+          }
+        },
+        {
+          "product": "ft",
+          "check": "reactor enthalpy closure",
+          "error_pct": 0.0
+        },
+        {
+          "product": "oxo",
+          "check": "reactor element balance",
+          "error_pct": 2.5720568742940323e-14
+        },
+        {
+          "product": "oxo",
+          "check": "full flowsheet element balance",
+          "error_pct": 2.5720568742940323e-14,
+          "elements_in": {
+            "C": 221.00373995971674,
+            "H": 525.8586666666666,
+            "O": 299.4734799194335,
+            "N": 1.72
+          },
+          "elements_out": {
+            "C": 221.0037399597168,
+            "H": 525.8586666666667,
+            "O": 299.47347991943354,
+            "N": 1.72
+          }
+        },
+        {
+          "product": "oxo",
+          "check": "reactor enthalpy closure",
+          "error_pct": 0.0
+        },
+        {
+          "product": "hydrogen",
+          "check": "reactor element balance",
+          "error_pct": 2.2411357004432068e-14
+        },
+        {
+          "product": "hydrogen",
+          "check": "full flowsheet element balance",
+          "error_pct": 1.3933576542015888e-14,
+          "elements_in": {
+            "C": 101.99,
+            "H": 1014.5466666666666,
+            "O": 305.78999999999996,
+            "N": 1.72
+          },
+          "elements_out": {
+            "C": 101.99000000000001,
+            "H": 1014.5466666666665,
+            "O": 305.78999999999996,
+            "N": 1.72
+          }
+        },
+        {
+          "product": "hydrogen",
+          "check": "reactor enthalpy closure",
+          "error_pct": 0.0
+        },
+        {
+          "product": "ammonia",
+          "check": "reactor element balance",
+          "error_pct": 1.5762950112133838e-14
+        },
+        {
+          "product": "ammonia",
+          "check": "full flowsheet element balance",
+          "error_pct": 4.1800729626047667e-14,
+          "elements_in": {
+            "C": 101.99,
+            "H": 1014.5466666666666,
+            "O": 360.6140884570312,
+            "N": 207.9629994335937
+          },
+          "elements_out": {
+            "C": 101.99000000000004,
+            "H": 1014.5466666666669,
+            "O": 360.61408845703113,
+            "N": 207.9629994335937
+          }
+        },
+        {
+          "product": "ammonia",
+          "check": "reactor enthalpy closure",
+          "error_pct": 1.9601419469652235e-12
+        }
+      ],
+      "note": "Full-flowsheet balance includes condensed water, MDEA CO2 product, PSA tail gas and dryer water as explicit withdrawal streams."
+    },
+    "4_thermo": {
+      "passed": true,
+      "reaction_enthalpies": {
+        "SMR": {
+          "shomate": 226.7847886174016,
+          "nasa7": 225.78730792473237,
+          "diff_kJ_per_mol": 0.9974806926692281
+        },
+        "WGS": {
+          "shomate": -33.56461233127399,
+          "nasa7": -33.5559759620937,
+          "diff_kJ_per_mol": -0.008636369180294423
+        },
+        "DRM": {
+          "shomate": 260.3494009486756,
+          "nasa7": 259.34328388682604,
+          "diff_kJ_per_mol": 1.0061170618495794
+        },
+        "H2OX": {
+          "shomate": -248.58953818999163,
+          "nasa7": -248.58522859674807,
+          "diff_kJ_per_mol": -0.004309593243561949
+        }
+      },
+      "PR_equilibrium": [
+        {
+          "product": "methanol",
+          "Z": 1.002952273976701,
+          "Kphi_R1": 1.0162786500706493,
+          "Q1_over_K1_real": 1.0000000000000144,
+          "deviation_pct": 1.4432899320127035e-12
+        },
+        {
+          "product": "ft",
+          "Z": 1.0033940899853566,
+          "Kphi_R1": 1.0070083337187008,
+          "Q1_over_K1_real": 1.0000000000000238,
+          "deviation_pct": 2.375877272697835e-12
+        },
+        {
+          "product": "oxo",
+          "Z": 1.00386422089638,
+          "Kphi_R1": 1.0085706353295776,
+          "Q1_over_K1_real": 1.0000000000000846,
+          "deviation_pct": 8.459899447643693e-12
+        },
+        {
+          "product": "hydrogen",
+          "Z": 1.0028808533088847,
+          "Kphi_R1": 1.0162559105779394,
+          "Q1_over_K1_real": 1.000000000000014,
+          "deviation_pct": 1.3988810110276972e-12
+        },
+        {
+          "product": "ammonia",
+          "Z": 1.0043401275498376,
+          "Kphi_R1": 1.015598219825351,
+          "Q1_over_K1_real": 1.0000000000000153,
+          "deviation_pct": 1.532107773982716e-12
+        }
+      ],
+      "worst_PR_deviation_pct": 8.459899447643693e-12,
+      "IAPWS": {
+        "available": true,
+        "h_30bar_673K_kJ_per_kg": 3231.571027259653,
+        "Tsat_30bar_K": 507.0084450062522,
+        "psat_500K_bar": 26.38897756273222,
+        "reference": "iapws 1.5.5; h(3 MPa,673.15 K)=3231.571 kJ/kg, Tsat(30 bar)=507.008 K"
+      },
+      "dew_point_IF97_K": 313.15,
+      "dew_point_NIST_K": 313.1659998921996,
+      "dew_point_diff_K": 0.015999892199602073,
+      "PR_vs_ideal": {
+        "X_ideal": 0.8088445166724041,
+        "X_PR": 0.80729519248395,
+        "delta_X": -0.0015493241884541042,
+        "SN_ideal": 2.0714323465572613,
+        "SN_PR": 2.0700572801305035
+      },
+      "kij_sets": [
+        "zero",
+        "base",
+        "high"
+      ],
+      "kij_X_CH4_spread": 0.0018495660643267353,
+      "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."
+    },
+    "5_validation_falsification": {
+      "passed": false,
+      "status": "FAILED (honestly reported)",
+      "reason": "No independent experimental or commercial-licensor validation of the V2 product variants. HYSYS was not run. All five product targets are matched by the model's own equilibrium solver, which is a self-check, not an external validation.",
+      "unchecked_items": [
+        "HYSYS / DWSIM / COCO steady-state run (not installed; user answer 11 confirms Python equivalent)",
+        "Experimental pilot campaign for Ni/MgAl2O4 conversion, pressure drop and catalyst life",
+        "Vendor Ni/MgAl2O4 catalyst datasheet: bulk density, Ni loading, crush strength, life",
+        "Validated Xu-Froment kinetic parameter set (full primary text not opened; secondary set fails self-consistency)",
+        "Sintering model discrimination: GPLE vs power-law life differ by factor ~3.06 (v1 finding)",
+        "PSA vendor impurity-breakthrough curve (slip weights are calibrated assumptions)",
+        "MDEA vendor reboiler duty and CO2 recovery guarantee",
+        "API 530 / ASME certified tube creep calculation (LMP slope is an assumption)",
+        "Regional gas/electricity/CO2 price quotes for Russia and the Middle East",
+        "GOST 5542:2022 full standard text (only a status page was opened)",
+        "Ammonia-loop compression and synthesis duty, methanol/FT/oxo downstream synthesis loops",
+        "Safety study: HAZOP, Ni(CO)4 formation during shutdown, relief sizing"
+      ],
+      "self_checks_that_pass": [
+        "methanol",
+        "ft",
+        "oxo",
+        "hydrogen",
+        "ammonia"
+      ],
+      "note": "This loop stays FAILED by design, as required by the user's rule: do not declare the model completed while loop 5 and the balances are open."
+    }
+  },
+  "summary": {
+    "1_sources": true,
+    "2_arithmetic": true,
+    "3_conservation": true,
+    "4_thermo": true,
+    "5_validation_falsification": false
+  },
+  "overall_passed": false,
+  "hysys": "NOT RUN - Python/DWSIM-equivalent explicitly confirmed by user answer 11"
+}

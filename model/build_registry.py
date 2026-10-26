@@ -1,0 +1,125 @@
+"""Generate docs/01_claims_register.csv and data/sources.json from a single
+source of truth. Keeps the registry machine-checkable (verification loop 1)."""
+import csv, json, os
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+SOURCES = [
+ ("S01","NIST WebBook methane, Shomate coefficients, Chase 1998 (NIST-JANAF 4th ed.)","https://webbook.nist.gov/cgi/cbook.cgi?ID=C74828&Units=SI&Mask=1",True,"CH4 g(T), h(T)"),
+ ("S02","NIST WebBook water gas, Shomate coefficients","https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=1",True,"H2O(g) g(T), h(T)"),
+ ("S03","NIST WebBook carbon monoxide, Shomate coefficients","https://webbook.nist.gov/cgi/cbook.cgi?ID=C630080&Units=SI&Mask=1",True,"CO g(T), h(T)"),
+ ("S04","NIST WebBook carbon dioxide, Shomate coefficients","https://webbook.nist.gov/cgi/cbook.cgi?ID=C124389&Units=SI&Mask=1",True,"CO2 g(T), h(T)"),
+ ("S05","NIST WebBook hydrogen, Shomate coefficients","https://webbook.nist.gov/cgi/cbook.cgi?ID=C1333740&Units=SI&Mask=1",True,"H2 g(T), h(T)"),
+ ("S06","NIST WebBook oxygen, Shomate coefficients","https://webbook.nist.gov/cgi/cbook.cgi?ID=C7782447&Units=SI&Mask=1",True,"O2 g(T), h(T)"),
+ ("S07","NIST WebBook nitrogen, Shomate coefficients","https://webbook.nist.gov/cgi/cbook.cgi?ID=C7727379&Units=SI&Mask=1",True,"N2 g(T), h(T)"),
+ ("S08","NIST WebBook water liquid Shomate + CODATA formation enthalpies","https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=2",True,"liquid water enthalpy; 44.004 kJ/mol gas-liquid difference"),
+ ("S09","NIST WebBook water Antoine coefficients (Bridgeman & Aldrich 1964; Liu & Lindsay 1970; Stull 1947)","https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Units=SI&Mask=4",True,"water psat, dew point"),
+ ("S10","NIST WebBook nickel condensed Shomate (solid fit ends 1728 K)","https://webbook.nist.gov/cgi/cbook.cgi?ID=C7440020&Units=SI&Mask=2",True,"Ni melting point, Tamman/Huettig"),
+ ("S11","NIST WebBook aluminium oxide condensed Shomate (solid fit ends 2327 K)","https://webbook.nist.gov/cgi/cbook.cgi?ID=C1344281&Units=SI&Mask=2",True,"Al2O3 melting point, gamma/delta/kappa phase data"),
+ ("S12","NASA TM-4513 (McBride, Gordon & Reno 1993) condensed & graphite NASA7, distributed with Cantera 3.2.0","https://ntrs.nasa.gov/citations/19940013151",True,"independent melting points, graphite thermo, MgAl2O4 Tm"),
+ ("S13","GRI-Mech 3.0 NASA7 gas polynomials, distributed with Cantera 3.2.0 (gri30.yaml); upstream page returned 404","https://combustion.berkeley.edu/gri-mech/version30/text30.html",True,"independent gas thermochemistry, C2H6"),
+ ("S14","Cantera 3.2.0 critical-properties.yaml (NIST WebBook + Yaws)","https://github.com/Cantera/cantera",True,"Peng-Robinson Tc, pc, omega"),
+ ("S15","Xu & Froment, AIChE J. 35 (1989) 88-96, DOI 10.1002/aic.690350109 (Crossref record opened; abstract only; FULL TEXT NOT READ)","https://api.crossref.org/works/10.1002/aic.690350109",False,"bibliographic verification of the LHHW kinetics candidate"),
+ ("S16","Xu & Froment, AIChE J. 35 (1989) 97-103, DOI 10.1002/aic.690350110 (Crossref/Wiley abstract only)","https://doi.org/10.1002/aic.690350110",False,"diffusional limitations reference"),
+ ("S17","Saavedra Lopez et al., Catalysts 2019, 9(10), 801, DOI 10.3390/catal9100801 (open access, opened)","https://www.mdpi.com/2073-4344/9/10/801",True,"15 wt% Ni/MgAl2O4, 86 m2/g, 6.6 nm; reduction 850 C/16 h; S/C 1.5-2.0 tests; C2+ effects; H2/CO ~5 at high conversion"),
+ ("S18","Mei et al., J. Catal. 316 (2014) 11-23, DOI 10.1016/j.jcat.2014.04.021 (abstract/introduction opened; paywalled full text)","https://www.sciencedirect.com/science/article/abs/pii/S0021951714001109",True,"7.7 -> 27.0 nm in 700 h at 773 K, 30 bar, steam:H2=10:1 (quoting Sehested); Rh/Ir 1-2 nm stable at 1123 K in steam"),
+ ("S19","PNNL-23207 (2014) DOE report (opened PDF)","https://www.pnnl.gov/main/publications/external/technical_reports/pnnl-23207.pdf",True,"20wt%Ni/MgAl2O4 4.6 nm reduced vs 8.6 nm Ni/Al2O3; TPR 400-800 C; BET 107 vs 122 m2/g; deactivation data"),
+ ("S20","EP1013603A1 (Haldor Topsoe AS, priority 1998-12-22, legal status Ceased) (opened)","https://patents.google.com/patent/EP1013603A1/en",True,"Ni 10-60 wt% on high-surface MgAl2O4; promoters Zr/Y/W/La/Ce 0.01-10 wt%; spinel BET 183-192 m2/g after 550 C/4 h; activity test 400-750 C"),
+ ("S21","US3436358A (Haldor Topsoe, priority 1962-12-29, Expired) (opened)","https://patents.google.com/patent/US3436358A/en",True,"historical Ni/Mg-aluminate spinel support; >=50-70 wt% spinel; axial crush strength 600 kg/cm2"),
+ ("S22","US7541005B2 (Siemens Energy, Expired - Fee Related) (opened)","https://patents.google.com/patent/US7541005B2/en",True,"MgAl2O4 melting temperature 2135 C = 2408 K"),
+ ("S23","US9393552B2 (opened)","https://patents.google.com/patent/US9393552",True,"2-16 wt% Ni + 0.01-0.5 wt% Rh/Ir on MgAl2O4/alumina"),
+ ("S24","Farrokhnemoun et al., J. Am. Ceram. Soc. 2024, DOI 10.1111/jace.19630 (abstract opened)","https://ceramics.onlinelibrary.wiley.com/doi/10.1111/jace.19630",True,"gamma->delta 800 C, ->theta 1000 C, theta->alpha 1050-1200 C"),
+ ("S25","Control of gamma->alpha alumina transformation, Bol. Soc. Esp. Ceram. Vidr. 2017 (opened)","https://www.elsevier.es/en-revista-boletin-sociedad-espanola-ceramica-vidrio-26-articulo-control-alumina-alumina-phase-transformation-S0366317516300899",True,"theta->alpha 1050-1200 C, max at 1192 C"),
+ ("S26","Morphology-dependent phase transformation of gamma-Al2O3, Appl. Surf. Sci. 2015 (abstract opened)","https://www.sciencedirect.com/science/article/abs/pii/S0926860X15002264",True,"200 -> 25 m2/g after 1100 C (>85% surface loss)"),
+ ("S27","Review of steam methane reforming as a method of hydrogen production, Energy 316 (2025) 134540 (open access review, opened)","https://www.sciencedirect.com/science/article/pii/S0360544225001823",True,"industrial <=850 C, <=2500 kPa, S/C 2-6, 5-35 bar"),
+ ("S28","Zecevic & Bolf, Processes 2020, 8(4), 408, DOI 10.3390/pr8040408 (open access, opened)","https://www.mdpi.com/2227-9717/8/4/408",True,"~50% of fired heat to tubes; 100,000 h tube design life; approach-to-equilibrium monitoring"),
+ ("S29","Linde / IEAGHG 2009, Enhanced Cryogenic Air Separation (opened PDF)","https://publications.ieaghg.org/docs/oxyfuel/OCC1/Plenary%201/Beysel_ASU_1stOxyfuel%20Cottbus.pdf",True,"0.35 kWh/Nm3 O2 and 245 kWh/t O2 at >99.5% purity"),
+ ("S30","NIST WebBook nickel tetracarbonyl reaction thermochemistry (opened)","https://webbook.nist.gov/cgi/cbook.cgi?ID=C13463393&Units=SI&Mask=8",True,"Ni(CO)4 decomposition enthalpy 160.4 +/- 2.5 kJ/mol; formation -152.7 +/- 4.2 kJ/mol"),
+ ("S31","Becht engineering note, Preventing Nickel Carbonyl Formation during Shutdowns (secondary, opened)","https://becht.com/becht-blog/entry/preventing-nickel-carbonyl-formation-during-hydroprocessing-unit-shutdowns/",True,"purge CO below 10 ppm before cooling <200 C"),
+ ("S32","Johnson Matthey purification webinar Q&A (secondary manufacturer document, opened)","https://matthey.com/documents/161599/162780/Purufication-webinar-QAs.pdf/23a7b33e-6a88-d530-7cb4-e7a818788619",True,"ZnO 350-400 C; 0.1 ppmv sulfur slip design; <10 ppbv ultra-purification"),
+ ("S33","SMR tube skin temperature papers, Chem. Eng. Res. Des. 2017, S0263876217304173 (abstract opened)","https://www.sciencedirect.com/science/article/abs/pii/S0263876217304173",True,"maximum tube skin temperature 905 C at 2.6 m"),
+ ("S34","Gas-heated / enhanced heat transfer reformer patent US4919844A (opened)","https://patents.google.com/patent/US4919844A/en",True,"alternative reformer configuration, CPC C01B3/38, B01J8/067"),
+ ("S35","Scopus / Web of Science / ScienceDirect / ACS / RSC / Wiley / Springer / CNKI / eLibrary.ru / Espacenet / WIPO / USPTO / FIPS / CNIPA / J-PlatPat / KIPRIS / The Lens / Derwent", "",False,"NOT accessible through this session's tool set; see docs/02_search_log.md"),
+ ("S36","API 530, 560, 520, 521, 610, 617, 618, 661, RP 941; TEMA; ASME BPVC VIII; ASTM A608; NFPA 86; API 556", "",False,"paywalled standards NOT opened; all code-compliance claims are [NOT CONFIRMED]"),
+ ("S37","Aspen HYSYS (any version) / DWSIM / COCO", "",False,"NOT installed in the sandbox; no vendor documentation of the installed version could be checked"),
+ ("S38","Commercial catalyst datasheets (Topsoe, Johnson Matthey, Clariant, BASF)", "",False,"NOT obtained; no brand names or performance data are asserted"),
+ ("S39","Integrated Modeling of SMR and Carbon Capture, MDPI Carbon Capture Util. 2025 (open access, opened)","https://www.mdpi.com/2673-4141/6/4/94",True,"S/C 2.5-3.0 optimum, 850-1000 C max conversion (secondary modelling study)"),
+ ("S40","AACE International Recommended Practice 18R-97 cost estimate classification", "",False,"NOT opened; AACE class is used only as an analogy with an explicit [ASSUMPTION]"),
+ ("S41","Sehested et al., Sintering of Nickel Steam-Reforming Catalysts on MgAl2O4 Spinel Supports, J. Catal. 197 (2001) 200-209, DOI 10.1006/jcat.2000.3085 (abstract opened, full text paywalled)","https://www.sciencedirect.com/science/article/abs/pii/S0021951700930859",True,"most sintering in first 200 h; limiting Ni particle size; particle migration/coalescence"),
+ ("S42","WO2019228797A1, Steam reforming heated by resistance heating (Topsoe) (opened)","https://patents.google.com/patent/WO2019228797A1/en",True,"electrified SMR configuration; SMR maximum tube wall temperature ca. 1000 C"),
+ ("S43","Abbas, Dupont & Mahmud, Int. J. Hydrogen Energy 42 (2017), DOI 10.1016/j.ijhydene.2016.11.093, open-access PDF (opened)","https://eprints.whiterose.ac.uk/id/eprint/108413/17/1-s2.0-S0360319916333821-main.pdf",True,"own LHHW parameters for 18 wt% NiO/alpha-Al2O3 at 1 bar, 550-700 C; experimental CH4 conversion vs W/F; Table 3 reproduces Xu-Froment Ea/k0; Appendix A rate equations and K expressions"),
+ ("S44","Fernandes & Soares Jr., Latin American Applied Research 36 (2006) 155-161, open-access PDF (opened)","https://www.scielo.org.ar/pdf/laar/v36n3/v36n3a04.pdf",True,"complete secondary Xu-Froment parameter set: k0/Ea, adsorption K0/dH, equilibrium constants, reactor geometry; Fig. 5a conversion curve"),
+ ("S45","Hou & Hughes, Chem. Eng. J. 82 (2001) 311-328 (PDF located but NOT opened)","https://terpconnect.umd.edu/~nsw/chbe446/Hou-MethaneSteamReform.pdf",False,"alternative kinetics candidate for Ni/alpha-Al2O3"),
+]
+
+CLAIMS = [
+ ("C001","Standard Gibbs energies of CH4, H2O, CO, CO2, H2, O2, N2","NIST Shomate (Chase 1998), p0=1 bar","-","298-6000 K, ideal gas","S01-S07","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C002","Gas constant R","8.31446261815324","J/(mol K)","CODATA-derived","S14","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C003","Reaction enthalpy CH4+H2O=CO+3H2 at 298.15 K","206.174","kJ/mol","1 bar, gas water","S01-S05","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C004","Reaction enthalpy CO+H2O=CO2+H2 at 298.15 K","-41.175","kJ/mol","1 bar","S01-S05","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C005","Reaction enthalpy CH4+CO2=2CO+2H2 at 298.15 K","247.350","kJ/mol","1 bar","S01-S05","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C006","Reaction enthalpy CH4+0.5O2=CO+2H2 at 298.15 K","-35.652","kJ/mol","1 bar","S01-S05","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C007","Reaction enthalpy CH4+2O2=CO2+2H2O(g)","-802.305","kJ/mol","1 bar; equals methane LHV","S01-S05","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C008","Graphite chemical potential (NASA7 condensed data)","NASA SP-273 / TM-4513","-","200-5000 K","S12","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C009","C2H6 thermochemistry (GRI-Mech 3.0 NASA7)","NASA7","-","200-3500 K","S13","[PARTIAL]","passed","passed","passed","passed","passed"),
+ ("C010","Ni melting point","1728","K","1 bar, bulk Ni","S10,S12","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C011","alpha-Al2O3 melting point","2327","K","1 bar","S11,S12","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C012","MgAl2O4 melting point","2408","K","2135 C","S12,S22","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C013","NiO melting point","NOT FOUND","K","oxidising stages","S36","[NOT CONFIRMED]","failed","not_applicable","not_applicable","not_applicable","not_applicable"),
+ ("C014","Tamman temperature of Ni (0.5 Tm)","864","K","=590.85 C","S10,S12","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C015","Huettig temperature of Ni (0.3 Tm)","518.4","K","=245.25 C","S10,S12","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C016","Maximum SMR tube skin temperature","905","C","industrial top-fired reformer, model validated on plant data","S33,S28","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C017","Peak / upset wall temperature","950","C","[ASSUMPTION]","-","[ASSUMPTION]","passed","passed","not_applicable","passed","failed"),
+ ("C018","gamma->delta->theta->alpha alumina transition windows","800 / 1000 / 1050-1200","C","precursor- and dopant-dependent","S24,S25,S26","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C019","BET loss of gamma-Al2O3 after 1100 C","200 -> 25","m2/g","specific commercial precursor","S26","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C020","Ni particle growth on MgAl2O4","7.7 -> 27.0","nm","773 K, 700 h, 30 bar, steam:H2=10:1, 7.6 wt% Ni","S18","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C021","Ni particle growth, high-T anchor","<2 -> 6.8","nm","1073 K, 1 h, N2, 20 wt% Ni/MgAl2O4","S19","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C022","Sintering power-law exponent n","4","-","[ASSUMPTION] / [PARTIAL] secondary quoting of Sehested","S18","[PARTIAL]","passed","passed","not_applicable","passed","failed"),
+ ("C023","Sintering activation energy from two anchors","fitted from C020+C021","kJ/mol","DIFFERENT catalysts and atmospheres","S18,S19","[ASSUMPTION]","passed","passed","not_applicable","not_applicable","failed"),
+ ("C024","Ni/MgAl2O4 laboratory catalyst: 15 wt% Ni, 86 m2/g, 6.6 nm","15 / 86 / 6.6","wt% / m2/g / nm","laboratory catalyst, not a commercial spec","S17","[PARTIAL]","passed","passed","not_applicable","passed","failed"),
+ ("C025","Ni/MgAl2O4 patent: Ni 10-60 wt%, promoters 0.01-10 wt%, spinel BET 183-192 m2/g at 550 C","-","-","patent examples, priority 1998-12-22, legal status Ceased","S20","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C026","Reduction of Ni/MgAl2O4 requires 800-850 C for full reduction","400-800 / 850","C","TPR start/complete; reduction 16 h at 850 C","S17,S19","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C027","Industrial SMR window","<=850 / <=25 / 2-4","C / bar / S/C","review of industrial installations","S27,S39","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C028","Furnace thermal efficiency (heat to process gas)","~50","%","industrial top-fired SMR","S28","[PARTIAL]","passed","passed","passed","passed","passed"),
+ ("C029","Furnace efficiency used in this model","0.85","-","[ASSUMPTION] LHV basis, for fuel sizing","-","[ASSUMPTION]","passed","passed","passed","passed","failed"),
+ ("C030","ASU specific power at >99.5% O2","245","kWh/t O2","0.35 kWh/Nm3; delivery pressure effects excluded","S29","[PARTIAL]","passed","passed","passed","passed","passed"),
+ ("C031","Sulfur slip design target","0.1","ppmv","after HDS + ZnO; <10 ppbv with ultra-purification","S32","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C032","Ni(CO)4 formation/decomposition enthalpy","-152.7 / 160.4","kJ/mol","equilibrium measurements","S30","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C033","Purge CO before cooling Ni below 200 C","<10","ppmv CO","shutdown practice, secondary engineering note","S31","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C034","Normal cubic metre definition","273.15 / 101.325","K / kPa","[ASSUMPTION] dry gas; ISO 13443 uses 288.15 K - user must confirm","-","[ASSUMPTION]","passed","passed","passed","passed","failed"),
+ ("C035","Feed gas composition, pressure, sulfur","see cases/base_case.json","mol frac / bar / ppmv","[ASSUMPTION] G0 questionnaire unanswered","-","[ASSUMPTION]","passed","passed","passed","passed","failed"),
+ ("C036","Target product, SN, capacity","methanol syngas / 2.0 / 100000","- / Nm3/h","[ASSUMPTION] G0 questionnaire unanswered","-","[ASSUMPTION]","passed","passed","passed","passed","failed"),
+ ("C037","SMR approach to equilibrium","10","K","[ASSUMPTION] no primary source opened; sensitivity 0-30 K","-","[ASSUMPTION]","passed","passed","passed","passed","failed"),
+ ("C038","Xu-Froment kinetic constants","NOT VERIFIED","-","primary full text not opened; L2 kinetics BLOCKED","S15,S16","[NOT CONFIRMED]","failed","not_applicable","not_applicable","not_applicable","not_applicable"),
+ ("C039","Commercial catalyst grades and lifetimes","NOT FOUND","-","no datasheet opened","S38","[NOT CONFIRMED]","failed","not_applicable","not_applicable","not_applicable","not_applicable"),
+ ("C040","API/TEMA/ASME/ASTM standard formulas","NOT VERIFIED","-","paywalled standards not opened","S36","[NOT CONFIRMED]","failed","not_applicable","not_applicable","not_applicable","not_applicable"),
+ ("C041","Aspen HYSYS case / COM automation","NOT AVAILABLE","-","HYSYS, DWSIM, COCO not installed","S37","[NOT CONFIRMED]","failed","not_applicable","not_applicable","not_applicable","not_applicable"),
+ ("C042","Ideal-gas assumption at 25 bar","quantified via PR","-","k_ij=0 [ASSUMPTION]","S14","[PARTIAL]","passed","passed","passed","passed","passed"),
+ ("C043","Water psat / dew point","NIST Antoine","bar / K","255.9-573 K; 373-379 K gap bridged by [ASSUMPTION]","S09","[CONFIRMED]","passed","passed","passed","passed","passed"),
+ ("C044","Thermodynamic carbon boundary (graphite)","Gibbs minimisation","-","necessary but NOT sufficient; coke type/kinetics not modelled","S08,S12","[CONFIRMED]","passed","passed","passed","passed","failed"),
+ ("C045","Equipment heat flux, GHSV, U, ZnO capacity","80 / 5000 / 60 / 0.25","kW/m2 / Nm3/m3h / W/m2K / kgS/kg","[ASSUMPTION] no vendor catalogue opened","-","[ASSUMPTION]","passed","passed","passed","passed","failed"),
+ ("C046","Prices, CAPEX, AACE class","see model/economics.py","USD","[ASSUMPTION] no cost database opened","S40","[ASSUMPTION]","passed","passed","passed","not_applicable","failed"),
+ ("C047","Ni sintering: most growth in first 200 h, asymptotic limiting particle size","qualitative","-","773 K, 30 bar, steam:H2=10:1, MgAl2O4","S41","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+ ("C048","GPLE bounded sintering model parameters (d_lim=30 nm, Ea=100 kJ/mol)","30 / 100","nm / kJ/mol","[ASSUMPTION] only the asymptotic behaviour is sourced","S41,S18","[ASSUMPTION]","passed","passed","not_applicable","not_applicable","failed"),
+ ("C049","Maximum tube wall temperature for electrified/SMR configurations","ca. 1000","C","patent statement","S42","[PARTIAL]","passed","passed","not_applicable","passed","passed"),
+ ("C050","Complete Xu-Froment secondary parameter set (k0, Ea, adsorption K0/dH)","see model/kinetics.py","-","secondary reproduction; primary full text NOT opened","S43,S44,S15","[PARTIAL]","passed","passed","not_applicable","passed","failed"),
+ ("C051","L2 kinetic PFR reproduces the published conversion curve","FAILED: mean abs deviation ~0.36","-","secondary source internal inconsistency or missing effectiveness/geometry data","S43,S44","[NOT CONFIRMED]","failed","failed","not_applicable","failed","failed"),
+ ("C052","Equilibrium constants of secondary kinetics source vs NIST-JANAF","<=8% deviation","-","750-1000 K, K1 and K2","S44,S01-S05","[CONFIRMED]","passed","passed","not_applicable","passed","passed"),
+]
+
+def build():
+    os.makedirs(os.path.join(ROOT,"docs"), exist_ok=True)
+    os.makedirs(os.path.join(ROOT,"data"), exist_ok=True)
+    json.dump({"meta":{"generated":"2026-10-26","note":"Only sources with opened=true were actually read in this session. opened=false entries are declared gaps."},
+               "sources":[{"id":i,"title":t,"url":u,"opened":o,"used_for":f} for i,t,u,o,f in SOURCES]},
+              open(os.path.join(ROOT,"data","sources.json"),"w",encoding="utf-8"), indent=2, ensure_ascii=False)
+    with open(os.path.join(ROOT,"docs","01_claims_register.csv"),"w",newline="",encoding="utf-8") as fh:
+        w = csv.writer(fh)
+        w.writerow(["ID","claim","value","units","conditions","source_ids","status",
+                    "loop1_sources","loop2_arithmetic","loop3_conservation",
+                    "loop4_thermo","loop5_validation"])
+        for c in CLAIMS:
+            w.writerow(list(c[:6]) + [c[6]] + list(c[7:]))
+    print("claims:",len(CLAIMS),"sources:",len(SOURCES))
+
+if __name__ == "__main__":
+    build()

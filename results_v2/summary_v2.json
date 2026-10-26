@@ -1,0 +1,107 @@
+{
+  "version": "2.0",
+  "generated": "2026-10-26",
+  "hysys": "NOT RUN - Python/DWSIM-equivalent CONFIRMED (user answer 11)",
+  "python": "3.11.2",
+  "config_active": {
+    "product": "methanol",
+    "normal": "0C",
+    "climate": "russia",
+    "feed": "russia_h",
+    "route": "bi_reforming",
+    "accuracy": "maximum",
+    "eos": "PR",
+    "steam_table": "IAPWS97"
+  },
+  "normal_conditions": {
+    "0C": {
+      "T_K": 273.15,
+      "p_Pa": 101325.0,
+      "label": "0 C, 101325 Pa (ISO 13443 alternative; dry)",
+      "Vm_m3_per_mol": 0.02241397
+    },
+    "15C": {
+      "T_K": 288.15,
+      "p_Pa": 101325.0,
+      "label": "15 C, 101325 Pa (ISO 13443:1996 natural-gas standard; dry)",
+      "Vm_m3_per_mol": 0.023645
+    },
+    "note": "User answer 3 = both. Vm computed from R*T/p; switching changes all volumetric flows by +5.49%. ISO 13443:1996 = 288.15 K / 101.325 kPa real dry gas (opened ISO catalogue page)."
+  },
+  "products": [
+    "methanol",
+    "ft",
+    "oxo",
+    "hydrogen",
+    "ammonia"
+  ],
+  "key_numbers": {
+    "methanol": {
+      "metric": "SN",
+      "target": 2.05,
+      "achieved": 2.0500001381882607,
+      "within_tolerance": true,
+      "levelised_cost": 225.061945565958,
+      "cost_unit": "USD/1000 Nm3 dry syngas",
+      "Ni_inventory_t": 9.05202774193929,
+      "catalyst_volume_m3": 67.05205734769844,
+      "total_CO2_t_h": 17.42593772023215
+    },
+    "ft": {
+      "metric": "H2_CO",
+      "target": 2.1,
+      "achieved": 2.1000010189022875,
+      "within_tolerance": true,
+      "levelised_cost": 214.38890548105317,
+      "cost_unit": "USD/1000 Nm3 dry syngas",
+      "Ni_inventory_t": 6.789676077285656,
+      "catalyst_volume_m3": 50.29389686878264,
+      "total_CO2_t_h": 9.774934649963422
+    },
+    "oxo": {
+      "metric": "H2_CO",
+      "target": 1.05,
+      "achieved": 1.0499989049408873,
+      "within_tolerance": true,
+      "levelised_cost": 249.49543869967613,
+      "cost_unit": "USD/1000 Nm3 dry syngas",
+      "Ni_inventory_t": 3.301705033215875,
+      "catalyst_volume_m3": 24.457074320117595,
+      "total_CO2_t_h": 23.8513717637543
+    },
+    "hydrogen": {
+      "metric": "H2_purity",
+      "target": 0.9997,
+      "achieved": 0.9997000000000001,
+      "within_tolerance": true,
+      "levelised_cost": 364.9813736316433,
+      "cost_unit": "USD/1000 Nm3 H2",
+      "Ni_inventory_t": 11.86160324561519,
+      "catalyst_volume_m3": 87.86372774529771,
+      "total_CO2_t_h": 75.77427640773526
+    },
+    "ammonia": {
+      "metric": "H2_N2",
+      "target": 3.0,
+      "achieved": 3.001234137183584,
+      "within_tolerance": true,
+      "levelised_cost": 600.0931402123921,
+      "cost_unit": "USD/t NH3",
+      "Ni_inventory_t": 10.179795726128217,
+      "catalyst_volume_m3": 75.40589426761643,
+      "total_CO2_t_h": 71.21065977673001
+    }
+  },
+  "verification_summary": {
+    "1_sources": true,
+    "2_arithmetic": true,
+    "3_conservation": true,
+    "4_thermo": true,
+    "5_validation_falsification": false
+  },
+  "overall_passed": false,
+  "runtime_s": 99.6,
+  "optional_packages": {
+    "iapws": true
+  }
+}

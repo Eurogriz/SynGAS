@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "source": "/home/user/SynGAS/.venv/lib/python3.11/site-packages/cantera/data/nasa_condensed.yaml",
+    "citation": "McBride, Gordon & Reno, NASA TM-4513, October 1993; distributed with Cantera 3.2.0",
+    "note": "Upper bound of the solid-phase NASA7 fit is taken as the melting temperature. Cross-checked against NIST-JANAF (Ni, Al2O3) and US7541005B2 (MgAl2O4).",
+    "retrieved": "2026-10-26"
+  },
+  "K": {
+    "Ni": {
+      "T_upper_fit_K": 1728.0,
+      "ranges_K": [
+        200.0,
+        631.0,
+        1000.0,
+        1728.0
+      ],
+      "species_name": "Ni(cr)"
+    },
+    "Al2O3": {
+      "T_upper_fit_K": 2327.0,
+      "ranges_K": [
+        300.0,
+        1000.0,
+        2327.0
+      ],
+      "species_name": "AL2O3(a)"
+    },
+    "MgAl2O4": {
+      "T_upper_fit_K": 2408.0,
+      "ranges_K": [
+        300.0,
+        1000.0,
+        2408.0
+      ],
+      "species_name": "MgAL2O4(s)"
+    },
+    "ZrO2": {
+      "T_upper_fit_K": 1478.0,
+      "ranges_K": [
+        300.0,
+        1000.0,
+        1478.0
+      ],
+      "species_name": "ZrO2(a)"
+    },
+    "ZrO2_b": {
+      "T_upper_fit_K": 2950.0,
+      "ranges_K": [
+        1478.0,
+        2950.0
+      ],
+      "species_name": "ZrO2(b)"
+    },
+    "C_graphite": {
+      "T_upper_fit_K": 5000.0,
+      "ranges_K": [
+        200.0,
+        1000.0,
+        5000.0
+      ],
+      "species_name": "C(gr)"
+    }
+  }
+}

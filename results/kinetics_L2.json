@@ -1,0 +1,59 @@
+{
+  "density_unit_interpretation_that_best_matches_published_curve": "kg_m3",
+  "calibration_note": "The source's Table 3 unit for catalyst density is ambiguous; both readings were RUN, not assumed. This is a documented fitting/interpretation choice (rule 1.5).",
+  "status": "code verification against a published INDEPENDENT MODEL IMPLEMENTATION, not against experiment",
+  "source": "Fernandes & Soares, Latin Am. Appl. Res. 36 (2006) 155-161, Fig. 5a, 29 atm conventional reactor (opened PDF)",
+  "rows": [
+    {
+      "T_K": 750.0,
+      "X_published": 0.18,
+      "X_density_as_printed_g_m3": 0.07079948037857409,
+      "X_density_as_kg_m3": 0.08358636683783094,
+      "abs_deviation_printed": 0.1092005196214259,
+      "abs_deviation_kg_m3": 0.09641363316216905
+    },
+    {
+      "T_K": 800.0,
+      "X_published": 0.38,
+      "X_density_as_printed_g_m3": 0.13167175177862978,
+      "X_density_as_kg_m3": 0.1351122753036944,
+      "abs_deviation_printed": 0.24832824822137023,
+      "abs_deviation_kg_m3": 0.2448877246963056
+    },
+    {
+      "T_K": 850.0,
+      "X_published": 0.55,
+      "X_density_as_printed_g_m3": 0.19905141468625187,
+      "X_density_as_kg_m3": 0.19957648576255416,
+      "abs_deviation_printed": 0.3509485853137482,
+      "abs_deviation_kg_m3": 0.3504235142374459
+    },
+    {
+      "T_K": 900.0,
+      "X_published": 0.73,
+      "X_density_as_printed_g_m3": 0.27866041820206666,
+      "X_density_as_kg_m3": 0.2787534953565347,
+      "abs_deviation_printed": 0.4513395817979333,
+      "abs_deviation_kg_m3": 0.4512465046434653
+    },
+    {
+      "T_K": 950.0,
+      "X_published": 0.88,
+      "X_density_as_printed_g_m3": 0.3738357525488627,
+      "X_density_as_kg_m3": 0.3739235855939067,
+      "abs_deviation_printed": 0.5061642474511373,
+      "abs_deviation_kg_m3": 0.5060764144060933
+    },
+    {
+      "T_K": 1000.0,
+      "X_published": 0.97,
+      "X_density_as_printed_g_m3": 0.48523457614809107,
+      "X_density_as_kg_m3": 0.48518480496365435,
+      "abs_deviation_printed": 0.4847654238519089,
+      "abs_deviation_kg_m3": 0.4848151950363456
+    }
+  ],
+  "max_abs_deviation": 0.5060764144060933,
+  "mean_abs_deviation": 0.3556438310303041,
+  "warning": "Reproducing another model's curve does NOT validate the kinetics for the Ni/MgAl2O4 design catalyst at 1123 K / 25 bar."
+}

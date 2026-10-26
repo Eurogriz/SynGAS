@@ -1,0 +1,16 @@
+# Pure-stdlib model needs NO third-party packages.
+# These are needed only for the OPTIONAL verification layer and plots:
+numpy>=2.0
+scipy>=1.14
+pandas>=2.2
+matplotlib>=3.9
+pint>=0.24
+cantera>=3.0
+PyYAML>=6.0
+pytest>=8.0
+
+# V2 maximum-accuracy / control-panel optional packages
+iapws>=1.5.4
+thermo>=0.4
+CoolProp>=6.4
+flask>=3.0

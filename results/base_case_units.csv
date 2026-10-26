@@ -1,0 +1,7 @@
+unit,Q_kJ_per_basis,Q_kW
+E-101 feed preheat,1483.9393383518955,4695.51708460098
+R-101 pre-reformer (adiabatic),0.0,0.0
+R-201 SMR furnace (process side),28077.676017525046,88844.06796749815
+E-201 waste-heat boiler,-10978.17271552253,-34737.40213712997
+E-202 cooler/condenser,-15122.388648193766,-47850.63137178678
+V-201 separator,0.0,0.0

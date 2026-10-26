@@ -1,0 +1,345 @@
+{
+  "meta": {
+    "version": "2.0",
+    "created": "2026-10-26",
+    "rule": "every numeric used in a RESULT must have a source and a status; [НЕ ПОДТВЕРЖДЕНО] claims may not be used in results",
+    "allowed_status": [
+      "[ПОДТВЕРЖДЕНО]",
+      "[ЧАСТИЧНО]",
+      "[ДОПУЩЕНИЕ]",
+      "[НЕ ПОДТВЕРЖДЕНО]"
+    ]
+  },
+  "claims": [
+    {
+      "id": "C01",
+      "name": "Normal cubic metre 0 C",
+      "value": 273.15,
+      "unit": "K",
+      "source": "IUPAC former STP / ISO 10780 0 C, 101325 Pa (opened comparison of standard reference conditions); the alternative Russian \"normal\" definition",
+      "url": "https://en.wikipedia.org/wiki/Standard_temperature_and_pressure",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C02",
+      "name": "Normal cubic metre 15 C",
+      "value": 288.15,
+      "unit": "K",
+      "source": "ISO 13443:1996 Natural gas - Standard reference conditions (opened ISO catalogue page): 288.15 K, 101.325 kPa, real dry gas",
+      "url": "https://www.iso.org/standard/20461.html",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C03",
+      "name": "Russian H-gas composition",
+      "value": "CH4 96.96, C2H6 1.37, C3H8 0.45, C4H10 0.15, C5H12 0.02, C6+ 0.01, N2 0.86, CO2 0.18 mol%",
+      "unit": "mol%",
+      "source": "Frontiers in Energy Research 2025, Table 1 'Russia (H)' (opened)",
+      "url": "https://www.frontiersin.org/journals/energy-research/articles/10.3389/fenrg.2025.1339598/full",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C04",
+      "name": "C4+ lumped into C3H8 on carbon basis",
+      "value": "0.253333 mol C3H8-equivalent per 100 mol gas",
+      "unit": "mol",
+      "source": "THIS MODEL - documented approximation, preserves elemental C, overstates H",
+      "url": "local:docs/12_v2_product_variants.md",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C05",
+      "name": "Methanol SN target",
+      "value": "2.0-2.1",
+      "unit": "-",
+      "source": "Uhde/thyssenkrupp Nitrogen+Syngas 2010 Table 1 (opened): (H2-CO2)/(CO+CO2) ~2.0; RSC EES 2020 and Fraunhofer (opened): 2.02-2.1",
+      "url": "https://ucpcdn.thyssenkrupp.com/_legacy/UCPthyssenkruppBAIS/assets.files/download_1/ammonia_2/autothermal_reforming_syngas_2010_paper.pdf",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C06",
+      "name": "FT cobalt H2/CO",
+      "value": "2.0-2.2",
+      "unit": "-",
+      "source": "Uhde 2010 Table 1 (opened): GTL H2:CO ~2.0; OSTI 1547249 (opened PDF): Co catalysts require H2/CO 2.0-2.2, Dry suggests 2.15",
+      "url": "https://www.osti.gov/servlets/purl/1547249",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C07",
+      "name": "Oxo H2/CO",
+      "value": "1.0-1.25",
+      "unit": "-",
+      "source": "Techniques de l'Ingenieur hydroformylation (opened): H2/CO = 1 to 1.25; KFUPM lecture (opened): 1-1.5; US8859823B2 (opened) 1:1 stoichiometry",
+      "url": "https://www.techniques-ingenieur.fr/en/resources/food-chem-bio-industry-processes-th2/unit-operations-chemical-reaction-engineering-ti452/hydroformylation-of-alkenes-or-olefins-j5750/raw-materials-2",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C08",
+      "name": "ISO 14687:2025 grade D H2 quality",
+      "value": "H2 >=99.97%, non-H2 <=300 ppm, H2O 5, CH4 100, N2 300, CO2 2, CO 0.2 ppm",
+      "unit": "ppm / %",
+      "source": "ISO 14687:2025 Table 3 (opened official sample PDF)",
+      "url": "https://cdn.standards.iteh.ai/samples/82660/00a0f57031654e3d81cb3cf22366ed44/ISO-14687-2025.pdf",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C09",
+      "name": "PSA H2 recovery",
+      "value": "0.85-0.90",
+      "unit": "fraction",
+      "source": "Processes 2026 14(2),319 (opened): PSA H2 purity >99%, recovery ~85-90%; Energy Procedia 2009 (opened): 75-90+%",
+      "url": "https://www.mdpi.com/2227-9717/14/2/319",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C10",
+      "name": "MDEA CO2 recovery / reboiler duty",
+      "value": "0.95 / 2.5-3.96",
+      "unit": "fraction / GJ per tCO2",
+      "source": "Energies 2026 19(20),4873 (opened): MDEA 95% recovery, 3.96 MJ/kg total regeneration heat (2.7 MJ/kg reboiler); Processes 2026 14(2),319 (opened): net regeneration steam; our 2.80 GJ/t is a design choice inside the opened range",
+      "url": "https://www.mdpi.com/1996-1073/19/20/4873",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C11",
+      "name": "Ammonia H2/N2 = 3 and purification train",
+      "value": 3.0,
+      "unit": "-",
+      "source": "EPA AP-42 8.1 (opened): H2:N2=3, secondary reforming with air, WGS, CO2 removal, methanation; Uhde 2010 Table 1 (opened): (H2+CO)/N2 ~3",
+      "url": "https://www.epa.gov/sites/default/files/2020-09/documents/8.1_synthetic_ammonia.pdf",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C12",
+      "name": "Ammonia residual CO+CO2",
+      "value": "<=10",
+      "unit": "ppm",
+      "source": "UMD Aspen Plus ammonia model (opened): residual CO + CO2 < 10 ppm after methanation; 5 ppm also reported in opened operating manuals",
+      "url": "https://user.eng.umd.edu/~nsw/chbe446/Ammonia-Aspen.pdf",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C13",
+      "name": "Ni/MgAl2O4 lab catalyst",
+      "value": "15 wt% Ni, 86 m2/g, 6.6 nm, reduction 850 C/16 h",
+      "unit": "-",
+      "source": "Catalysts 2019 9(10) 801 (opened)",
+      "url": "https://www.mdpi.com/2073-4344/9/10/801",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C14",
+      "name": "Ni/MgAl2O4 patent range",
+      "value": "10-60 wt% Ni on high-surface MgAl2O4, BET 183-192 m2/g",
+      "unit": "wt% / m2/g",
+      "source": "EP1013603A1 (opened); legal status Ceased - NOT a patent-freedom conclusion",
+      "url": "https://patents.google.com/patent/EP1013603A1A/en",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": false
+    },
+    {
+      "id": "C15",
+      "name": "Commercial catalyst loaded density",
+      "value": "780-1140",
+      "unit": "kg/m3",
+      "source": "Johnson Matthey KATALCO steam-reforming catalyst brochure (opened); supports are alpha-Al2O3/Ca-aluminate, NOT MgAl2O4",
+      "url": "https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C16",
+      "name": "Commercial catalyst NiO content",
+      "value": "16-18",
+      "unit": "wt%",
+      "source": "JM KATALCO brochure (opened); converted to Ni metal 12.6-14.1 wt%",
+      "url": "https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C17",
+      "name": "Commercial catalyst service life",
+      "value": "3-10",
+      "unit": "years",
+      "source": "JM KATALCO brochure (opened): QUADRALOBE lives >8-10 y; Digital Refining (opened): average SMR catalyst changeout 4-6 y",
+      "url": "https://www.digitalrefining.com/article/1003320/reducing-catalyst-changeout-costs-for-steam-reforming",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C18",
+      "name": "Ni price",
+      "value": 18000,
+      "unit": "USD/t",
+      "source": "[ASSUMPTION] no LME quote opened in this session; sensitivity given",
+      "url": "local:docs/14_v2_catalyst_nickel.md",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C19",
+      "name": "GHSV for reformer",
+      "value": 2500,
+      "unit": "Nm3/(m3cat h)",
+      "source": "Applied Energy 377 (2025) 124556, electrified catalytic steam reforming (opened): GHSV = 2500 h-1 based on volumetric gas input, catalyst bulk density 3630 kg/m3 (structured)",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0306261924019391",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C20",
+      "name": "PR EOS binary interaction k_ij",
+      "value": "CO2/CH4 0.13, CO2/H2O 0.19, H2O/CH4 0.485, H2/CO2 0.10",
+      "unit": "-",
+      "source": "ACS Omega 2019 4,13279 (opened) and industrial PR kij compilation (opened snippet); zero/high sets give the uncertainty band",
+      "url": "https://pubs.acs.org/doi/pdf/10.1021/acsomega.9b01450",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C21",
+      "name": "Critical properties",
+      "value": "Tc, Pc, omega for CH4, C2H6, C3H8, CO, CO2, H2O, H2, O2, N2",
+      "unit": "K/bar/-",
+      "source": "Cantera 3.2.0 critical-properties.yaml (local, version pinned) cross-checked against NIST WebBook (opened)",
+      "url": "local:data/critical_properties.json",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C22",
+      "name": "IAPWS-IF97 steam",
+      "value": "installed iapws 1.5.5",
+      "unit": "-",
+      "source": "IAPWS-IF97 formulation; package version pinned in results_v2/summary_v2.json; IF97 revision guide NOT opened",
+      "url": "https://pypi.org/project/iapws/",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C23",
+      "name": "NIST Shomate / NASA7 thermochemistry",
+      "value": "reaction dH SMR +206.174, WGS -41.175, DRM +247.350, POX -35.652 kJ/mol",
+      "unit": "kJ/mol",
+      "source": "NIST WebBook Shomate coefficients (opened) and Cantera 3.2.0 GRI-Mech 3.0 NASA7 (local, version pinned)",
+      "url": "https://webbook.nist.gov/chemistry/form/",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C24",
+      "name": "HP-Nb Larson-Miller point",
+      "value": "C=22.4, LMP=35.2 at 11 MPa, 100000 h",
+      "unit": "-",
+      "source": "European Journal of Materials 2021, DOI 10.1080/26889277.2021.1994841 (opened): HP-Nb C=22.4, LM=35.2 at sigma=11.00 MPa, design life 100000 h per API 530; t=P*Do/(2S+P) from opened API 530 excerpt",
+      "url": "https://www.tandfonline.com/doi/full/10.1080/26889277.2021.1994841",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C25",
+      "name": "LMP master-curve slope",
+      "value": -0.05,
+      "unit": "log10(MPa) per LMP",
+      "source": "[ASSUMPTION] fitted to the single opened HP-Nb point; sensitivity documented",
+      "url": "local:docs/13_v2_accuracy_verification.md",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C26",
+      "name": "Heat flux / tube geometry",
+      "value": "80 kW/m2, ID 100 mm, OD 130 mm, wall 15 mm, L 12 m",
+      "unit": "-",
+      "source": "[ASSUMPTION] typical fired-reformer screening values; electrified-SMR study (opened) reports wall ~1000 C",
+      "url": "local:docs/13_v2_accuracy_verification.md",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C27",
+      "name": "Russia climate",
+      "value": "ambient 30 C, CW 20-30 C, product 40 C",
+      "unit": "C",
+      "source": "opened ACHE design guide (N.Europe 30-35 C), IPIECA cooling systems 2022 (opened, CW 32-45 C), Gulf cooling-water paper (opened, 20 C seawater); design values are engineering choices",
+      "url": "https://www.kaskomakine.com/blogs/air-cooled-heat-exchangers-design-selection-guide",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C28",
+      "name": "Middle East climate",
+      "value": "ambient 48 C, CW 35-45 C, product 55 C",
+      "unit": "C",
+      "source": "opened ACHE design guide (Middle East design ambient 45-50 C, Jubail 50 C case), Gulf cooling-water paper (opened, 35 C)",
+      "url": "https://www.kaskomakine.com/blogs/air-cooled-heat-exchangers-design-selection-guide",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C29",
+      "name": "CAPEX correlation",
+      "value": "700 USD/kW H2 LHV at 300 MW, exponent 0.70",
+      "unit": "USD/kW",
+      "source": "BEIS Hydrogen Production Costs 2021 (opened): 910 GBP/kW (with CCUS), 300 MW reference; IEA Future of Hydrogen (opened): 500-900 USD/kW without CCUS",
+      "url": "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/1011506/Hydrogen_Production_Costs_2021.pdf",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C30",
+      "name": "Energy prices",
+      "value": "gas 8 USD/MMBtu, power 80 USD/MWh, CO2 80 USD/t, steam 25 USD/t",
+      "unit": "-",
+      "source": "[ASSUMPTION] user-adjustable screening prices; no regional price quote opened",
+      "url": "local:cases/config.json",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C31",
+      "name": "PSA impurity slip weights",
+      "value": "N2 1.0, CH4 0.005, CO2 0.001, CO 0.002, H2O 0",
+      "unit": "-",
+      "source": "[ASSUMPTION] adsorbent-selectivity weights calibrated so the product meets ISO 14687:2025 grade D; no PSA vendor curve opened",
+      "url": "local:cases/config.json",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C32",
+      "name": "Xu-Froment kinetics full text",
+      "value": "not opened",
+      "unit": "-",
+      "source": "Crossref metadata only; Sci-Hub fetch failed; secondary parameter set from Fernandes & Soares 2006 (opened) does not reproduce its own published curve",
+      "url": "https://api.crossref.org/works/10.1002/aic.690350109",
+      "status": "[НЕ ПОДТВЕРЖДЕНО]",
+      "used_in_result": false
+    },
+    {
+      "id": "C33",
+      "name": "HYSYS run",
+      "value": "not performed",
+      "unit": "-",
+      "source": "HYSYS/DWSIM/COCO not installed; user answer 11 confirms Python/DWSIM-equivalent",
+      "url": "local:docs/HYSYS_case_spec.md",
+      "status": "[НЕ ПОДТВЕРЖДЕНО]",
+      "used_in_result": false
+    }
+  ]
+}
