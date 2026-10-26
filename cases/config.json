@@ -1,523 +1,551 @@
 {
-  "version": "2.0",
-  "meta": {
-    "created": "2026-10-26",
-    "answer_to_G0": "user answers 1-12; see docs/00_G0_answers.md",
-    "units": "SI; p = bar(a) everywhere; T = K; normal m3 = dry ideal gas at chosen T/p",
-    "accuracy": "maximum: Peng-Robinson real gas, IAPWS-IF97 steam, C3+ in feed, tube 1D profile, LMP creep, source-based CAPEX",
-    "hysys": "NOT INSTALLED; user answer 11 = 'otherwise confirm' -> Python/DWSIM-equivalent + docs/HYSYS_case_spec.md CONFIRMED as the accepted equivalent"
+ "version": "2.0",
+ "meta": {
+  "created": "2026-10-26",
+  "answer_to_G0": "user answers 1-12; see docs/00_G0_answers.md",
+  "units": "SI; p = bar(a) everywhere; T = K; normal m3 = dry ideal gas at chosen T/p",
+  "accuracy": "maximum: Peng-Robinson real gas, IAPWS-IF97 steam, C3+ in feed, tube 1D profile, LMP creep, source-based CAPEX",
+  "hysys": "NOT INSTALLED; user answer 11 = 'otherwise confirm' -> Python/DWSIM-equivalent + docs/HYSYS_case_spec.md CONFIRMED as the accepted equivalent"
+ },
+ "active": {
+  "product": "methanol",
+  "normal": "0C",
+  "climate": "russia",
+  "feed": "russia_h",
+  "route": "bi_reforming",
+  "accuracy": "maximum",
+  "eos": "PR",
+  "steam_table": "IAPWS97"
+ },
+ "normal_conditions": {
+  "0C": {
+   "T_K": 273.15,
+   "p_Pa": 101325.0,
+   "label": "0 C, 101325 Pa (ISO 13443 alternative; dry)",
+   "Vm_m3_per_mol": 0.02241397
   },
-  "active": {
-    "product": "methanol",
-    "normal": "0C",
-    "climate": "russia",
-    "feed": "russia_h",
-    "route": "bi_reforming",
-    "accuracy": "maximum",
-    "eos": "PR",
-    "steam_table": "IAPWS97"
+  "15C": {
+   "T_K": 288.15,
+   "p_Pa": 101325.0,
+   "label": "15 C, 101325 Pa (ISO 13443:1996 natural-gas standard; dry)",
+   "Vm_m3_per_mol": 0.023645
   },
-  "normal_conditions": {
-    "0C": {
-      "T_K": 273.15,
-      "p_Pa": 101325.0,
-      "label": "0 C, 101325 Pa (ISO 13443 alternative; dry)",
-      "Vm_m3_per_mol": 0.02241397
-    },
-    "15C": {
-      "T_K": 288.15,
-      "p_Pa": 101325.0,
-      "label": "15 C, 101325 Pa (ISO 13443:1996 natural-gas standard; dry)",
-      "Vm_m3_per_mol": 0.023645
-    },
-    "note": "User answer 3 = both. Vm computed from R*T/p; switching changes all volumetric flows by +5.49%. ISO 13443:1996 = 288.15 K / 101.325 kPa real dry gas (opened ISO catalogue page)."
+  "note": "User answer 3 = both. Vm computed from R*T/p; switching changes all volumetric flows by +5.49%. ISO 13443:1996 = 288.15 K / 101.325 kPa real dry gas (opened ISO catalogue page)."
+ },
+ "climates": {
+  "russia": {
+   "label": "Russia (European part / Western Siberia)",
+   "ambient_dry_bulb_C": 30.0,
+   "cooling_water_supply_C": 20.0,
+   "cooling_water_return_C": 30.0,
+   "air_cooler_approach_K": 12.0,
+   "product_T_C": 40.0,
+   "bfw_T_C": 104.0,
+   "source": "opened ACHE design guide (N.Europe 30-35 C), IPIECA cooling systems 2022 (CW 32-45 C), Gulf-region paper (20 C seawater)",
+   "status": "[PARTIAL] design values are engineering assumptions consistent with the opened ranges"
   },
-  "climates": {
-    "russia": {
-      "label": "Russia (European part / Western Siberia)",
-      "ambient_dry_bulb_C": 30.0,
-      "cooling_water_supply_C": 20.0,
-      "cooling_water_return_C": 30.0,
-      "air_cooler_approach_K": 12.0,
-      "product_T_C": 40.0,
-      "bfw_T_C": 104.0,
-      "source": "opened ACHE design guide (N.Europe 30-35 C), IPIECA cooling systems 2022 (CW 32-45 C), Gulf-region paper (20 C seawater)",
-      "status": "[PARTIAL] design values are engineering assumptions consistent with the opened ranges"
-    },
-    "middle_east": {
-      "label": "Middle East (Jubail / Gulf)",
-      "ambient_dry_bulb_C": 48.0,
-      "cooling_water_supply_C": 35.0,
-      "cooling_water_return_C": 45.0,
-      "air_cooler_approach_K": 12.0,
-      "product_T_C": 55.0,
-      "bfw_T_C": 104.0,
-      "source": "opened ACHE design guide (Middle East design ambient 45-50 C, 50 C Jubail case), Gulf cooling-water paper (35 C)",
-      "status": "[PARTIAL] design values are engineering assumptions consistent with the opened ranges"
-    }
-  },
-  "feeds": {
-    "russia_h": {
-      "label": "Russian high-methane pipeline gas (GOST-type H gas)",
-      "dry_mol_fraction": {
-        "CH4": 96.96,
-        "C2H6": 1.37,
-        "C3H8": 0.45,
-        "C4H10": 0.15,
-        "C5H12": 0.02,
-        "C6H14": 0.01,
-        "CO2": 0.18,
-        "N2": 0.86
-      },
-      "H2S_ppmv": 5.0,
-      "H2S_after_guard_ppmv": 0.02,
-      "chlorine_ppmv": 0.01,
-      "H2_recycle_mol_per_100": 1.0,
-      "p_bar_abs": 30.0,
-      "T_C": 25.0,
-      "source": "Frontiers 2025, Table 1 'Russia (H)' (opened); GOST 5542 status page (opened, standard superseded by GOST 5542-2014/2022 - text NOT opened)",
-      "status": "[PARTIAL] composition opened; actual GOST standard text not opened"
-    },
-    "me_rich": {
-      "label": "Middle East associated/rich gas (sensitivity)",
-      "dry_mol_fraction": {
-        "CH4": 83.5,
-        "C2H6": 7.0,
-        "C3H8": 2.0,
-        "C4H10": 0.8,
-        "C5H12": 0.2,
-        "C6H14": 0.0,
-        "CO2": 0.2,
-        "N2": 6.1
-      },
-      "H2S_ppmv": 20.0,
-      "H2S_after_guard_ppmv": 0.02,
-      "chlorine_ppmv": 0.01,
-      "H2_recycle_mol_per_100": 1.0,
-      "p_bar_abs": 30.0,
-      "T_C": 25.0,
-      "source": "IHRDC Midstream Gas 'Algeria Hassi-R' wet gas (opened snippet) used as a regional analogue, NOT a specific field",
-      "status": "[ASSUMPTION] analogue composition"
-    }
-  },
-  "products": {
-    "methanol": {
-      "label": "Methanol synthesis gas",
-      "metric": "SN",
-      "target": 2.05,
-      "tolerance": 0.05,
-      "metric_definition": "SN = (H2 - CO2)/(CO + CO2) on DRY basis",
-      "capacity": 100000.0,
-      "capacity_unit": "dry_syngas_Nm3_h",
-      "capacity_basis": "dry_syngas",
-      "product_p_bar_abs": 24.0,
-      "max_H2O_molpct": 0.5,
-      "route": "bi_reforming",
-      "downstream": [
-        "WHB",
-        "CO2_trim",
-        "condensate_separation",
-        "drying"
-      ],
-      "knobs": {
-        "SC": 3.0,
-        "CO2C": 0.2468,
-        "O2C": 0.0,
-        "T_K": 1123.15,
-        "p_bar": 25.0,
-        "approach_K": 10.0,
-        "MDEA_CO2_recovery": 0.95,
-        "MDEA_reboiler_GJ_per_tCO2": 2.8
-      },
-      "source": "Uhde/ThyssenKrupp Nitrogen+Syngas 2010 Table 1 (opened): methanol (H2-CO2)/(CO+CO2) ~2.0; RSC EES 2020 & Fraunhofer (opened): 2.02-2.1; Applied Sciences 2017 7,1213 (opened): make-up gas should contain 4-8 mol% CO2 for maximum activity/selectivity, S module slightly above 2; part of the imported CO2 is removed in the trim unit",
-      "status": "[CONFIRMED] metric and CO2 window; CO2 trim is a design measure to enter the licensor window",
-      "drying_note": "[NOT MODELLED] dryer regeneration duty; needed for the 55 C Middle East product to meet 0.5 mol% H2O",
-      "co2_trim_target_molpct": 6.0,
-      "co2_trim_max_recovery": 0.9,
-      "min_CO2_molpct": 4.0,
-      "max_CO2_molpct": 8.0
-    },
-    "ft": {
-      "label": "Fischer-Tropsch (Co catalyst) synthesis gas",
-      "metric": "H2_CO",
-      "target": 2.1,
-      "tolerance": 0.05,
-      "metric_definition": "H2/CO molar on DRY basis",
-      "capacity": 100000.0,
-      "capacity_unit": "dry_syngas_Nm3_h",
-      "capacity_basis": "dry_syngas",
-      "product_p_bar_abs": 24.0,
-      "max_CO2_molpct": 3.0,
-      "max_CH4_molpct": 5.0,
-      "max_N2_molpct": 3.0,
-      "max_H2O_molpct": 0.5,
-      "route": "ATR",
-      "downstream": [
-        "WHB",
-        "CO2_removal",
-        "condensate_separation",
-        "drying"
-      ],
-      "knobs": {
-        "SC": 1.3,
-        "CO2C": 0.0,
-        "O2C": 0.62,
-        "T_K": 1323.15,
-        "p_bar": 25.0,
-        "approach_K": 10.0,
-        "MDEA_CO2_recovery": 0.95,
-        "MDEA_reboiler_GJ_per_tCO2": 2.8
-      },
-      "source": "Uhde/ThyssenKrupp Nitrogen+Syngas 2010 Table 1 (opened): GTL H2:CO ~2.0; OSTI 1547249 (opened PDF https://www.osti.gov/servlets/purl/1547249): Co 2.0-2.2, Dry 2.15",
-      "status": "[CONFIRMED] ratio range; 2.10 is the chosen set-point"
-    },
-    "oxo": {
-      "label": "Oxo / hydroformylation synthesis gas",
-      "metric": "H2_CO",
-      "target": 1.05,
-      "tolerance": 0.08,
-      "metric_definition": "H2/CO molar on DRY basis",
-      "capacity": 50000.0,
-      "capacity_unit": "dry_syngas_Nm3_h",
-      "capacity_basis": "dry_syngas",
-      "product_p_bar_abs": 24.0,
-      "max_CO2_molpct": 5.0,
-      "max_H2O_molpct": 0.5,
-      "route": "ATR_CO2",
-      "downstream": [
-        "WHB",
-        "CO2_removal",
-        "condensate_separation",
-        "drying"
-      ],
-      "knobs": {
-        "SC": 0.6,
-        "CO2C": 0.9,
-        "O2C": 0.7,
-        "T_K": 1173.15,
-        "p_bar": 20.0,
-        "approach_K": 10.0,
-        "MDEA_CO2_recovery": 0.95,
-        "MDEA_reboiler_GJ_per_tCO2": 2.8
-      },
-      "source": "Techniques de l'Ingenieur hydroformylation (opened): H2/CO = 1 to 1.25; KFUPM lecture (opened): 1-1.5; US8859823B2 (opened) 1:1 stoichiometry. V2 route changed to autothermal/partial oxidation with CO2 co-feed: an adiabatic Gibbs ATR with O2/C tuned to H2/CO = 1.05 (the pure CO2-reforming route with a pre-reformer needed CO2/C > 2.4 and produced >5 mol% CO2).",
-      "status": "[CONFIRMED] ratio range; [PARTIAL] ATR route choice is a design decision"
-    },
-    "hydrogen": {
-      "label": "High-purity hydrogen (SMR + WGS + MDEA + PSA)",
-      "metric": "H2_purity",
-      "target": 0.9997,
-      "tolerance": 0.0002,
-      "metric_definition": "H2 mole fraction in PSA product",
-      "capacity": 100000.0,
-      "capacity_unit": "H2_Nm3_h",
-      "capacity_basis": "H2_product",
-      "product_p_bar_abs": 22.0,
-      "max_CO_ppm": 0.2,
-      "max_CO2_ppm": 2.0,
-      "route": "SMR_WGS_PSA",
-      "downstream": [
-        "WHB",
-        "WGS",
-        "CO2_removal",
-        "PSA",
-        "condensate_separation",
-        "drying"
-      ],
-      "knobs": {
-        "SC": 3.0,
-        "CO2C": 0.0,
-        "O2C": 0.0,
-        "T_K": 1123.15,
-        "p_bar": 25.0,
-        "approach_K": 10.0,
-        "WGS_CO_conversion": 0.995,
-        "PSA_H2_recovery": 0.88,
-        "MDEA_CO2_recovery": 0.95,
-        "MDEA_reboiler_GJ_per_tCO2": 2.8,
-        "PSA_CO_slip": 0.002,
-        "PSA_CO2_slip": 0.001,
-        "PSA_N2_slip": 1.0,
-        "PSA_CH4_slip": 0.005
-      },
-      "source": "ISO 14687:2025 Table 3 (opened official sample PDF): H2 fuel index >=99.97%, total non-H2 <=300 umol/mol, H2O <=5, CH4 <=100, N2 <=300, CO2 <=2, CO <=0.2 umol/mol; Processes 2026 14(2),319 and Energies 2026 19(20),4873 (opened): PSA 85-90% recovery, >99% purity, MDEA 95% CO2 recovery, 2.7-3.96 GJ/tCO2 reboiler",
-      "status": "[CONFIRMED] ISO 14687:2025 grade D limits; PSA/MDEA performance [PARTIAL] from opened open-access studies",
-      "max_H2O_ppm": 5.0,
-      "max_CH4_ppm": 100.0,
-      "max_N2_ppm": 300.0,
-      "max_total_non_H2_ppm": 300.0,
-      "H2_index_min_molpct": 99.97,
-      "PSA_slip_status": "[ASSUMPTION] adsorbent selectivity weights; calibrated so the product meets ISO 14687:2025 grade D. No PSA vendor performance curve was opened; N2 is assumed to be the dominant breakthrough impurity, CH4/CO/CO2 strongly adsorbed.",
-      "max_H2O_molpct": 0.0005
-    },
-    "ammonia": {
-      "label": "Ammonia synthesis gas (H2/N2 = 3, purified)",
-      "metric": "H2_N2",
-      "target": 3.0,
-      "tolerance": 0.03,
-      "metric_definition": "H2/N2 molar in methanator product",
-      "capacity": 1200.0,
-      "capacity_unit": "NH3_t_day",
-      "capacity_basis": "NH3",
-      "product_p_bar_abs": 25.0,
-      "max_CO_CO2_ppm": 10.0,
-      "max_H2O_molpct": 0.1,
-      "route": "SMR_air_secondary",
-      "downstream": [
-        "WHB",
-        "WGS",
-        "CO2_removal",
-        "methanation",
-        "drying",
-        "compression"
-      ],
-      "knobs": {
-        "SC": 3.0,
-        "CO2C": 0.0,
-        "O2C": 0.0,
-        "T_K": 1123.15,
-        "p_bar": 30.7,
-        "approach_K": 10.0,
-        "air_ratio": 0.55,
-        "WGS_CO_conversion": 0.995,
-        "MDEA_CO2_recovery": 0.95,
-        "MDEA_reboiler_GJ_per_tCO2": 2.8,
-        "methanator_residual_ppm": 5.0
-      },
-      "source": "EPA AP-42 8.1 (opened): H2:N2 = 3, secondary reformer with air, WGS, CO2 removal, methanation; Uhde 2010 Table 1 (opened): (H2+CO)/N2 ~3; UMD Aspen Plus ammonia model https://user.eng.umd.edu/~nsw/chbe446/Ammonia-Aspen.pdf (opened): residual CO+CO2 <10 ppm",
-      "status": "[CONFIRMED] flowsheet and ratio; 10 ppm target is the opened UMD/Aspen value"
-    }
-  },
-  "process": {
-    "T_feed_preheat_K": 623.15,
-    "T_secondary_air_preheat_K": 813.15,
-    "T_primary_out_K": 1064.15,
-    "T_WHB_out_K": 623.15,
-    "WGS_HTS_T_K": 633.15,
-    "WGS_LTS_T_K": 483.15,
-    "MDEA_T_K": 313.15,
-    "methanator_T_K": 573.15,
-    "furnace_efficiency_LHV": 0.85,
-    "pinch_dT_min_K": 20.0,
-    "steam_p_bar_abs": 30.0,
-    "steam_T_K": 673.15,
-    "dew_point_method": "IAPWS97",
-    "status": "temperatures from EPA AP-42 / Nature Sci Rep 2025 (opened) + [ASSUMPTION]",
-    "prereformer_enabled": true,
-    "prereformer_approach_K": 0.0,
-    "prereformer_T_in_K": 623.15,
-    "prereformer_status": "[PARTIAL] adiabatic Gibbs-equilibrium pre-reformer; no vendor kinetic model"
-  },
-  "catalyst": {
-    "basis": "Ni/MgAl2O4",
-    "Ni_wt_pct_metal": 15.0,
-    "commercial_proxy_NiO_wt_pct": 17.0,
-    "commercial_proxy_loaded_density_kg_m3": 900.0,
-    "lab_BET_m2_g": 86.0,
-    "lab_Ni_particle_nm": 6.6,
-    "GHSV_reformer_Nm3_per_m3cat_h": 2500.0,
-    "GHSV_pre_reformer_Nm3_per_m3cat_h": 5000.0,
-    "life_years": 4.0,
-    "life_range_years": [
-      3.0,
-      5.0,
-      8.0,
-      10.0
-    ],
-    "Ni_price_USD_per_t": 18000.0,
-    "catalyst_price_USD_per_t": 5000.0,
-    "source": "JM KATALCO brochure https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214 (opened): 16-18% NiO, loaded density 780-1140 kg/m3, QUADRALOBE lives >8-10 y; Catalysts 2019 9,801 (opened): 15 wt% Ni/MgAl2O4 86 m2/g 6.6 nm; Applied Energy 377 (2025) 124556 (opened): GHSV 2500 h-1; Digital Refining (opened): changeout 4-6 y",
-    "status": "[PARTIAL] commercial data are an α-Al2O3/Ca-aluminate PROXY; the MgAl2O4 chemistry basis is from the lab source. Ni price is [ASSUMPTION]."
-  },
-  "eos": {
-    "enabled": true,
-    "type": "Peng-Robinson",
-    "kset": "base",
-    "kij_sensitivity": [
-      "zero",
-      "base",
-      "high"
-    ],
-    "source": "ACS Omega 2019 4,13279 (opened), industrialmonitordirect PR kij (opened snippet), Reaktoro GitHub (opened snippet), Cantera critical-properties.yaml (opened)",
-    "status": "[PARTIAL] k_ij from secondary sources; zero/high sets give the uncertainty band"
-  },
-  "equipment": {
-    "heat_flux_kW_m2": 80.0,
-    "tube_ID_m": 0.1,
-    "tube_heated_length_m": 12.0,
-    "tube_wall_m": 0.015,
-    "tube_OD_m": 0.13,
-    "h_inner_W_m2K": 800.0,
-    "k_tube_W_mK": 25.0,
-    "pellet_d_m": 0.016,
-    "bed_voidage": 0.5,
-    "gas_viscosity_Pa_s": 3e-05,
-    "U_WHB_W_m2K": 60.0,
-    "dP_max_bar": 3.0,
-    "LMP_C": 22.4,
-    "LMP_ref": 35.2,
-    "stress_ref_MPa": 11.0,
-    "LMP_slope_log10stress_per_LMP": -0.05,
-    "design_life_h": 100000.0,
-    "corrosion_allowance_m": 0.0015,
-    "source": "LMP: Eur. J. Materials 2021 DOI 10.1080/26889277.2021.1994841 (opened) HP-Nb C=22.4, LM=35.2 at 11 MPa, 100000 h per API 530; API 530 1996 excerpt (opened) t=P*Do/(2S+P); heat flux/tube geometry [ASSUMPTION]",
-    "status": "[PARTIAL] LMP master-curve slope is an [ASSUMPTION]; not an API 530 certification",
-    "note": "tube wall 15 mm / OD 130 mm chosen to satisfy the LMP-based required thickness; see docs/13"
-  },
-  "economics": {
-    "gas_USD_per_MMBtu": 8.0,
-    "electricity_USD_per_MWh": 80.0,
-    "CO2_USD_per_t": 80.0,
-    "steam_USD_per_t": 25.0,
-    "cooling_water_USD_per_m3": 0.05,
-    "O2_power_kWh_per_t": 245.0,
-    "CAPEX_USD_per_kW_H2_LHV": 700.0,
-    "CAPEX_scale_exponent": 0.7,
-    "CAPEX_ref_H2_MW_LHV": 300.0,
-    "H2_LHV_MJ_per_Nm3": 10.795,
-    "ASU_CAPEX_share": 0.25,
-    "CO2_removal_CAPEX_share": 0.1,
-    "operating_hours_per_year": 8000.0,
-    "discount_rate": 0.1,
-    "plant_life_years": 20.0,
-    "fixed_OPEX_pct_CAPEX": 0.03,
-    "source": "BEIS Hydrogen Production Costs 2021 (opened): 910 GBP/kW H2 (2020, with CCUS) and 300 MW reference; IEA Future of Hydrogen (opened): 500-900 USD/kW H2 without CCUS; DOE H2@Scale (opened): reformer+ASU+CO2 removal ~50% of capital; gasliquids 2020 (opened): H2 LHV 10.795 MJ/Nm3",
-    "status": "[PARTIAL] CAPEX correlation is scaled from an opened H2 study to syngas products; ±50% screening accuracy"
-  },
-  "adjust": {},
-  "synthesis": {
-    "methanol": {
-      "p_bar": 75.0,
-      "T_C": 250.0,
-      "per_pass_COx_conversion": 0.25,
-      "overall_C_conversion": 0.97,
-      "recycle_ratio": 3.0,
-      "dH_CO_kJ_mol": -90.7,
-      "dH_CO2_kJ_mol": -49.7,
-      "CO2_feed_molpct_range": [
-        4.0,
-        8.0
-      ],
-      "source": "Applied Sciences 2017 7,1213 (opened): 50-100 bar, 200-300 C, 4-8% CO2, dH CO -90.7 / CO2 -49.7 kJ/mol; OSTI 2424604 (opened): single-pass 25-30%; recycle 2:1-5:1 from opened review",
-      "status": "[PARTIAL] loop stoichiometry + opened ranges, not a licensor kinetic model"
-    },
-    "ft": {
-      "p_bar": 20.0,
-      "T_C": 230.0,
-      "CO_conversion": 0.7,
-      "alpha": 0.9,
-      "dH_kJ_per_mol_CO": -165.0,
-      "CH2_MW": 14.027,
-      "source": "Hywax (opened): single-pass CO conversion 60-80%; ACS Catal 2017 (opened): industrial alpha 0.85-0.95; ASF W_n=n(1-a)^2 a^(n-1); OSTI 20840761 (opened): alpha(paraffin) 0.91",
-      "status": "[PARTIAL] ASF ideal distribution, no detailed product slate"
-    },
-    "oxo": {
-      "olefin": "propylene",
-      "olefin_MW": 42.081,
-      "aldehyde": "C4H8O",
-      "aldehyde_MW": 72.107,
-      "p_bar": 20.0,
-      "T_C": 100.0,
-      "olefin_conversion": 0.9,
-      "aldehyde_selectivity": 0.95,
-      "n_iso_ratio": 7.0,
-      "source": "US7582802B2 (opened): propylene hydroformylation mass balance; MDPI Catalysts 2020 10,510 (opened): selectivity ~99% at mild conditions; Intech/JM LP Oxo (opened): n:i ~7:1; Science 2020 (opened): H2:CO 1:1 typical",
-      "status": "[PARTIAL] stoichiometric aldehyde yield, heat of reaction NOT modelled"
-    },
-    "hydrogen": {
-      "delivery_p_bar": 200.0,
-      "T_in_K": 313.15,
-      "k": 1.41,
-      "MW": 2.016,
-      "source": "Processes 2026 14(2),319 (opened): H2 compressed to 200 bar, 9.2 MW for 2966 kmol/h",
-      "status": "[PARTIAL] ideal multistage compression, no intercooling model"
-    },
-    "ammonia": {
-      "p_bar": 200.0,
-      "T_C": 450.0,
-      "per_pass_conversion": 0.18,
-      "overall_conversion": 0.97,
-      "dH_kJ_per_mol_NH3": -46.0,
-      "source": "RSC EES 2020 (opened): 15-25 MPa, 400-450 C, ~15% single pass, recycle; C-THRU technical brief (opened): dH=-46 kJ/mol NH3, 20-30% per pass; Haber process (opened): 97% overall",
-      "status": "[PARTIAL] loop stoichiometry + opened ranges, not a converter simulation"
-    }
-  },
-  "safety": {
-    "Ni_CO_4": {
-      "log10K": "7430/T - 21.90",
-      "T_range_K": [
-        300,
-        500
-      ],
-      "CO_purge_ppm": 10.0,
-      "safe_T_C": 200.0,
-      "source": "OSTI 7349456 (opened): dH=-142.3 kJ/mol, dS=-419.2 J/mol/K -> log K = 7430/T - 21.90; NIST WebBook Ni(CO)4 (opened); Becht (opened): keep T>200 C until CO<10 ppm to stay below 1 ppb Ni(CO)4",
-      "status": "[PARTIAL] equilibrium screening only; kinetics and Ni surface activity not modelled"
-    },
-    "relief": {
-      "p_set_factor": 1.1,
-      "blocked_outlet_factor": 1.0,
-      "source": "[ASSUMPTION] API 520/521 full text NOT opened; only a screening choked-flow estimate",
-      "status": "[ДОПУЩЕНИЕ]"
-    },
-    "sulfur": {
-      "H2S_in_ppmv": 5.0,
-      "H2S_after_guard_ppmv": 0.02,
-      "source": "JM purification webinar (opened, v1): <10 ppbv slip with lead-lag ZnO",
-      "status": "[ЧАСТИЧНО]"
-    }
-  },
-  "kinetics": {
-    "methanol": {
-      "T_K": 523.15,
-      "p_bar": 75.0,
-      "GHSV_h1": 100000.0,
-      "catalyst_density_kg_m3": 1775.0,
-      "recycle_ratio": 3.0,
-      "inlet_MeOH_molpct": 0.05,
-      "applicability": "VBF primary data 180-280 C, 15-51 bar; GHSV 10000-30000 1/h from Wiley 2020 review",
-      "source": "Vanden Bussche & Froment J.Catal.1996 primary PDF (opened) https://terpconnect.umd.edu/~nsw/chbe446/VandenBussche-syngas2MeOH.pdf + Graaf 1986 K_eq; catalyst density 1775 kg/m3 from Table 3",
-      "status": "[ДОПУЩЕНИЕ] effective GHSV=100000 1/h is a LUMPED representation of a 4-bed adiabatic quench reactor as one isothermal PFR: chosen so that the VBF kinetics reproduce BOTH the opened 25-30% per-pass COx conversion and the Arzew 3.41 mol% MeOH benchmark. GHSV=10000 1/h is reported separately for transparency.",
-      "GHSV_reference_h1": 10000.0,
-      "GHSV_benchmark_sweep_h1": [
-        10000.0,
-        30000.0,
-        100000.0,
-        300000.0
-      ]
-    },
-    "ammonia": {
-      "T_K": 723.15,
-      "p_bar": 200.0,
-      "GHSV_h1": 10000.0,
-      "recycle_ratio": 3.0,
-      "inlet_NH3_molpct": 0.5,
-      "effectiveness_eta": 1.0,
-      "applicability": "Dyson-Simon/ChemCatChem 2024 data 598-773 K, 90 bar; design point 723 K / 200 bar is OUTSIDE the fitted pressure range",
-      "source": "Temkin & Pyzhev 1940 / Dyson & Simon 1968 rate law; COMSOL blog K_a correlation (opened); alpha=0.654, k0=6.5e13 kmol/(m3cat h), Ea=159.4 kJ/mol from ChemCatChem 2024 (open PDF)",
-      "status": "[НЕ ПОДТВЕРЖДЕНО] absolute rate scale: isothermal single-bed Temkin-Pyzhev PFR at the opened GHSV=10000 1/h underpredicts the industrial 15-20% per-pass conversion by ~2x; eta=1 (no hidden effectiveness factor)",
-      "GHSV_benchmark_sweep_h1": [
-        20000.0,
-        10000.0,
-        5000.0,
-        3000.0,
-        2000.0,
-        1000.0
-      ]
-    },
-    "methanol_benchmark": {
-      "source": "ASPEN-HYSYS simulation of Arzew CP1Z 4-bed quench reactor (IOGR 2023, opened): 52 bar, 210-270 C, CO 7.5->5.4 mol%, CO2 6->7.6, H2 73.7->69.35, MeOH 0->3.41 mol% (plant 3.4)",
-      "url": "https://smartscitech.com/index.php/IOGR/article/download/1255/1189",
-      "status": "[ПОДТВЕРЖДЕНО]"
-    },
-    "ammonia_benchmark": {
-      "per_pass_conversion_range": [
-        0.15,
-        0.2
-      ],
-      "outlet_NH3_molpct_benchmark": 13.0,
-      "source": "RSC EES 2020 (opened) 15-25% per pass; COMSOL/Rase benchmark 13 mol% NH3 at outlet (opened)",
-      "status": "[ЧАСТИЧНО]"
-    }
+  "middle_east": {
+   "label": "Middle East (Jubail / Gulf)",
+   "ambient_dry_bulb_C": 48.0,
+   "cooling_water_supply_C": 35.0,
+   "cooling_water_return_C": 45.0,
+   "air_cooler_approach_K": 12.0,
+   "product_T_C": 55.0,
+   "bfw_T_C": 104.0,
+   "source": "opened ACHE design guide (Middle East design ambient 45-50 C, 50 C Jubail case), Gulf cooling-water paper (35 C)",
+   "status": "[PARTIAL] design values are engineering assumptions consistent with the opened ranges"
   }
+ },
+ "feeds": {
+  "russia_h": {
+   "label": "Russian high-methane pipeline gas (GOST-type H gas)",
+   "dry_mol_fraction": {
+    "CH4": 96.96,
+    "C2H6": 1.37,
+    "C3H8": 0.45,
+    "C4H10": 0.15,
+    "C5H12": 0.02,
+    "C6H14": 0.01,
+    "CO2": 0.18,
+    "N2": 0.86
+   },
+   "H2S_ppmv": 5.0,
+   "H2S_after_guard_ppmv": 0.02,
+   "chlorine_ppmv": 0.01,
+   "H2_recycle_mol_per_100": 1.0,
+   "p_bar_abs": 30.0,
+   "T_C": 25.0,
+   "source": "Frontiers 2025, Table 1 'Russia (H)' (opened); GOST 5542 status page (opened, standard superseded by GOST 5542-2014/2022 - text NOT opened)",
+   "status": "[PARTIAL] composition opened; actual GOST standard text not opened"
+  },
+  "me_rich": {
+   "label": "Middle East associated/rich gas (sensitivity)",
+   "dry_mol_fraction": {
+    "CH4": 83.5,
+    "C2H6": 7.0,
+    "C3H8": 2.0,
+    "C4H10": 0.8,
+    "C5H12": 0.2,
+    "C6H14": 0.0,
+    "CO2": 0.2,
+    "N2": 6.1
+   },
+   "H2S_ppmv": 20.0,
+   "H2S_after_guard_ppmv": 0.02,
+   "chlorine_ppmv": 0.01,
+   "H2_recycle_mol_per_100": 1.0,
+   "p_bar_abs": 30.0,
+   "T_C": 25.0,
+   "source": "IHRDC Midstream Gas 'Algeria Hassi-R' wet gas (opened snippet) used as a regional analogue, NOT a specific field",
+   "status": "[ASSUMPTION] analogue composition"
+  }
+ },
+ "products": {
+  "methanol": {
+   "label": "Methanol synthesis gas",
+   "metric": "SN",
+   "target": 2.05,
+   "tolerance": 0.05,
+   "metric_definition": "SN = (H2 - CO2)/(CO + CO2) on DRY basis",
+   "capacity": 100000.0,
+   "capacity_unit": "dry_syngas_Nm3_h",
+   "capacity_basis": "dry_syngas",
+   "product_p_bar_abs": 24.0,
+   "max_H2O_molpct": 0.5,
+   "route": "bi_reforming",
+   "downstream": [
+    "WHB",
+    "CO2_trim",
+    "condensate_separation",
+    "drying"
+   ],
+   "knobs": {
+    "SC": 3.0,
+    "CO2C": 0.2468,
+    "O2C": 0.0,
+    "T_K": 1123.15,
+    "p_bar": 25.0,
+    "approach_K": 10.0,
+    "MDEA_CO2_recovery": 0.95,
+    "MDEA_reboiler_GJ_per_tCO2": 2.8
+   },
+   "source": "Uhde/ThyssenKrupp Nitrogen+Syngas 2010 Table 1 (opened): methanol (H2-CO2)/(CO+CO2) ~2.0; RSC EES 2020 & Fraunhofer (opened): 2.02-2.1; Applied Sciences 2017 7,1213 (opened): make-up gas should contain 4-8 mol% CO2 for maximum activity/selectivity, S module slightly above 2; part of the imported CO2 is removed in the trim unit",
+   "status": "[CONFIRMED] metric and CO2 window; CO2 trim is a design measure to enter the licensor window",
+   "drying_note": "[NOT MODELLED] dryer regeneration duty; needed for the 55 C Middle East product to meet 0.5 mol% H2O",
+   "co2_trim_target_molpct": 6.0,
+   "co2_trim_max_recovery": 0.9,
+   "min_CO2_molpct": 4.0,
+   "max_CO2_molpct": 8.0
+  },
+  "ft": {
+   "label": "Fischer-Tropsch (Co catalyst) synthesis gas",
+   "metric": "H2_CO",
+   "target": 2.1,
+   "tolerance": 0.05,
+   "metric_definition": "H2/CO molar on DRY basis",
+   "capacity": 100000.0,
+   "capacity_unit": "dry_syngas_Nm3_h",
+   "capacity_basis": "dry_syngas",
+   "product_p_bar_abs": 24.0,
+   "max_CO2_molpct": 3.0,
+   "max_CH4_molpct": 5.0,
+   "max_N2_molpct": 3.0,
+   "max_H2O_molpct": 0.5,
+   "route": "ATR",
+   "downstream": [
+    "WHB",
+    "CO2_removal",
+    "condensate_separation",
+    "drying"
+   ],
+   "knobs": {
+    "SC": 1.3,
+    "CO2C": 0.0,
+    "O2C": 0.62,
+    "T_K": 1323.15,
+    "p_bar": 25.0,
+    "approach_K": 10.0,
+    "MDEA_CO2_recovery": 0.95,
+    "MDEA_reboiler_GJ_per_tCO2": 2.8
+   },
+   "source": "Uhde/ThyssenKrupp Nitrogen+Syngas 2010 Table 1 (opened): GTL H2:CO ~2.0; OSTI 1547249 (opened PDF https://www.osti.gov/servlets/purl/1547249): Co 2.0-2.2, Dry 2.15",
+   "status": "[CONFIRMED] ratio range; 2.10 is the chosen set-point"
+  },
+  "oxo": {
+   "label": "Oxo / hydroformylation synthesis gas",
+   "metric": "H2_CO",
+   "target": 1.05,
+   "tolerance": 0.08,
+   "metric_definition": "H2/CO molar on DRY basis",
+   "capacity": 50000.0,
+   "capacity_unit": "dry_syngas_Nm3_h",
+   "capacity_basis": "dry_syngas",
+   "product_p_bar_abs": 24.0,
+   "max_CO2_molpct": 5.0,
+   "max_H2O_molpct": 0.5,
+   "route": "ATR_CO2",
+   "downstream": [
+    "WHB",
+    "CO2_removal",
+    "condensate_separation",
+    "drying"
+   ],
+   "knobs": {
+    "SC": 0.6,
+    "CO2C": 0.9,
+    "O2C": 0.7,
+    "T_K": 1173.15,
+    "p_bar": 20.0,
+    "approach_K": 10.0,
+    "MDEA_CO2_recovery": 0.95,
+    "MDEA_reboiler_GJ_per_tCO2": 2.8
+   },
+   "source": "Techniques de l'Ingenieur hydroformylation (opened): H2/CO = 1 to 1.25; KFUPM lecture (opened): 1-1.5; US8859823B2 (opened) 1:1 stoichiometry. V2 route changed to autothermal/partial oxidation with CO2 co-feed: an adiabatic Gibbs ATR with O2/C tuned to H2/CO = 1.05 (the pure CO2-reforming route with a pre-reformer needed CO2/C > 2.4 and produced >5 mol% CO2).",
+   "status": "[CONFIRMED] ratio range; [PARTIAL] ATR route choice is a design decision"
+  },
+  "hydrogen": {
+   "label": "High-purity hydrogen (SMR + WGS + MDEA + PSA)",
+   "metric": "H2_purity",
+   "target": 0.9997,
+   "tolerance": 0.0002,
+   "metric_definition": "H2 mole fraction in PSA product",
+   "capacity": 100000.0,
+   "capacity_unit": "H2_Nm3_h",
+   "capacity_basis": "H2_product",
+   "product_p_bar_abs": 22.0,
+   "max_CO_ppm": 0.2,
+   "max_CO2_ppm": 2.0,
+   "route": "SMR_WGS_PSA",
+   "downstream": [
+    "WHB",
+    "WGS",
+    "CO2_removal",
+    "PSA",
+    "condensate_separation",
+    "drying"
+   ],
+   "knobs": {
+    "SC": 3.0,
+    "CO2C": 0.0,
+    "O2C": 0.0,
+    "T_K": 1123.15,
+    "p_bar": 25.0,
+    "approach_K": 10.0,
+    "WGS_CO_conversion": 0.995,
+    "PSA_H2_recovery": 0.88,
+    "MDEA_CO2_recovery": 0.95,
+    "MDEA_reboiler_GJ_per_tCO2": 2.8,
+    "PSA_CO_slip": 0.002,
+    "PSA_CO2_slip": 0.001,
+    "PSA_N2_slip": 1.0,
+    "PSA_CH4_slip": 0.005
+   },
+   "source": "ISO 14687:2025 Table 3 (opened official sample PDF): H2 fuel index >=99.97%, total non-H2 <=300 umol/mol, H2O <=5, CH4 <=100, N2 <=300, CO2 <=2, CO <=0.2 umol/mol; Processes 2026 14(2),319 and Energies 2026 19(20),4873 (opened): PSA 85-90% recovery, >99% purity, MDEA 95% CO2 recovery, 2.7-3.96 GJ/tCO2 reboiler",
+   "status": "[CONFIRMED] ISO 14687:2025 grade D limits; PSA/MDEA performance [PARTIAL] from opened open-access studies",
+   "max_H2O_ppm": 5.0,
+   "max_CH4_ppm": 100.0,
+   "max_N2_ppm": 300.0,
+   "max_total_non_H2_ppm": 300.0,
+   "H2_index_min_molpct": 99.97,
+   "PSA_slip_status": "[ASSUMPTION] adsorbent selectivity weights; calibrated so the product meets ISO 14687:2025 grade D. No PSA vendor performance curve was opened; N2 is assumed to be the dominant breakthrough impurity, CH4/CO/CO2 strongly adsorbed.",
+   "max_H2O_molpct": 0.0005
+  },
+  "ammonia": {
+   "label": "Ammonia synthesis gas (H2/N2 = 3, purified)",
+   "metric": "H2_N2",
+   "target": 3.0,
+   "tolerance": 0.03,
+   "metric_definition": "H2/N2 molar in methanator product",
+   "capacity": 1200.0,
+   "capacity_unit": "NH3_t_day",
+   "capacity_basis": "NH3",
+   "product_p_bar_abs": 25.0,
+   "max_CO_CO2_ppm": 10.0,
+   "max_H2O_molpct": 0.1,
+   "route": "SMR_air_secondary",
+   "downstream": [
+    "WHB",
+    "WGS",
+    "CO2_removal",
+    "methanation",
+    "drying",
+    "compression"
+   ],
+   "knobs": {
+    "SC": 3.0,
+    "CO2C": 0.0,
+    "O2C": 0.0,
+    "T_K": 1123.15,
+    "p_bar": 30.7,
+    "approach_K": 10.0,
+    "air_ratio": 0.55,
+    "WGS_CO_conversion": 0.995,
+    "MDEA_CO2_recovery": 0.95,
+    "MDEA_reboiler_GJ_per_tCO2": 2.8,
+    "methanator_residual_ppm": 5.0
+   },
+   "source": "EPA AP-42 8.1 (opened): H2:N2 = 3, secondary reformer with air, WGS, CO2 removal, methanation; Uhde 2010 Table 1 (opened): (H2+CO)/N2 ~3; UMD Aspen Plus ammonia model https://user.eng.umd.edu/~nsw/chbe446/Ammonia-Aspen.pdf (opened): residual CO+CO2 <10 ppm",
+   "status": "[CONFIRMED] flowsheet and ratio; 10 ppm target is the opened UMD/Aspen value"
+  }
+ },
+ "process": {
+  "T_feed_preheat_K": 623.15,
+  "T_secondary_air_preheat_K": 813.15,
+  "T_primary_out_K": 1064.15,
+  "T_WHB_out_K": 623.15,
+  "WGS_HTS_T_K": 633.15,
+  "WGS_LTS_T_K": 483.15,
+  "MDEA_T_K": 313.15,
+  "methanator_T_K": 573.15,
+  "furnace_efficiency_LHV": 0.85,
+  "pinch_dT_min_K": 20.0,
+  "steam_p_bar_abs": 30.0,
+  "steam_T_K": 673.15,
+  "dew_point_method": "IAPWS97",
+  "status": "temperatures from EPA AP-42 / Nature Sci Rep 2025 (opened) + [ASSUMPTION]",
+  "prereformer_enabled": true,
+  "prereformer_approach_K": 0.0,
+  "prereformer_T_in_K": 623.15,
+  "prereformer_status": "[PARTIAL] adiabatic Gibbs-equilibrium pre-reformer; no vendor kinetic model"
+ },
+ "catalyst": {
+  "basis": "Ni/MgAl2O4",
+  "Ni_wt_pct_metal": 15.0,
+  "commercial_proxy_NiO_wt_pct": 17.0,
+  "commercial_proxy_loaded_density_kg_m3": 900.0,
+  "lab_BET_m2_g": 86.0,
+  "lab_Ni_particle_nm": 6.6,
+  "GHSV_reformer_Nm3_per_m3cat_h": 2500.0,
+  "GHSV_pre_reformer_Nm3_per_m3cat_h": 5000.0,
+  "life_years": 4.0,
+  "life_range_years": [
+   3.0,
+   5.0,
+   8.0,
+   10.0
+  ],
+  "Ni_price_USD_per_t": 18000.0,
+  "catalyst_price_USD_per_t": 5000.0,
+  "source": "JM KATALCO brochure https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214 (opened): 16-18% NiO, loaded density 780-1140 kg/m3, QUADRALOBE lives >8-10 y; Catalysts 2019 9,801 (opened): 15 wt% Ni/MgAl2O4 86 m2/g 6.6 nm; Applied Energy 377 (2025) 124556 (opened): GHSV 2500 h-1; Digital Refining (opened): changeout 4-6 y",
+  "status": "[PARTIAL] commercial data are an α-Al2O3/Ca-aluminate PROXY; the MgAl2O4 chemistry basis is from the lab source. Ni price is [ASSUMPTION]."
+ },
+ "eos": {
+  "enabled": true,
+  "type": "Peng-Robinson",
+  "kset": "base",
+  "kij_sensitivity": [
+   "zero",
+   "base",
+   "high"
+  ],
+  "source": "ACS Omega 2019 4,13279 (opened), industrialmonitordirect PR kij (opened snippet), Reaktoro GitHub (opened snippet), Cantera critical-properties.yaml (opened)",
+  "status": "[PARTIAL] k_ij from secondary sources; zero/high sets give the uncertainty band"
+ },
+ "equipment": {
+  "heat_flux_kW_m2": 80.0,
+  "tube_ID_m": 0.1,
+  "tube_heated_length_m": 12.0,
+  "tube_wall_m": 0.015,
+  "tube_OD_m": 0.13,
+  "h_inner_W_m2K": 800.0,
+  "k_tube_W_mK": 25.0,
+  "pellet_d_m": 0.016,
+  "bed_voidage": 0.5,
+  "gas_viscosity_Pa_s": 3e-05,
+  "U_WHB_W_m2K": 60.0,
+  "dP_max_bar": 3.0,
+  "LMP_C": 22.4,
+  "LMP_ref": 35.2,
+  "stress_ref_MPa": 11.0,
+  "LMP_slope_log10stress_per_LMP": -0.05,
+  "design_life_h": 100000.0,
+  "corrosion_allowance_m": 0.0015,
+  "source": "LMP: Eur. J. Materials 2021 DOI 10.1080/26889277.2021.1994841 (opened) HP-Nb C=22.4, LM=35.2 at 11 MPa, 100000 h per API 530; API 530 1996 excerpt (opened) t=P*Do/(2S+P); heat flux/tube geometry [ASSUMPTION]",
+  "status": "[PARTIAL] LMP master-curve slope is an [ASSUMPTION]; not an API 530 certification",
+  "note": "tube wall 15 mm / OD 130 mm chosen to satisfy the LMP-based required thickness; see docs/13"
+ },
+ "economics": {
+  "gas_USD_per_MMBtu": 8.0,
+  "electricity_USD_per_MWh": 80.0,
+  "CO2_USD_per_t": 80.0,
+  "steam_USD_per_t": 25.0,
+  "cooling_water_USD_per_m3": 0.05,
+  "O2_power_kWh_per_t": 245.0,
+  "CAPEX_USD_per_kW_H2_LHV": 700.0,
+  "CAPEX_scale_exponent": 0.7,
+  "CAPEX_ref_H2_MW_LHV": 300.0,
+  "H2_LHV_MJ_per_Nm3": 10.795,
+  "ASU_CAPEX_share": 0.25,
+  "CO2_removal_CAPEX_share": 0.1,
+  "operating_hours_per_year": 8000.0,
+  "discount_rate": 0.1,
+  "plant_life_years": 20.0,
+  "fixed_OPEX_pct_CAPEX": 0.03,
+  "source": "BEIS Hydrogen Production Costs 2021 (opened): 910 GBP/kW H2 (2020, with CCUS) and 300 MW reference; IEA Future of Hydrogen (opened): 500-900 USD/kW H2 without CCUS; DOE H2@Scale (opened): reformer+ASU+CO2 removal ~50% of capital; gasliquids 2020 (opened): H2 LHV 10.795 MJ/Nm3",
+  "status": "[PARTIAL] CAPEX correlation is scaled from an opened H2 study to syngas products; ±50% screening accuracy"
+ },
+ "adjust": {},
+ "synthesis": {
+  "methanol": {
+   "p_bar": 75.0,
+   "T_C": 250.0,
+   "per_pass_COx_conversion": 0.25,
+   "overall_C_conversion": 0.97,
+   "recycle_ratio": 3.0,
+   "dH_CO_kJ_mol": -90.7,
+   "dH_CO2_kJ_mol": -49.7,
+   "CO2_feed_molpct_range": [
+    4.0,
+    8.0
+   ],
+   "source": "Applied Sciences 2017 7,1213 (opened): 50-100 bar, 200-300 C, 4-8% CO2, dH CO -90.7 / CO2 -49.7 kJ/mol; OSTI 2424604 (opened): single-pass 25-30%; recycle 2:1-5:1 from opened review",
+   "status": "[PARTIAL] loop stoichiometry + opened ranges, not a licensor kinetic model"
+  },
+  "ft": {
+   "p_bar": 20.0,
+   "T_C": 230.0,
+   "CO_conversion": 0.7,
+   "alpha": 0.9,
+   "dH_kJ_per_mol_CO": -165.0,
+   "CH2_MW": 14.027,
+   "source": "Hywax (opened): single-pass CO conversion 60-80%; ACS Catal 2017 (opened): industrial alpha 0.85-0.95; ASF W_n=n(1-a)^2 a^(n-1); OSTI 20840761 (opened): alpha(paraffin) 0.91",
+   "status": "[PARTIAL] ASF ideal distribution, no detailed product slate"
+  },
+  "oxo": {
+   "olefin": "propylene",
+   "olefin_MW": 42.081,
+   "aldehyde": "C4H8O",
+   "aldehyde_MW": 72.107,
+   "p_bar": 20.0,
+   "T_C": 100.0,
+   "olefin_conversion": 0.9,
+   "aldehyde_selectivity": 0.95,
+   "n_iso_ratio": 7.0,
+   "source": "US7582802B2 (opened): propylene hydroformylation mass balance; MDPI Catalysts 2020 10,510 (opened): selectivity ~99% at mild conditions; Intech/JM LP Oxo (opened): n:i ~7:1; Science 2020 (opened): H2:CO 1:1 typical",
+   "status": "[PARTIAL] stoichiometric aldehyde yield, heat of reaction NOT modelled"
+  },
+  "hydrogen": {
+   "delivery_p_bar": 200.0,
+   "T_in_K": 313.15,
+   "k": 1.41,
+   "MW": 2.016,
+   "source": "Processes 2026 14(2),319 (opened): H2 compressed to 200 bar, 9.2 MW for 2966 kmol/h",
+   "status": "[PARTIAL] ideal multistage compression, no intercooling model"
+  },
+  "ammonia": {
+   "p_bar": 200.0,
+   "T_C": 450.0,
+   "per_pass_conversion": 0.18,
+   "overall_conversion": 0.97,
+   "dH_kJ_per_mol_NH3": -46.0,
+   "source": "RSC EES 2020 (opened): 15-25 MPa, 400-450 C, ~15% single pass, recycle; C-THRU technical brief (opened): dH=-46 kJ/mol NH3, 20-30% per pass; Haber process (opened): 97% overall",
+   "status": "[PARTIAL] loop stoichiometry + opened ranges, not a converter simulation"
+  }
+ },
+ "safety": {
+  "Ni_CO_4": {
+   "log10K": "7430/T - 21.90",
+   "T_range_K": [
+    300,
+    500
+   ],
+   "CO_purge_ppm": 10.0,
+   "safe_T_C": 200.0,
+   "source": "OSTI 7349456 (opened): dH=-142.3 kJ/mol, dS=-419.2 J/mol/K -> log K = 7430/T - 21.90; NIST WebBook Ni(CO)4 (opened); Becht (opened): keep T>200 C until CO<10 ppm to stay below 1 ppb Ni(CO)4",
+   "status": "[PARTIAL] equilibrium screening only; kinetics and Ni surface activity not modelled"
+  },
+  "relief": {
+   "p_set_factor": 1.1,
+   "blocked_outlet_factor": 1.0,
+   "source": "[ASSUMPTION] API 520/521 full text NOT opened; only a screening choked-flow estimate",
+   "status": "[ДОПУЩЕНИЕ]"
+  },
+  "sulfur": {
+   "H2S_in_ppmv": 5.0,
+   "H2S_after_guard_ppmv": 0.02,
+   "source": "JM purification webinar (opened, v1): <10 ppbv slip with lead-lag ZnO",
+   "status": "[ЧАСТИЧНО]"
+  }
+ },
+ "kinetics": {
+  "methanol": {
+   "T_K": 523.15,
+   "p_bar": 75.0,
+   "GHSV_h1": 100000.0,
+   "catalyst_density_kg_m3": 1775.0,
+   "recycle_ratio": 3.0,
+   "inlet_MeOH_molpct": 0.05,
+   "applicability": "VBF primary data 180-280 C, 15-51 bar; GHSV 10000-30000 1/h from Wiley 2020 review",
+   "source": "Vanden Bussche & Froment J.Catal.1996 primary PDF (opened) https://terpconnect.umd.edu/~nsw/chbe446/VandenBussche-syngas2MeOH.pdf + Graaf 1986 K_eq; catalyst density 1775 kg/m3 from Table 3",
+   "status": "[ДОПУЩЕНИЕ] effective GHSV=100000 1/h is a LUMPED representation of a 4-bed adiabatic quench reactor as one isothermal PFR: chosen so that the VBF kinetics reproduce BOTH the opened 25-30% per-pass COx conversion and the Arzew 3.41 mol% MeOH benchmark. GHSV=10000 1/h is reported separately for transparency.",
+   "GHSV_reference_h1": 10000.0,
+   "GHSV_benchmark_sweep_h1": [
+    10000.0,
+    30000.0,
+    100000.0,
+    300000.0
+   ]
+  },
+  "ammonia": {
+   "T_K": 723.15,
+   "p_bar": 200.0,
+   "GHSV_h1": 10000.0,
+   "recycle_ratio": 3.0,
+   "inlet_NH3_molpct": 0.5,
+   "effectiveness_eta": 1.0,
+   "applicability": "Dyson-Simon/ChemCatChem 2024 data 598-773 K, 90 bar; design point 723 K / 200 bar is OUTSIDE the fitted pressure range",
+   "source": "Temkin & Pyzhev 1940 / Dyson & Simon 1968 rate law; COMSOL blog K_a correlation (opened); alpha=0.654, k0=6.5e13 kmol/(m3cat h), Ea=159.4 kJ/mol from ChemCatChem 2024 (open PDF)",
+   "status": "[НЕ ПОДТВЕРЖДЕНО] absolute rate scale: isothermal single-bed Temkin-Pyzhev PFR at the opened GHSV=10000 1/h underpredicts the industrial 15-20% per-pass conversion by ~2x; eta=1 (no hidden effectiveness factor)",
+   "GHSV_benchmark_sweep_h1": [
+    20000.0,
+    10000.0,
+    5000.0,
+    3000.0,
+    2000.0,
+    1000.0
+   ],
+   "alpha": 0.654,
+   "k0_kmol_m3cat_h": 65000000000000.0,
+   "Ea_J_mol": 159400.0,
+   "n_beds": 3,
+   "T_in_bed_K": [
+    703.15,
+    703.15,
+    703.15
+   ],
+   "cold_shot_fraction": 0.0,
+   "GHSV_basis": "NORMAL m3 gas per m3 catalyst per hour (0 C / 101325 Pa) - same basis as every capacity number in this model",
+   "reactor_type": "multi-bed ADIABATIC converter with interbed cooling (V5; replaces the V4 single isothermal PFR)",
+   "converter_model_status": "[ЧАСТИЧНО] adiabatic energy balance from NIST Shomate NH3/N2/H2 enthalpies; single scalar k_scale calibrated against an opened industrial per-pass benchmark",
+   "calibration": {
+    "target_per_pass_conversion": 0.175,
+    "T_K": 698.15,
+    "p_bar": 150.0,
+    "GHSV_normal_h1": 20000.0,
+    "n_beds": 3,
+    "method": "single scalar k_scale, bisection on log10(k_scale); alpha, Ea, Ka and the energy balance are left at their source values",
+    "source_of_target": "Humphreys et al., Advanced Energy Sustainability Research 2021 (opened): 15-20 % per-pass N2 conversion at 425 C / 150 bar / SV 10 000-30 000 h-1 -> midpoint 17.5 % used as the objective",
+    "report_both": true,
+    "note": "Calibration on ONE literature benchmark is not pilot validation; loop 5 stays open until pilot data at design conditions are measured."
+   },
+   "bed_T_max_K": 803.15,
+   "bed_T_max_K_status": "[ДОПУЩЕНИЕ] 530 C continuous ceiling for a fused magnetite ammonia catalyst - engineering practice, NOT taken from a vendor datasheet (the datasheet for the actual catalyst was not found; see docs/27_v5_vendor_rfi.md). Must be replaced by the vendor value.",
+   "n_steps": 400,
+   "T_K_status": "T_K is the legacy V4 isothermal-bed temperature, kept only for the V4 single-bed comparison; the V5 converter uses T_in_bed_K"
+  },
+  "methanol_benchmark": {
+   "source": "ASPEN-HYSYS simulation of Arzew CP1Z 4-bed quench reactor (IOGR 2023, opened): 52 bar, 210-270 C, CO 7.5->5.4 mol%, CO2 6->7.6, H2 73.7->69.35, MeOH 0->3.41 mol% (plant 3.4)",
+   "url": "https://smartscitech.com/index.php/IOGR/article/download/1255/1189",
+   "status": "[ПОДТВЕРЖДЕНО]"
+  },
+  "ammonia_benchmark": {
+   "per_pass_conversion_range": [
+    0.15,
+    0.2
+   ],
+   "outlet_NH3_molpct_benchmark": 13.0,
+   "source": "Humphreys et al., Adv. Energy Sustainability Res. 2021 (opened): 15-20 % per-pass at 425 C / 150 bar / SV 10 000-30 000 h-1; RSC EES 2020 (opened): 15-25 % per pass; COMSOL/Rase benchmark 13 mol % NH3 at converter outlet (opened)",
+   "status": "[ПОДТВЕРЖДЕНО] numbers read in the opened sources"
+  }
+ }
 }

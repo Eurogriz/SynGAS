@@ -192,6 +192,52 @@ def api_verify():
                                 "runtime_s": round(time.time() - t0, 1)}))
 
 
+@app.get("/api/converter")
+def api_converter():
+    """V5 multi-bed adiabatic NH3 converter. Uses the saved run when present;
+    otherwise computes it once (tens of seconds) and caches it."""
+    path = os.path.join(ROOT, "results_v2", "converter_ammonia.json")
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as fh:
+                obj = json.load(fh)
+            obj["from_saved_run"] = True
+            return jsonify(to_jsonable(obj))
+        except Exception as exc:
+            return jsonify({"error": str(exc)}), 500
+    if "converter" in _CACHE:
+        return jsonify(to_jsonable(_CACHE["converter"]))
+    from model.converter import ammonia_converter_block
+    try:
+        r = _run("ammonia", {}, no_tune=False)
+        obj = ammonia_converter_block(load_config(product="ammonia"), r)
+        obj["from_saved_run"] = False
+        _CACHE["converter"] = obj
+        return jsonify(to_jsonable(obj))
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+
+
+@app.post("/api/ingest")
+def api_ingest():
+    """Validate a pilot campaign file against data/pilot_schema.json and rerun
+    the loop-5 pilot subchecks. Only files inside the repository are accepted."""
+    a = request.get_json(force=True, silent=True) or {}
+    rel = str(a.get("file", "")).strip()
+    if not rel:
+        return jsonify({"error": "field 'file' is required (path inside the repo)"}), 400
+    cand = os.path.normpath(os.path.join(ROOT, rel))
+    if not cand.startswith(ROOT + os.sep) or not os.path.exists(cand):
+        return jsonify({"error": "file not found inside the repository: " + rel}), 404
+    if not cand.lower().endswith((".csv", ".json")):
+        return jsonify({"error": "only .csv or .json campaign files are accepted"}), 400
+    from model.data_ingest import report
+    try:
+        return jsonify(to_jsonable(report(cand, load_config(product="ammonia"))))
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+
+
 @app.get("/plot/<path:name>")
 def plot(name):
     if not name.endswith(".png") or "/" in name or ".." in name:
@@ -318,12 +364,14 @@ a{color:var(--acc)}
 <button onclick="tab('t7',this)">JSON</button>
 <button onclick="tab('t8',this)">Синтез</button>
 <button onclick="tab('t9',this)">Безопасность</button>
-<button onclick="tab('t10',this)">Кинетика / контур 5</button></div>
+<button onclick="tab('t10',this)">Кинетика / контур 5</button>
+<button onclick="tab('t11',this);conv()">Конвертор NH₃ (V5)</button></div>
 <div id="t1"></div><div id="t2" class="hidden"></div><div id="t3" class="hidden"></div>
 <div id="t4" class="hidden"></div><div id="t5" class="hidden"></div>
 <div id="t6" class="hidden"></div><div id="t7" class="hidden"><pre id="raw"></pre></div>
 <div id="t8" class="hidden"></div><div id="t9" class="hidden"></div>
 <div id="t10" class="hidden"></div>
+<div id="t11" class="hidden"></div>
 </main></div>
 <script>
 let CFG=null, LAST=null;
@@ -332,7 +380,7 @@ const fmt=(x,n=3)=>x===null||x===undefined||Number.isNaN(+x)?'—':(+x).toFixed(
 const tbl=(head,rows)=>'<table><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+
  rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
 const say=(m,bad=false)=>{$('status').textContent=m;$('status').style.borderLeftColor=bad?'#f85149':'#d29922'};
-function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
 async function init(){CFG=(await (await fetch('/api/config')).json());
  const P=CFG.raw.products, A=CFG.raw.active, C=CFG.raw.catalyst, E=CFG.raw.economics, PR=CFG.raw.process;
  const fill=(id,arr,val)=>{$(id).innerHTML=arr.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('')};
@@ -478,6 +526,65 @@ async function pilot(){const j=await (await fetch('/api/pilot')).json();
   fmt(j.mean_model_bias,3)+' (модель равновесная, данные кинетические). Даташит Ni/MgAl2O4 катализатора: '+
   (j.commercial_datasheet.catalyst_datasheet_found?'НАЙДЕН':'НЕ НАЙДЕН')+'.';
  tab('t10');}
+async function conv(){
+ say('конвертор NH3: расчёт (может занять ~20 с, если нет сохранённого прогона) ...');
+ const c=await (await fetch('/api/converter')).json();
+ if(c.error){$('t11').innerHTML='<h2>Конвертор NH3</h2><div class="note">ошибка: '+c.error+'</div>';say(c.error,true);return;}
+ const d=c.design||{},k=c.calibration||{},b=c.benchmark_validation||{},rm=c.peak_temperature_remedy||{},eq=c.equilibrium_check||{},rc=d.recycle_closure||{};
+ const st=x=>'<span class="'+(x==='OK'?'pass':'fail')+'">'+(x==='OK'?'в пределах':'ПРЕВЫШЕН')+'</span>';
+ $('t11').innerHTML='<h2>Многосекционный адиабатический конвертор NH3 (V5)</h2>'+
+  '<div class="note">3 адиабатические секции с промежуточным охлаждением; закон Темкина–Пызева; '+
+  'тепловой баланс по NIST Shomate; GHSV в <b>нормальных</b> м3/м3_кат·ч. '+
+  (c.from_saved_run?'Числа из сохранённого прогона `results_v2/converter_ammonia.json`.':'Рассчитано по запросу (в кэше панели).')+'</div>'+
+  tbl(['параметр','значение','комментарий'],[
+   ['давление / GHSV',fmt(d.p_bar,0)+' бар / '+fmt(d.GHSV_normal_h1,0)+' ч-1','нормальный базис (V5)'],
+   ['X N2 за проход (калибр.)',fmt(100*d.per_pass_N2_conversion,2)+' %','открытый коридор 15–20 % (150 бар)'],
+   ['X N2 за проход (k0 из статьи)',fmt(100*d.per_pass_N2_conversion_uncalibrated,2)+' %','без подгонки'],
+   ['выход NH3',fmt(d.outlet_NH3_molpct,2)+' мол.%','бенчмарк 13 мол.%'],
+   ['объём / масса катализатора',fmt(d.catalyst_volume_m3,1)+' м3 / '+fmt(d.catalyst_mass_t_at_1775kgm3,1)+' т','плотность 1775 кг/м3 — из VBF, не от поставщика'],
+   ['T секций (вход→выход)',JSON.stringify(d.T_bed_in_out_K),'подъём '+JSON.stringify(d.adiabatic_rise_K)+' K'],
+   ['пик постели / потолок',fmt(d.T_peak_K,1)+' K / '+fmt(d.catalyst_T_max_assumed_K,1)+' K',st(d.peak_T_check)],
+   ['ΔH при T постели',fmt(d.dH_rxn_at_bed_T_kJ_per_mol_NH3,2)+' кДж/моль NH3','не -45,9 при 298 K'],
+   ['теплота / промежуточное охлаждение',fmt(d.reaction_heat_MW,1)+' / '+fmt(d.interbed_cooling_duty_MW,1)+' МВт','утилизация не просчитана'],
+   ['рецикл по кинетике',fmt(d.recycle_ratio_implied_by_kinetics,2)+' (в конфиге '+fmt(d.recycle_ratio_configured,2)+')','X*(1+RR)='+fmt(rc.fraction_of_fresh_N2_converted,3)],
+   ['NH3: аппарат против контура',fmt(d.NH3_formed_in_converter_t_h,2)+' / '+fmt(d.net_NH3_from_loop_t_h,2)+' т/ч','отношение '+fmt(d.converter_vs_loop_NH3_ratio,3)],
+   ['невязка теплового баланса',(d.energy_balance_max_rel_residual||0).toExponential(2),'H=const по каждой секции'],
+  ])+
+  '<h2>Калибровка k0: один скаляр, открыто</h2>'+
+  tbl(['величина','значение','метка'],[
+   ['k_scale',fmt(k.k_scale,4),'бисекция по log10, только этот параметр'],
+   ['k0 опубликовано → эффективно',(k.k0_published_kmol_m3cat_h||0).toExponential(3)+' → '+(k.k0_effective_kmol_m3cat_h||0).toExponential(3),'кмоль/(м3кат·ч)'],
+   ['до калибровки',fmt(100*((k.uncalibrated||{}).per_pass_N2_conversion||0),2)+' %','отклонение от цели '+fmt(k.deviation_before_pct,1)+' %'],
+   ['после калибровки',fmt(100*((k.calibrated||{}).per_pass_N2_conversion||0),2)+' %','верно по построению: это проверка процедуры, не аппарата'],
+   ['расхождение двух открытых бенчмарков','×'+fmt(k.k0_uncertainty_factor,2),'17,5 % за проход против 13 мол.% NH3'],
+  ])+
+  '<div class="note">'+(k.what_this_is||'')+'</div>'+
+  '<h2>Сетка на открытой бенчмарк-точке (150 бар, 698 K, без подгонки)</h2>'+
+  tbl(['случай','GHSV ч-1','X за проход','NH3 мол.%','равновесие мол.%','T пик K'],
+   (b.rows||[]).map(r=>[r.case,fmt(r.GHSV_normal_h1,0),fmt(100*r.per_pass_N2_conversion,2)+' %',fmt(r.outlet_NH3_molpct,2),fmt(r.equilibrium_NH3_molpct_at_inlet_T,1),fmt(r.T_peak_K,0)]))+
+  '<p>строк внутри открытого коридора: '+fmt(b.n_rows_in_band,0)+' из '+fmt(b.n_rows,0)+'</p>'+
+  '<h2>Проверка K_a против энергий Гиббса NIST Shomate</h2>'+
+  '<p>максимальное отклонение '+fmt(eq.max_abs_deviation_pct,2)+' % → '+
+   '<span class="'+(eq.passed_within_15pct?'pass':'fail')+'">'+(eq.passed_within_15pct?'ПРОЙДЕНА':'ПРОВАЛЕНА')+'</span> '+
+   '(добавлено в цикл 4)</p>'+
+  '<h2>Мера по пиковой температуре</h2>'+
+  '<p>общий вход в секции '+fmt(rm.recommended_common_bed_inlet_K,1)+' K → пик '+fmt(rm.achieved_peak_T_K,1)+' K, '+
+   'X за проход '+fmt(100*(rm.per_pass_N2_conversion_at_that_inlet||0),2)+' %, выход NH3 '+fmt(rm.outlet_NH3_molpct_at_that_inlet,2)+' мол.%</p>'+
+  '<div class="note">'+(rm.caveat||'')+'</div>'+
+  '<img src="/plot/13_converter_profile.png">'+
+  '<h2>Приём данных питотной кампании</h2>'+
+  '<p>Контракт данных: <code>data/pilot_schema.json</code> (см. <code>docs/27</code>). Положите файл кампании в репозиторий и укажите путь — валидация + сравнение + авто-перезапуск подпроверок контура 5.</p>'+
+  '<div class="row"><input id="ingfile" size="34" placeholder="data/my_campaign.csv"><button onclick="ing()">Проверить и перезапустить контур 5</button></div><pre id="ingout"></pre>'+
+  '<div class="note">Контур 5 остаётся НЕ ПРОЙДЕННЫМ: ни питотной кампании в расчётной точке, ни даташита катализатора, ни сертифицированной HAZOP нет. Калибровка по чужому промышленному бенчмарку валидацией не считается.</div>';
+ say('конвертор NH3: готово');}
+async function ing(){const f=$('ingfile').value;say('ингестирование '+f+' ...');
+ const r=await fetch('/api/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({file:f})});
+ const j=await r.json();
+ if(j.error){$('ingout').textContent=j.error;say(j.error,true);return;}
+ $('ingout').textContent=JSON.stringify(j,null,1).slice(0,8000);
+ say('пригодных записей: '+(j.n_records_usable||0)+' из '+(j.n_records_read||0)+
+  '; ошибок контракта: '+(j.n_errors||0)+'; подпроверок контура 5 закрыто этими данными: '+
+  (j.loop5_subchecks_passed_from_this_data||0)+'/3', (j.n_errors||0)>0);}
 async function verify(){const j=await call('/api/verify',{});
  if(j.summary){$('t6').innerHTML='<h2>Пять циклов проверки</h2>'+tbl(['цикл','статус'],
   Object.entries(j.summary).map(([k,v])=>[k,'<span class="'+(v?'pass':'fail')+'">'+(v?'PASS':'FAIL')+'</span>']))

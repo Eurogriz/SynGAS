@@ -282,6 +282,39 @@ def make_plots(designs, scenarios, verification):
                  fontsize=11)
     fig.tight_layout(); fig.savefig(os.path.join(OUT, "12_kinetic_benchmarks.png")); plt.close(fig)
 
+    # 13 V5 adiabatic converter: bed temperature / NH3 profile --------------
+    convb = (designs["ammonia"]["synthesis"]["kinetic"]
+             .get("ammonia_converter") or {})
+    if convb.get("design"):
+        prof = convb["design"]["bed_profile"]
+        fig, ax = plt.subplots(1, 2, figsize=(11, 4))
+        vb = [q["V_over_Vtot"] for q in prof]
+        ax[0].plot(vb, [q["T_K"] for q in prof], "-o", ms=2, lw=1.2)
+        ax[0].axhline(convb["design"]["catalyst_T_max_assumed_K"], color="r",
+                      ls="--", label="assumed catalyst ceiling")
+        for q in prof:
+            if abs(q["V_over_Vtot"] * convb["design"]["reactor"]["n_beds"]
+                   - round(q["V_over_Vtot"] * convb["design"]["reactor"]["n_beds"])) < 1e-9:
+                ax[0].axvline(q["V_over_Vtot"], color="grey", lw=0.6)
+        ax[0].set_xlabel("cumulative V / V_total catalyst")
+        ax[0].set_ylabel("bed temperature [K]")
+        ax[0].set_title("adiabatic beds: T profile (3 beds, 200 bar)")
+        ax[0].legend(fontsize=7)
+        ax[1].plot(vb, [q["y_NH3_molpct"] for q in prof], "-s", ms=2, lw=1.2,
+                   color="tab:green")
+        eq = convb["design"]["equilibrium_NH3_molpct_at_inlet_T"]
+        ax[1].axhline(eq, color="k", ls=":", label="equilibrium at inlet T")
+        ax[1].axhline(13.0, color="r", ls="--", label="opened benchmark 13 mol%")
+        ax[1].set_xlabel("cumulative V / V_total catalyst")
+        ax[1].set_ylabel("NH3 [mol%]")
+        ax[1].set_title("converter NH3 build-up vs opened benchmark")
+        ax[1].legend(fontsize=7)
+        fig.suptitle("SynGAS V5 - multi-bed adiabatic ammonia converter",
+                     fontsize=12)
+        fig.tight_layout()
+        fig.savefig(os.path.join(OUT, "13_converter_profile.png"))
+        plt.close(fig)
+
     # 13 loop 5 subchecks ---------------------------------------------------
     l5 = verification["loops"]["5_validation_falsification"]
     subs = l5["subchecks"]
@@ -314,6 +347,7 @@ def fnum(x, n=3):
 
 
 def write_reports(designs, scenarios, v):
+    l5 = v["loops"]["5_validation_falsification"]
     # 12 product variants --------------------------------------------------
     rows = []
     for p, r in designs.items():
@@ -738,7 +772,27 @@ CLOSED (docs/20); stoichiometric
 synthesis loops (docs/18) are now complemented by VBF/Graaf and
 Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
 (docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
-loop 5 was rerun and remains FAILED with 4/13 subchecks passing (docs/25).
+loop 5 was rerun and remains FAILED with {l5["subchecks_passed"]} of
+{l5["subchecks_total"]} subchecks passing (docs/25, docs/26).
+
+## 17.6 V5 state
+
+The isothermal ammonia PFR was replaced by a **multi-bed adiabatic converter**
+(NIST Shomate energy balance, normal-basis space velocity, Temkin-Pyzhev with
+published alpha/Ea and ONE documented activity scalar k_scale), and the pilot
+data / vendor / HAZOP gaps were converted into executable handover documents:
+
+- `docs/26_v5_converter.md` - converter, calibration, loop-5 consequences;
+- `docs/27_v5_pilot_test_program.md` + `data/pilot_schema.json` +
+  `model/data_ingest.py` - campaign design, data contract, automatic loop-5
+  rerun on ingest;
+- `docs/28_v5_vendor_rfi.md` - the 18 datasheet items the model needs;
+- `docs/29_v5_hazop_tor.md` - terms of reference for a certified HAZOP team.
+
+Still true after V5: **no pilot campaign has been run, no vendor datasheet was
+obtained, no certified HAZOP took place, and no HYSYS run exists** - those are
+physical and organisational acts that a code agent cannot perform; they are
+prepared for, not faked. Loop 5 stays FAILED until the data arrive.
 """
     open(os.path.join(DOCS, "17_v2_final_report.md"), "w", encoding="utf-8").write(txt)
 
@@ -1216,6 +1270,145 @@ FT и оксо по-прежнему стехиометрические (отк�
 """
     open(os.path.join(DOCS, "25_v4_loop5.md"), "w", encoding="utf-8").write(txt)
 
+    # 26 V5 multi-bed adiabatic ammonia converter ---------------------------
+    cv = (designs["ammonia"]["synthesis"]["kinetic"]
+          .get("ammonia_converter") or {})
+    cd = cv.get("design") or {}
+    cc = cv.get("calibration") or {}
+    cb = cv.get("benchmark_validation") or {}
+    ce = cv.get("equilibrium_check") or {}
+    rec = cd.get("recycle_closure") or {}
+    rm = cv.get("peak_temperature_remedy") or {}
+    txt = f"""# 26. V5 — многосекционный адиабатический конвертор NH₃ и калибровка k₀
+
+Замена изотермического PFR (V4) на промышленно корректный аппарат:
+**3 адиабатические секции с промежуточным охлаждением**, закон скорости
+Темкина–Пызева / Дайсона–Саймона, энтальпийный баланс по NIST Shomate.
+Код: `model/converter.py`; числа: `results_v2/converter_ammonia.json`,
+`converter_benchmark_grid.csv`, `converter_bed_profile.csv`,
+`converter_equilibrium_check.csv`, `13_converter_profile.png`.
+
+## 26.1 Три исправления, ни одно не подгонка
+
+1. **Тип аппарата.** V4 считал одну изотермическую трубку. Реальный конвертор —
+   2–4 адиабатические секции; экзотермия даёт подъём температуры на секцию,
+   поэтому локальные k(T) и K_a(T) вычисляются по текущей температуре постели,
+   а не по проектной.
+2. **Базис объемной скорости.** Промышленные GHSV (10 000–30 000 ч⁻¹,
+   Humphreys et al., Adv. Energy Sustainability Res. 2021, открыт) отнесены к
+   **нормальным** м³ газа. V4 использовал фактический расход при T и p аппарата,
+   что при 698 K / 150 бар занижало время контакта примерно в 58 раз и делало
+   модель «слишком медленной» — вывод V4 об этом был артефактом.
+3. **Базис питания.** В конвертор подаётся очищенный цикл H₂/N₂ **с рециклом**:
+   N₂ и H₂ берутся из блока `synthesis`, инерты = сухой газ минус N₂ и H₂, а не
+   из сырого синтез-газа. Поле `synthesis.inert_mol_h` для аммиака = «всё, кроме
+   H₂» (то есть включает азот),
+   то есть включает азот; в V5 оно сознательно не используется.
+
+## 26.2 Сетка на открытой бенчмарк-точке (без калибровки, k₀ из источника)
+
+Условия бенчмарка: {fnum(cb.get('opened_conditions',{}).get('T_K'),2)} K,
+{fnum(cb.get('opened_conditions',{}).get('p_bar'),1)} бар,
+GHSV {cb.get('opened_conditions',{}).get('GHSV_normal_h1')} ч⁻¹ (норм.),
+открытый коридор захода N₂ за проход
+{100*cb.get('opened_per_pass_range',[0.15,0.2])[0]:.0f}–{100*cb.get('opened_per_pass_range',[0.15,0.2])[1]:.0f} %,
+цель по выходу NH₃ {fnum(cb.get('outlet_NH3_benchmark_molpct'),1)} мол.%.
+
+{md_table(['случай','GHSV ч⁻¹','X_N₂ за проход','выход NH₃, мол.%','равновесие при T_вх, мол.%','T_пик, K','V_кат на 100 моль/ч питания, м³'],
+          [[r['case'], fnum(r['GHSV_normal_h1'],0), fnum(100*r['per_pass_N2_conversion'],2)+' %',
+            fnum(r['outlet_NH3_molpct'],2), fnum(r['equilibrium_NH3_molpct_at_inlet_T'],1),
+            fnum(r['T_peak_K'],0), fnum(r['catalyst_volume_per_100mol_h_feed_m3'],4)]
+           for r in cb.get('rows', [])])}
+
+Строк внутри открытого коридора: **{cb.get('n_rows_in_band',0)} из {cb.get('n_rows',0)}**.
+{cb.get('note2','')}
+
+## 26.3 Калибровка единственного множителя k₀
+
+- Цель: середина открытого коридора X_N₂ за проход =
+  {fnum(100*cc.get('target_per_pass_conversion',0),1)} % при 698,15 K / 150 бар /
+  GHSV {fnum((cc.get('benchmark_conditions') or {}).get('GHSV_normal_h1'),0)} ч⁻¹, 3 секции.
+- Метод: {cc.get('method')}. Подбирается **только** `k_scale`; α, E_a, K_a и
+  энтальпийный баланс остаются по источнику.
+- Результат: **k_scale = {fnum(cc.get('k_scale'),4)}**, т.е.
+  k₀ = {cc.get('k0_published_kmol_m3cat_h'):.3e} →
+  {cc.get('k0_effective_kmol_m3cat_h'):.3e} кмоль/(м³_кат·ч).
+- До калибровки X за проход = {fnum(100*(cc.get('uncalibrated') or {}).get('per_pass_N2_conversion'),2)} %
+  (отклонение {fnum(cc.get('deviation_before_pct'),1)} % от цели), после —
+  {fnum(100*(cc.get('calibrated') or {}).get('per_pass_N2_conversion'),2)} %.
+- **Важное несоответствие источников:** калибровка по выходу NH₃
+  ({fnum((cc.get('alternative_objective') or {}).get('outlet_NH3_molpct'),1)} мол.%) требует
+  k_scale = {fnum((cc.get('alternative_objective') or {}).get('k_scale_needed'),4)},
+  т.е. открытые промышленные данные расходятся по активности на множитель
+  **{fnum(cc.get('k0_uncertainty_factor'),2)}**. Это и есть честная неопределённость
+  калибровки: она не может быть меньше, пока нет питательных или собственных
+  заводских данных по конвертору.
+- {cc.get('what_this_is')}
+
+## 26.4 Расчётная точка проекта (проектный конфиг аммиака)
+
+| параметр | значение | метка |
+|---|---|---|
+| давление | {fnum(cd.get('p_bar'),1)} бар | [ПОДТВЕРЖДЕНО] диапазон источника |
+| GHSV (норм.) | {fnum(cd.get('GHSV_normal_h1'),0)} ч⁻¹ | [ЧАСТИЧНО] вне 10–30 тыс. |
+| входной поток аппарата | {fnum(cd.get('reactor_inlet_Nm3_h'),0)} Нм³/ч | расчёт |
+| объём катализатора | {fnum(cd.get('catalyst_volume_m3'),1)} м³ ({fnum(cd.get('catalyst_mass_t_at_1775kgm3'),1)} т при 1775 кг/м³) | [ЧАСТИЧНО] ρ из VBF Table 3, не от производителя |
+| X_N₂ за проход | **{fnum(100*cd.get('per_pass_N2_conversion'),2)} %** (без калибровки {fnum(100*cd.get('per_pass_N2_conversion_uncalibrated'),2)} %) | [ЧАСТИЧНО] |
+| выход NH₃ | **{fnum(cd.get('outlet_NH3_molpct'),2)} мол.%** (без калибровки {fnum(cd.get('outlet_NH3_molpct_uncalibrated'),2)} %) | [ЧАСТИЧНО] |
+| температуры секций (вход→выход) | {cd.get('T_bed_in_out_K')} K | расчёт |
+| подъём на секцию | {cd.get('adiabatic_rise_K')} K | расчёт |
+| пик температуры постели | {fnum(cd.get('T_peak_K'),1)} K при потолке {fnum(cd.get('catalyst_T_max_assumed_K'),1)} K → запас {fnum(cd.get('peak_T_margin_K'),1)} K | **{cd.get('peak_T_check')}** |
+| ΔH реакции при T постели | {fnum(cd.get('dH_rxn_at_bed_T_kJ_per_mol_NH3'),2)} кДж/моль NH₃ (не −45,9 при 298 K) | [ПОДТВЕРЖДЕНО] NIST Shomate |
+| теплота реакции в аппарате | {fnum(cd.get('reaction_heat_MW'),1)} МВт; промежуточное охлаждение {fnum(cd.get('interbed_cooling_duty_MW'),1)} МВт | расчёт |
+| подход к равновесию | {fnum(cd.get('approach_to_equilibrium'),3)} | расчёт |
+| рецикл: требуемый по кинетике | RR = {fnum(cd.get('recycle_ratio_implied_by_kinetics'),2)} против проектного {fnum(cd.get('recycle_ratio_configured'),2)}; X·(1+RR) = {fnum(rec.get('fraction_of_fresh_N2_converted'),3)} | [ЧАСТИЧНО] |
+| NH₃ в аппарате против контура | {fnum(cd.get('NH3_formed_in_converter_t_h'),2)} т/ч против {fnum(cd.get('net_NH3_from_loop_t_h'),2)} т/ч (отношение {fnum(cd.get('converter_vs_loop_NH3_ratio'),3)}) | проверка увязки |
+| невязка энтальпийного баланса | {("%.2e" % cd["energy_balance_max_rel_residual"]) if cd.get('energy_balance_max_rel_residual') is not None else "n/a"} | [ПОДТВЕРЖДЕНО] внутренняя |
+
+Мера по пиковой температуре: {rm.get('recommended_common_bed_inlet_K')} K на входе во все
+секции даёт пик {rm.get('achieved_peak_T_K')} K, X за проход
+{fnum(100*(rm.get('per_pass_N2_conversion_at_that_inlet') or 0),2)} % и выход
+{fnum(rm.get('outlet_NH3_molpct_at_that_inlet'),2)} мол.% NH₃ — то есть тот же порядок,
+но с запасом по катализатору. {rm.get('caveat','')}
+
+## 26.5 Независимая термодинамическая проверка K_a
+
+Kp для N₂ + 3H₂ → 2NH₃ пересобран из энергий Гиббса NIST Shomate и сравнён с
+открытой корреляцией log₁₀K_a (COMSOL/Rase). Обе ветки — только открытые данные.
+
+{md_table(['T, K','ΔG°, кДж/моль','Kp из NIST Shomate','Kp из корреляции K_a','отклонение, %'],
+          [[fnum(r['T_K'],2), fnum(r['dG0_kJ_per_mol'],3), f"{r['Kp_from_NIST_Shomate']:.4e}",
+            f"{r['Kp_from_Ka_correlation']:.4e}", fnum(r['deviation_pct'],2)]
+           for r in ce.get('rows', [])])}
+
+Максимальное отклонение **{fnum(ce.get('max_abs_deviation_pct'),2)} %**
+(среднее {fnum(ce.get('mean_abs_deviation_pct'),2)} %) — проверка
+{'ПРОЙДЕНА' if ce.get('passed_within_15pct') else 'ПРОВАЛЕНА'} и добавлена в контур 4.
+{ce.get('note','')}
+
+## 26.6 Что осталось непроверенным (не скрывать)
+
+1. Калибровка сделана по **чужому** заводу и **чужому** катализатору: это не
+   валидация контура 5.
+2. Потолок температуры постели {fnum(cd.get('catalyst_T_max_assumed_K'),1)} K —
+   **допущение**, а не даташит: даташит производителя катализатора не найден
+   (запрос сформулирован в `docs/28_v5_vendor_rfi.md`, п. 12–18).
+3. Гидравлика постели (Δp), распределение газа по секциям и реальная
+   конструкция (радиальный/аксиальный, холодные вбросы) не моделируются.
+4. Утилизация тепла промежуточного охлаждения ({fnum(cd.get('interbed_cooling_duty_MW'),1)} МВт)
+   в пар не просчитана: это отдельный узел теплового включения.
+5. Деактивация (отравление CO₂, спекание) в конверторе не моделируется: для
+   магнетитового катализатора аммиачного синтеза открытых питательных данных
+   по 200–1000 ч в этом проекте нет.
+
+## 26.7 Следующий шаг
+
+Прогнать `model/data_ingest.py` на данных питотной кампании (`docs/27`), затем
+пересобрать контур 5. До появления этих данных k_scale остаётся
+подгоночным параметром с неопределённостью ×{fnum(cc.get('k0_uncertainty_factor'),2)}.
+"""
+    open(os.path.join(DOCS, "26_v5_converter.md"), "w", encoding="utf-8").write(txt)
+
     # claims register markdown ---------------------------------------------
     claims = json.load(open(os.path.join(ROOT, "data", "v2_claims.json"), encoding="utf-8"))
     txt = "# V2 source / claim registry\n\n" + md_table(
@@ -1232,6 +1425,15 @@ def main():
     print("[v2] running 5 product designs + scenarios ...")
     base, sc = run_all()
     print(f"[v2] designs+scenarios done in {time.time()-t0:.1f} s")
+    print("[v5] multi-bed adiabatic NH3 converter (calibration + design) ...")
+    from .converter import ammonia_converter_block
+    try:
+        base["ammonia"]["synthesis"]["kinetic"]["ammonia_converter"] = \
+            ammonia_converter_block(load_config(product="ammonia"), base["ammonia"])
+    except Exception as exc:                          # never lose the run
+        base["ammonia"]["synthesis"]["kinetic"]["ammonia_converter"] = {
+            "computed": False, "error": repr(exc)}
+    print(f"[v5] converter done in {time.time()-t0:.1f} s")
     print("[v2] running five verification loops ...")
     v = verify_all(base, sc)
     # write
@@ -1262,6 +1464,15 @@ def main():
                "comparison": l5["external_data"]})
     dump_json(os.path.join(OUT, "kinetic_synthesis.json"),
               {p: r["synthesis"]["kinetic"] for p, r in base.items()})
+    convb = base["ammonia"]["synthesis"]["kinetic"].get("ammonia_converter") or {}
+    dump_json(os.path.join(OUT, "converter_ammonia.json"), convb)
+    if convb.get("design"):
+        write_csv(os.path.join(OUT, "converter_benchmark_grid.csv"),
+                  convb["benchmark_validation"]["rows"])
+        write_csv(os.path.join(OUT, "converter_bed_profile.csv"),
+                  convb["design"]["bed_profile"])
+        write_csv(os.path.join(OUT, "converter_equilibrium_check.csv"),
+                  convb.get("equilibrium_check", {}).get("rows", []))
     dump_json(os.path.join(OUT, "verification_v2.json"), v)
     dump_json(os.path.join(OUT, "scenarios_v2.json"), sc)
     cfg = Config.load(DEFAULT_PATH)
@@ -1299,6 +1510,22 @@ def main():
                   "mean_pilot_bias": v["loops"]["5_validation_falsification"]["external_data"]["mean_model_bias"],
                   "catalyst_datasheet_found": v["loops"]["5_validation_falsification"]["external_data"]["commercial_datasheet"]["catalyst_datasheet_found"]},
         "hazop": {"certified": False, "worksheet_rows": hazop_report()["worksheet_rows"]},
+        "ammonia_converter": {
+            "reactor": "3 adiabatic beds with interbed cooling (V5)",
+            "space_velocity_basis": "normal m3/m3/h",
+            "k_scale_calibrated": (convb.get("calibration") or {}).get("k_scale"),
+            "per_pass_N2_conversion": (convb.get("design") or {}).get(
+                "per_pass_N2_conversion"),
+            "per_pass_N2_conversion_published_k0":
+                (convb.get("design") or {}).get(
+                    "per_pass_N2_conversion_uncalibrated"),
+            "outlet_NH3_molpct": (convb.get("design") or {}).get("outlet_NH3_molpct"),
+            "catalyst_volume_m3": (convb.get("design") or {}).get(
+                "catalyst_volume_m3"),
+            "T_peak_K": (convb.get("design") or {}).get("T_peak_K"),
+            "peak_T_check": (convb.get("design") or {}).get("peak_T_check"),
+            "computed": bool(convb.get("design")),
+        },
         "overall_passed": v["overall_passed"],
         "runtime_s": round(time.time() - t0, 1),
         "optional_packages": {"iapws": __import__("model.steam", fromlist=["available"]).available()},
@@ -1308,7 +1535,8 @@ def main():
     make_plots(base, sc, v)
     print("[v2] writing reports ...")
     write_reports(base, sc, v)
-    print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/ and docs/12..25")
+    print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/, docs/12..26 "
+          f"(V5 handover packs: docs/27..29)")
     print("[v2] verification:", v["summary"])
     return 0
 

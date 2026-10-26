@@ -5,9 +5,9 @@
 «нет данных».
 
 **Вердикт:** FAILED (now evidence-based, not just absence-of-data)
-**Причина:** External pilot data WERE found and compared. The model is an EQUILIBRIUM model; the lab data are KINETIC at 1-10 bar, so the mean bias is +0.287 X_CH4. A commercial Ni/MgAl2O4 catalyst datasheet, a design-point pilot campaign, a 200-1000 h sintering series and a certified HAZOP are still absent. The methanol kinetic model reproduces two opened benchmarks; the ammonia kinetic model does not.
+**Причина:** External pilot data WERE found and compared. The model is an EQUILIBRIUM model; the lab data are KINETIC at 1-10 bar, so the mean bias is +0.287 X_CH4. A commercial Ni/MgAl2O4 catalyst datasheet, a design-point pilot campaign, a 200-1000 h sintering series and a certified HAZOP are still absent. The methanol kinetic model reproduces two opened benchmarks. The ammonia model was rebuilt as a multi-bed adiabatic converter and now needs ONE documented activity scalar (k_scale=0.213) to sit on the opened per-pass benchmark; the two opened ammonia benchmarks themselves disagree by a factor of 2.36 on that scalar, so this is calibration, not validation.
 
-## 25.1 Подпроверки: 4 из 13
+## 25.1 Подпроверки: 8 из 23
 
 | статус | проверка | примечание |
 |---|---|---|
@@ -22,6 +22,16 @@
 | ПРОВЕРЕНО | methanol VBF reproduces Arzew 3.4 mol% MeOH within 10% |  |
 | НЕ ПРОЙДЕНО | NH3 Temkin-Pyzhev per-pass conversion in opened 15-25% |  |
 | НЕ ПРОЙДЕНО | NH3 benchmark matched at an OPENED GHSV |  |
+| НЕ ПРОЙДЕНО | NH3 adiabatic converter reaches the opened per-pass band at an OPENED GHSV with the PUBLISHED k0 | 0 of 6 grid rows inside the band; the single-bed rows sit at the adiabatic equilibrium |
+| ПРОВЕРЕНО | k_scale calibration reproduces the opened benchmark AT THE BENCHMARK POINT | true BY CONSTRUCTION (the fit target is that number) - it validates the calibration pr |
+| НЕ ПРОЙДЕНО | converter design point inside the wider opened 15-25% band | 200 bar design point sits slightly above the opened band; the band belongs to another  |
+| НЕ ПРОЙДЕНО | the two opened NH3 benchmarks are mutually consistent | matching 17.5% per-pass needs k_scale=0.213, matching 13 mol% NH3 needs k_scale=0.504  |
+| ПРОВЕРЕНО | converter bed enthalpy balance closes (H=const per bed) | relative residual of the per-bed adiabatic invariant; the profile is written to result |
+| НЕ ПРОЙДЕНО | converter peak bed T within the catalyst ceiling at the design inlet temperature | peak 845 K vs assumed ceiling 803 K; remedy (cooler inlets or more beds with cold shot |
+| ПРОВЕРЕНО | converter recycle closure X*(1+RR) >= 1 at the configured RR |  |
+| ПРОВЕРЕНО | converter NH3 formation consistent with loop stoichiometry within 5% |  |
+| НЕ ПРОЙДЕНО | ammonia converter geometry / ceiling confirmed by vendor datasheet | no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.m |
+| НЕ ПРОЙДЕНО | pilot campaign file ingested and validated against the contract | contract data/pilot_schema.json + harness model/data_ingest.py are in place and self-t |
 | НЕ ПРОЙДЕНО | certified HAZOP (IEC 61882) | worksheet with 110 rows generated, but NOT certified |
 | НЕ ПРОЙДЕНО | independent HYSYS / DWSIM run | not installed; Python equivalent confirmed by user answer 11 |
 
@@ -53,13 +63,16 @@
 3. Measured packed-bed pressure drop at design velocity (Ergun is a correlation)
 4. 200-1000 h Ni particle-size / sintering series for 15 wt% Ni/MgAl2O4
 5. Commercial Ni/MgAl2O4 reforming CATALYST datasheet (Ni wt%, loaded density, crush strength, life)
-6. Validated Xu-Froment kinetic parameter set (secondary set fails self-consistency)
-7. Sintering model discrimination GPLE vs power-law (factor ~3.06, v1 finding)
-8. PSA vendor breakthrough curve and MDEA vendor reboiler guarantee
-9. Absolute rate scale of the Temkin-Pyzhev PFR (needs GHSV ~1000 1/h to match 13 mol% NH3)
-10. Kinetic models for FT and oxo loops; external propylene cost
-11. Certified HAZOP / LOPA / SIL verification, API 520/521 PSV full text, Ni(CO)4 kinetics
-12. API 530 / ASME certified tube creep calculation; regional price quotes; GOST 5542 full text
+6. Ammonia converter vendor data: bed-T ceiling, GHSV basis, pressure drop, catalyst size distribution (docs/28_v5_vendor_rfi.md items 12-18)
+7. Certified HAZOP team / facilitator for the worksheet in docs/29 (terms of reference issued, no team convened)
+8. Measured NH3 converter per-pass data on THIS catalyst at 150-250 bar (k_scale is fitted to a literature plant benchmark, not to our pilot)
+9. Validated Xu-Froment kinetic parameter set (secondary set fails self-consistency)
+10. Sintering model discrimination GPLE vs power-law (factor ~3.06, v1 finding)
+11. PSA vendor breakthrough curve and MDEA vendor reboiler guarantee
+12. Absolute Temkin-Pyzhev activity scale: V4's 'GHSV ~1000 1/h' figure was an ARTIFACT of using the actual-basis volumetric flow; on the normal basis the 3-bed converter sits 20-40% ABOVE the opened band with published k0, and the remaining k_scale=0.213 cannot be separated from the vendor's own activity/packing definition without plant or pilot converter data
+13. Kinetic models for FT and oxo loops; external propylene cost
+14. Certified HAZOP / LOPA / SIL verification, API 520/521 PSV full text, Ni(CO)4 kinetics
+15. API 530 / ASME certified tube creep calculation; regional price quotes; GOST 5542 full text
 
 ## 25.5 Итог пяти контуров
 

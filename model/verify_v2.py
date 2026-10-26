@@ -232,6 +232,8 @@ def loop4_thermo(designs, scenarios):
     kij = scenarios.get("eos_sensitivity", [])
     spread = (max(x["X_CH4"] for x in kij) - min(x["X_CH4"] for x in kij)
               if kij else None)
+    from .converter import equilibrium_cross_check
+    nh3chk = equilibrium_cross_check()
     worst_eq = max(x["deviation_pct"] for x in eq_rows)
     worst_dH = max(abs(v["diff_kJ_per_mol"]) for v in dH.values())
     sci = scipy_pr_minimisation(f, T, 25.0, "base")
@@ -275,15 +277,38 @@ def loop4_thermo(designs, scenarios):
                             "SN_PR": b["stoichiometric_number_SN"]},
             "kij_sets": list(KIJ.keys()), "kij_X_CH4_spread": spread,
             "scipy_independent_PR": sci, "extra_checks": extra,
+            "nh3_converter_thermo": nh3chk,
             "extra_checks_passed": {"scipy": sci_ok, "prereformer": pre_ok,
                                     "synthesis": syn_ok, "safety": safe_ok,
-                                    "dP": dp_ok},
+                                    "dP": dp_ok, "NH3_Ka_vs_NIST":
+                                    nh3chk["passed_within_15pct"]},
             "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual "
                     "is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."}
 
 
+def _ingest_ready():
+    """True only when a validated campaign file with usable records exists."""
+    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                        "results_v2", "pilot_ingest_report.json")
+    if not os.path.exists(path):
+        return False
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            rep = json.load(fh)
+        return (rep.get("n_records_usable", 0) > 0
+                and rep.get("n_errors", 1) == 0)
+    except Exception:
+        return False
+
+
 def loop5_validation(designs, cfg=None):
     """External validation / falsification with REAL opened pilot data.
+
+    V5 adds the multi-bed adiabatic ammonia converter checks (opened benchmark
+    band with published k0, the documented k_scale calibration, its internal
+    consistency against loop stoichiometry, the peak-bed-temperature ceiling and
+    the vendor-datasheet gap) plus the handover-pack status (pilot test program,
+    vendor RFI, HAZOP terms of reference) - issued, not executed.
 
     The loop now consumes data/pilot_ni_mgal2o4.json (30 sourced records) and
     data/commercial_mgal2o4.json, compares the equilibrium model against the
@@ -342,6 +367,11 @@ def loop5_validation(designs, cfg=None):
                 "status": m.get("status"),
             })
 
+    conv = (designs.get("ammonia", {}).get("synthesis", {})
+            .get("kinetic", {}).get("ammonia_converter") or {})
+    cd = conv.get("design") or {}
+    cb = conv.get("benchmark_validation") or {}
+    cc = conv.get("calibration") or {}
     subchecks = [
         {"check": "external numeric pilot comparisons", "passed": True,
          "value": ext["n_numeric_X_CH4_comparable"],
@@ -374,6 +404,70 @@ def loop5_validation(designs, cfg=None):
         {"check": "NH3 benchmark matched at an OPENED GHSV",
          "passed": next((r["required_GHSV_inside_opened_range"] for r in kin_rows
                          if r["product"] == "ammonia"), False)},
+        {"check": "NH3 adiabatic converter reaches the opened per-pass band at "
+                  "an OPENED GHSV with the PUBLISHED k0",
+         "passed": bool(cb.get("band_reached_without_any_fit")),
+         "note": "%d of %d grid rows inside the band; the single-bed rows sit at "
+                 "the adiabatic equilibrium pinch (14.99%% vs the 15%% edge), the "
+                 "3-bed rows overshoot by 20-40%%" % (cb.get("n_rows_in_band", 0),
+                                                       cb.get("n_rows", 0))},
+        {"check": "k_scale calibration reproduces the opened benchmark AT THE "
+                  "BENCHMARK POINT",
+         "passed": bool(cc) and abs((cc.get("calibrated") or {})
+                                   .get("per_pass_N2_conversion", 9)
+                                   - cc.get("target_per_pass_conversion", 0)) <= 0.01,
+         "value": (cc.get("calibrated") or {}).get("per_pass_N2_conversion"),
+         "note": "true BY CONSTRUCTION (the fit target is that number) - it "
+                 "validates the calibration procedure, not the design point"},
+        {"check": "converter design point inside the wider opened 15-25% band",
+         "passed": bool(cd) and 0.15 <= cd.get("per_pass_N2_conversion", 0) <= 0.25,
+         "value": cd.get("per_pass_N2_conversion"),
+         "note": "200 bar design point sits slightly above the opened band; the "
+                 "band belongs to another plant/catalyst, and no design-point "
+                 "data exist, so this is not closable by tuning"},
+        {"check": "the two opened NH3 benchmarks are mutually consistent",
+         "passed": bool(cc.get("k0_uncertainty_factor")) and
+         cc["k0_uncertainty_factor"] <= 1.5,
+         "value": cc.get("k0_uncertainty_factor"),
+         "note": "matching 17.5%% per-pass needs k_scale=%.3f, matching "
+                 "13 mol%% NH3 needs k_scale=%.3f -> the opened benchmarks "
+                 "disagree on the activity scale by a factor of %.2f"
+                 % (cc.get("k_scale", 1.0),
+                    (cc.get("alternative_objective") or {}).get("k_scale_needed")
+                    or 1.0, cc.get("k0_uncertainty_factor") or 0.0)},
+        {"check": "converter bed enthalpy balance closes (H=const per bed)",
+         "passed": bool(cd)
+         and cd.get("energy_balance_max_rel_residual", 1.0) <= 1e-6,
+         "value": cd.get("energy_balance_max_rel_residual"),
+         "note": "relative residual of the per-bed adiabatic invariant; the profile "
+                 "is written to results_v2/converter_ammonia.json"},
+        {"check": "converter peak bed T within the catalyst ceiling at the design "
+                  "inlet temperature",
+         "passed": bool(cd) and cd.get("peak_T_check") == "OK",
+         "value": cd.get("T_peak_K"),
+         "note": "peak %.0f K vs assumed ceiling %.0f K; remedy (cooler inlets or "
+                 "more beds with cold shot) computed and reported"
+                 % (cd.get("T_peak_K", 0.0), cd.get("catalyst_T_max_assumed_K", 0.0))
+         if cd else "converter block not computed"},
+        {"check": "converter recycle closure X*(1+RR) >= 1 at the configured RR",
+         "passed": bool(cd) and (cd.get("recycle_closure") or {}).get(
+             "fraction_of_fresh_N2_converted", 0) >= 1.0,
+         "value": (cd.get("recycle_closure") or {}).get(
+             "fraction_of_fresh_N2_converted")},
+        {"check": "converter NH3 formation consistent with loop stoichiometry "
+                  "within 5%",
+         "passed": bool(cd) and abs(cd.get("converter_vs_loop_NH3_ratio", 9)
+                                    - 1.0) <= 0.05,
+         "value": cd.get("converter_vs_loop_NH3_ratio")},
+        {"check": "ammonia converter geometry / ceiling confirmed by vendor "
+                  "datasheet", "passed": False,
+         "note": "no vendor converter datasheet; bed-T ceiling is an assumption "
+                 "(docs/28_v5_vendor_rfi.md asks for it)"},
+        {"check": "pilot campaign file ingested and validated against the "
+                  "contract", "passed": _ingest_ready(),
+         "note": "contract data/pilot_schema.json + harness model/data_ingest.py "
+                 "are in place and self-tested; no campaign file exists yet, so "
+                 "the check is ready-to-pass rather than passed"},
         {"check": "certified HAZOP (IEC 61882)", "passed": haz["certified"],
          "note": "worksheet with %d rows generated, but NOT certified" %
                  haz["worksheet_rows"]},
@@ -387,10 +481,18 @@ def loop5_validation(designs, cfg=None):
         "Measured packed-bed pressure drop at design velocity (Ergun is a correlation)",
         "200-1000 h Ni particle-size / sintering series for 15 wt% Ni/MgAl2O4",
         "Commercial Ni/MgAl2O4 reforming CATALYST datasheet (Ni wt%, loaded density, crush strength, life)",
+        "Ammonia converter vendor data: bed-T ceiling, GHSV basis, pressure drop, "
+        "catalyst size distribution (docs/28_v5_vendor_rfi.md items 12-18)",
+        "Certified HAZOP team / facilitator for the worksheet in docs/29 (terms of reference issued, no team convened)",
+        "Measured NH3 converter per-pass data on THIS catalyst at 150-250 bar (k_scale is fitted to a literature plant benchmark, not to our pilot)",
         "Validated Xu-Froment kinetic parameter set (secondary set fails self-consistency)",
         "Sintering model discrimination GPLE vs power-law (factor ~3.06, v1 finding)",
         "PSA vendor breakthrough curve and MDEA vendor reboiler guarantee",
-        "Absolute rate scale of the Temkin-Pyzhev PFR (needs GHSV ~1000 1/h to match 13 mol% NH3)",
+        "Absolute Temkin-Pyzhev activity scale: V4's 'GHSV ~1000 1/h' figure was an "
+        "ARTIFACT of using the actual-basis volumetric flow; on the normal basis the "
+        "3-bed converter sits 20-40% ABOVE the opened band with published k0, and "
+        "the remaining k_scale=0.213 cannot be separated from the vendor's own "
+        "activity/packing definition without plant or pilot converter data",
         "Kinetic models for FT and oxo loops; external propylene cost",
         "Certified HAZOP / LOPA / SIL verification, API 520/521 PSV full text, Ni(CO)4 kinetics",
         "API 530 / ASME certified tube creep calculation; regional price quotes; GOST 5542 full text",
@@ -403,12 +505,41 @@ def loop5_validation(designs, cfg=None):
                    "mean bias is %+.3f X_CH4. A commercial Ni/MgAl2O4 catalyst "
                    "datasheet, a design-point pilot campaign, a 200-1000 h "
                    "sintering series and a certified HAZOP are still absent. "
-                   "The methanol kinetic model reproduces two opened benchmarks; "
-                   "the ammonia kinetic model does not." % (ext["mean_model_bias"] or 0.0)),
+                   "The methanol kinetic model reproduces two opened benchmarks. "
+                   "The ammonia model was rebuilt as a multi-bed adiabatic "
+                   "converter and now needs ONE documented activity scalar "
+                   "(k_scale=%.3f) to sit on the opened per-pass benchmark; the "
+                   "two opened ammonia benchmarks themselves disagree by a factor "
+                   "of %.2f on that scalar, so this is calibration, not "
+                   "validation." % (ext["mean_model_bias"] or 0.0,
+                                    (cd or {}).get("k_scale_applied", 1.0)
+                                    if conv else 1.0,
+                                    (cc or {}).get("k0_uncertainty_factor")
+                                    or float("nan"))),
         "subchecks": subchecks,
         "subchecks_passed": n_pass, "subchecks_total": len(subchecks),
         "external_data": ext,
         "kinetic_checks": kin_rows,
+        "converter_ammonia": ({
+            "computed": True,
+            "k_scale": cc.get("k_scale"),
+            "k0_uncertainty_factor": cc.get("k0_uncertainty_factor"),
+            "per_pass_N2_conversion": cd.get("per_pass_N2_conversion"),
+            "per_pass_N2_conversion_uncalibrated":
+                cd.get("per_pass_N2_conversion_uncalibrated"),
+            "outlet_NH3_molpct": cd.get("outlet_NH3_molpct"),
+            "catalyst_volume_m3": cd.get("catalyst_volume_m3"),
+            "T_peak_K": cd.get("T_peak_K"),
+            "peak_T_check": cd.get("peak_T_check"),
+            "energy_balance_max_rel_residual":
+                cd.get("energy_balance_max_rel_residual"),
+            "recycle_ratio_implied_by_kinetics":
+                cd.get("recycle_ratio_implied_by_kinetics"),
+            "benchmark_rows_in_band": "%d/%d" % (
+                cb.get("n_rows_in_band", 0), cb.get("n_rows", 0)),
+        } if conv else {"computed": False,
+                        "note": "block not attached to this run; call "
+                                "model.converter.ammonia_converter_block"}),
         "hazop": {"certified": haz["certified"], "worksheet_rows": haz["worksheet_rows"],
                   "high_risk_rows": haz["high_risk_rows"],
                   "certification_gaps": haz["certification_gaps"]},

@@ -10,5 +10,15 @@ methanol VBF per-pass conversion in opened 25-30% (+0.2 pp),True,,
 methanol VBF reproduces Arzew 3.4 mol% MeOH within 10%,True,,
 NH3 Temkin-Pyzhev per-pass conversion in opened 15-25%,False,,
 NH3 benchmark matched at an OPENED GHSV,False,,
+NH3 adiabatic converter reaches the opened per-pass band at an OPENED GHSV with the PUBLISHED k0,False,,"0 of 6 grid rows inside the band; the single-bed rows sit at the adiabatic equilibrium pinch (14.99% vs the 15% edge), the 3-bed rows overshoot by 20-40%"
+k_scale calibration reproduces the opened benchmark AT THE BENCHMARK POINT,True,0.17500000000002744,"true BY CONSTRUCTION (the fit target is that number) - it validates the calibration procedure, not the design point"
+converter design point inside the wider opened 15-25% band,False,0.25353163160321224,"200 bar design point sits slightly above the opened band; the band belongs to another plant/catalyst, and no design-point data exist, so this is not closable by tuning"
+the two opened NH3 benchmarks are mutually consistent,False,2.3616070349861866,"matching 17.5% per-pass needs k_scale=0.213, matching 13 mol% NH3 needs k_scale=0.504 -> the opened benchmarks disagree on the activity scale by a factor of 2.36"
+converter bed enthalpy balance closes (H=const per bed),True,4.440892098500626e-16,relative residual of the per-bed adiabatic invariant; the profile is written to results_v2/converter_ammonia.json
+converter peak bed T within the catalyst ceiling at the design inlet temperature,False,845.3409367299781,peak 845 K vs assumed ceiling 803 K; remedy (cooler inlets or more beds with cold shot) computed and reported
+converter recycle closure X*(1+RR) >= 1 at the configured RR,True,1.0,
+converter NH3 formation consistent with loop stoichiometry within 5%,True,1.045491264343143,
+ammonia converter geometry / ceiling confirmed by vendor datasheet,False,,no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.md asks for it)
+pilot campaign file ingested and validated against the contract,False,,"contract data/pilot_schema.json + harness model/data_ingest.py are in place and self-tested; no campaign file exists yet, so the check is ready-to-pass rather than passed"
 certified HAZOP (IEC 61882),False,,"worksheet with 110 rows generated, but NOT certified"
 independent HYSYS / DWSIM run,False,,not installed; Python equivalent confirmed by user answer 11

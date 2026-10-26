@@ -68,10 +68,12 @@
       "risk_score": 6
     }
   ],
+  "n_generic_template_rows": 87,
   "worksheet": [
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": true,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at Natural-gas feed / HDS-ZnO guard",
@@ -88,6 +90,7 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": true,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at Natural-gas feed / HDS-ZnO guard",
@@ -104,6 +107,7 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": true,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "HIGH P",
       "deviation": "HIGH P at Natural-gas feed / HDS-ZnO guard",
@@ -120,6 +124,7 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": true,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "LOW P",
       "deviation": "LOW P at Natural-gas feed / HDS-ZnO guard",
@@ -136,12 +141,13 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": false,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "HIGH T",
       "deviation": "HIGH T at Natural-gas feed / HDS-ZnO guard",
       "cause": "firing maldistribution, loss of quench, exothermic runaway",
-      "consequence": "tube creep rupture (LMP), Ni sintering, Ni(CO)4 decomposition",
-      "safeguards": "skin thermocouples, high-high T trip, LMP-based tube life",
+      "consequence": "ZnO/HDS bed sintering, sulfur slip to reformer catalyst, guard-vessel damage",
+      "safeguards": "bed inlet TC high-high trip, online H2S analyser, deactivation model for ZnO",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -152,12 +158,13 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": false,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "LOW T",
       "deviation": "LOW T at Natural-gas feed / HDS-ZnO guard",
       "cause": "loss of preheat, excessive quench, ambient cooling during shutdown",
-      "consequence": "condensation, Ni(CO)4 formation, hydrate/ice, thermal shock",
-      "safeguards": "preheat interlock, CO purge before cooldown, tracing",
+      "consequence": "condensation, hydrate/ice, thermal shock",
+      "safeguards": "preheat interlock, CO purge before cooldowntracing",
       "severity": "S",
       "likelihood": "M",
       "risk_score": 2,
@@ -168,6 +175,7 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": true,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at Natural-gas feed / HDS-ZnO guard",
@@ -184,6 +192,7 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": true,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at Natural-gas feed / HDS-ZnO guard",
@@ -200,11 +209,12 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": false,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at Natural-gas feed / HDS-ZnO guard",
       "cause": "creep, corrosion, thermal fatigue, flange failure",
-      "consequence": "fire, toxic CO/H2/Ni(CO)4 release, escalation",
+      "consequence": "fire, toxic CO/H2, escalation",
       "safeguards": "gas detectors, fire detectors, ESD, deluge, zoning",
       "severity": "H",
       "likelihood": "L",
@@ -216,6 +226,7 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": true,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at Natural-gas feed / HDS-ZnO guard",
@@ -232,12 +243,13 @@
     {
       "node_id": "N01",
       "node": "Natural-gas feed / HDS-ZnO guard",
+      "template_generic": false,
       "design_intent": "deliver S<0.02 ppmv gas at 30 bar",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at Natural-gas feed / HDS-ZnO guard",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "HDS catalyst not sulfided on first start, cold guard bed, sulfur breakthrough to the reformer, carbon formation at the Ni layer",
+      "safeguards": "sulfiding procedure + permit, bed preheat interlock, H2S analyser before start",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -248,6 +260,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at R-100 adiabatic pre-reformer",
@@ -264,6 +277,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at R-100 adiabatic pre-reformer",
@@ -280,6 +294,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "HIGH P",
       "deviation": "HIGH P at R-100 adiabatic pre-reformer",
@@ -296,6 +311,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "LOW P",
       "deviation": "LOW P at R-100 adiabatic pre-reformer",
@@ -312,6 +328,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "HIGH T",
       "deviation": "HIGH T at R-100 adiabatic pre-reformer",
@@ -328,6 +345,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "LOW T",
       "deviation": "LOW T at R-100 adiabatic pre-reformer",
@@ -344,6 +362,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at R-100 adiabatic pre-reformer",
@@ -360,6 +379,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at R-100 adiabatic pre-reformer",
@@ -376,6 +396,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at R-100 adiabatic pre-reformer",
@@ -392,6 +413,7 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": true,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at R-100 adiabatic pre-reformer",
@@ -408,12 +430,13 @@
     {
       "node_id": "N02",
       "node": "R-100 adiabatic pre-reformer",
+      "template_generic": false,
       "design_intent": "remove C2+ at 600-750 K, Q=0",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at R-100 adiabatic pre-reformer",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "Ni(CO)4 formation while CO-rich gas cools below 200 C, explosive mixture during purge",
+      "safeguards": "written purge procedure, CO < 10 ppm permit before T < 200 C, Ni(CO)4 monitoring",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -424,6 +447,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at R-101 fired tubular reformer",
@@ -440,6 +464,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at R-101 fired tubular reformer",
@@ -456,6 +481,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "HIGH P",
       "deviation": "HIGH P at R-101 fired tubular reformer",
@@ -472,6 +498,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "LOW P",
       "deviation": "LOW P at R-101 fired tubular reformer",
@@ -488,6 +515,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "HIGH T",
       "deviation": "HIGH T at R-101 fired tubular reformer",
@@ -504,6 +532,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "LOW T",
       "deviation": "LOW T at R-101 fired tubular reformer",
@@ -520,6 +549,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at R-101 fired tubular reformer",
@@ -536,6 +566,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at R-101 fired tubular reformer",
@@ -552,6 +583,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at R-101 fired tubular reformer",
@@ -568,6 +600,7 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": true,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at R-101 fired tubular reformer",
@@ -584,12 +617,13 @@
     {
       "node_id": "N03",
       "node": "R-101 fired tubular reformer",
+      "template_generic": false,
       "design_intent": "1123 K, 25 bar, SN=2.05",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at R-101 fired tubular reformer",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "Ni(CO)4 formation while CO-rich gas cools below 200 C, tube overheating on firing during low steam flow",
+      "safeguards": "written purge procedure, CO < 10 ppm permit before T < 200 C, S/C low-low permissive on light-off",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -600,6 +634,7 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": true,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at WHB / syngas cooler",
@@ -616,6 +651,7 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": true,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at WHB / syngas cooler",
@@ -632,6 +668,7 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": true,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "HIGH P",
       "deviation": "HIGH P at WHB / syngas cooler",
@@ -648,6 +685,7 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": true,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "LOW P",
       "deviation": "LOW P at WHB / syngas cooler",
@@ -664,12 +702,13 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": false,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "HIGH T",
       "deviation": "HIGH T at WHB / syngas cooler",
       "cause": "firing maldistribution, loss of quench, exothermic runaway",
-      "consequence": "tube creep rupture (LMP), Ni sintering, Ni(CO)4 decomposition",
-      "safeguards": "skin thermocouples, high-high T trip, LMP-based tube life",
+      "consequence": "boiler tube creep rupture, steam-side overpressure, WHB dry-out",
+      "safeguards": "drum level trips, skin TCs, steam relief to header",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -680,12 +719,13 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": false,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "LOW T",
       "deviation": "LOW T at WHB / syngas cooler",
       "cause": "loss of preheat, excessive quench, ambient cooling during shutdown",
-      "consequence": "condensation, Ni(CO)4 formation, hydrate/ice, thermal shock",
-      "safeguards": "preheat interlock, CO purge before cooldown, tracing",
+      "consequence": "condensation, hydrate/ice, thermal shock",
+      "safeguards": "preheat interlock, CO purge before cooldowntracing",
       "severity": "S",
       "likelihood": "M",
       "risk_score": 2,
@@ -696,6 +736,7 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": true,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at WHB / syngas cooler",
@@ -712,6 +753,7 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": true,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at WHB / syngas cooler",
@@ -728,11 +770,12 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": false,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at WHB / syngas cooler",
       "cause": "creep, corrosion, thermal fatigue, flange failure",
-      "consequence": "fire, toxic CO/H2/Ni(CO)4 release, escalation",
+      "consequence": "fire, toxic CO/H2, escalation",
       "safeguards": "gas detectors, fire detectors, ESD, deluge, zoning",
       "severity": "H",
       "likelihood": "L",
@@ -744,6 +787,7 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": true,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at WHB / syngas cooler",
@@ -760,12 +804,13 @@
     {
       "node_id": "N04",
       "node": "WHB / syngas cooler",
+      "template_generic": false,
       "design_intent": "recover heat, raise 30 bar steam",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at WHB / syngas cooler",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "thermal shock of boiler tubes on hot syngas admission, dry-out if drum level is not established, acid-gas condensation corrosion in cold syngas lines",
+      "safeguards": "warm-up rate limit, drum level permissive before syngas admission, low-T drain points",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -776,6 +821,7 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": true,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at A-302 CO2 trim / A-301 MDEA",
@@ -792,6 +838,7 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": true,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at A-302 CO2 trim / A-301 MDEA",
@@ -808,6 +855,7 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": true,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "HIGH P",
       "deviation": "HIGH P at A-302 CO2 trim / A-301 MDEA",
@@ -824,6 +872,7 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": true,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "LOW P",
       "deviation": "LOW P at A-302 CO2 trim / A-301 MDEA",
@@ -840,12 +889,13 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": false,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "HIGH T",
       "deviation": "HIGH T at A-302 CO2 trim / A-301 MDEA",
       "cause": "firing maldistribution, loss of quench, exothermic runaway",
-      "consequence": "tube creep rupture (LMP), Ni sintering, Ni(CO)4 decomposition",
-      "safeguards": "skin thermocouples, high-high T trip, LMP-based tube life",
+      "consequence": "MDEA thermal degradation above ~120 C, reboiler fouling, CO2 slip off-spec, water carry-over to methanation",
+      "safeguards": "reboiler TC high trip, lean amine flow control, reclaimer availability",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -856,12 +906,13 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": false,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "LOW T",
       "deviation": "LOW T at A-302 CO2 trim / A-301 MDEA",
       "cause": "loss of preheat, excessive quench, ambient cooling during shutdown",
-      "consequence": "condensation, Ni(CO)4 formation, hydrate/ice, thermal shock",
-      "safeguards": "preheat interlock, CO purge before cooldown, tracing",
+      "consequence": "condensation, hydrate/ice, thermal shock",
+      "safeguards": "preheat interlock, CO purge before cooldowntracing",
       "severity": "S",
       "likelihood": "M",
       "risk_score": 2,
@@ -872,6 +923,7 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": true,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at A-302 CO2 trim / A-301 MDEA",
@@ -888,6 +940,7 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": true,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at A-302 CO2 trim / A-301 MDEA",
@@ -904,11 +957,12 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": false,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at A-302 CO2 trim / A-301 MDEA",
       "cause": "creep, corrosion, thermal fatigue, flange failure",
-      "consequence": "fire, toxic CO/H2/Ni(CO)4 release, escalation",
+      "consequence": "fire, toxic CO/H2, escalation",
       "safeguards": "gas detectors, fire detectors, ESD, deluge, zoning",
       "severity": "H",
       "likelihood": "L",
@@ -920,6 +974,7 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": true,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at A-302 CO2 trim / A-301 MDEA",
@@ -936,12 +991,13 @@
     {
       "node_id": "N05",
       "node": "A-302 CO2 trim / A-301 MDEA",
+      "template_generic": false,
       "design_intent": "CO2 to 4-8 mol% / <3 mol%",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at A-302 CO2 trim / A-301 MDEA",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "amine solidification / freezing of lines, carry-over of water and CO2 into the methanator on restart",
+      "safeguards": "trace heating, commissioning procedure, CO2 spec permit before methanator light-off",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -952,6 +1008,7 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": true,
       "design_intent": "product at 40/55 C",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at E-601 cooler + knockout + dryer",
@@ -968,6 +1025,7 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": true,
       "design_intent": "product at 40/55 C",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at E-601 cooler + knockout + dryer",
@@ -984,6 +1042,7 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": true,
       "design_intent": "product at 40/55 C",
       "guideword": "HIGH P",
       "deviation": "HIGH P at E-601 cooler + knockout + dryer",
@@ -1000,6 +1059,7 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": true,
       "design_intent": "product at 40/55 C",
       "guideword": "LOW P",
       "deviation": "LOW P at E-601 cooler + knockout + dryer",
@@ -1016,12 +1076,13 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": false,
       "design_intent": "product at 40/55 C",
       "guideword": "HIGH T",
       "deviation": "HIGH T at E-601 cooler + knockout + dryer",
       "cause": "firing maldistribution, loss of quench, exothermic runaway",
-      "consequence": "tube creep rupture (LMP), Ni sintering, Ni(CO)4 decomposition",
-      "safeguards": "skin thermocouples, high-high T trip, LMP-based tube life",
+      "consequence": "molecular-sieve adsorbent damage, breakthrough of water to the synthesis loop, catalyst poisoning",
+      "safeguards": "regeneration TC high trip, heater interlock, online dew-point analyser",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -1032,12 +1093,13 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": false,
       "design_intent": "product at 40/55 C",
       "guideword": "LOW T",
       "deviation": "LOW T at E-601 cooler + knockout + dryer",
       "cause": "loss of preheat, excessive quench, ambient cooling during shutdown",
-      "consequence": "condensation, Ni(CO)4 formation, hydrate/ice, thermal shock",
-      "safeguards": "preheat interlock, CO purge before cooldown, tracing",
+      "consequence": "condensation, hydrate/ice, thermal shock",
+      "safeguards": "preheat interlock, CO purge before cooldowntracing",
       "severity": "S",
       "likelihood": "M",
       "risk_score": 2,
@@ -1048,6 +1110,7 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": true,
       "design_intent": "product at 40/55 C",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at E-601 cooler + knockout + dryer",
@@ -1064,6 +1127,7 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": true,
       "design_intent": "product at 40/55 C",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at E-601 cooler + knockout + dryer",
@@ -1080,11 +1144,12 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": false,
       "design_intent": "product at 40/55 C",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at E-601 cooler + knockout + dryer",
       "cause": "creep, corrosion, thermal fatigue, flange failure",
-      "consequence": "fire, toxic CO/H2/Ni(CO)4 release, escalation",
+      "consequence": "fire, toxic CO/H2, escalation",
       "safeguards": "gas detectors, fire detectors, ESD, deluge, zoning",
       "severity": "H",
       "likelihood": "L",
@@ -1096,6 +1161,7 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": true,
       "design_intent": "product at 40/55 C",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at E-601 cooler + knockout + dryer",
@@ -1112,12 +1178,13 @@
     {
       "node_id": "N06",
       "node": "E-601 cooler + knockout + dryer",
+      "template_generic": false,
       "design_intent": "product at 40/55 C",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at E-601 cooler + knockout + dryer",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "wet adsorbent if regeneration is incomplete, ice/hydrate in cold depressurised beds, oxygen ingress on vacuum breaking",
+      "safeguards": "regeneration completion permit, N2 blanket, dew-point analyser before admission to loop",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -1128,6 +1195,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at PSA / methanator",
@@ -1144,6 +1212,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at PSA / methanator",
@@ -1160,6 +1229,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "HIGH P",
       "deviation": "HIGH P at PSA / methanator",
@@ -1176,6 +1246,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "LOW P",
       "deviation": "LOW P at PSA / methanator",
@@ -1192,6 +1263,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "HIGH T",
       "deviation": "HIGH T at PSA / methanator",
@@ -1208,6 +1280,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "LOW T",
       "deviation": "LOW T at PSA / methanator",
@@ -1224,6 +1297,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at PSA / methanator",
@@ -1240,6 +1314,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at PSA / methanator",
@@ -1256,6 +1331,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at PSA / methanator",
@@ -1272,6 +1348,7 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": true,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at PSA / methanator",
@@ -1288,12 +1365,13 @@
     {
       "node_id": "N07",
       "node": "PSA / methanator",
+      "template_generic": false,
       "design_intent": "ISO 14687 H2 / <10 ppm CO+CO2",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at PSA / methanator",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "Ni(CO)4 formation in the methanator catalyst during cooldown with CO present, wet methanator catalyst on steam-out",
+      "safeguards": "CO purge sequence, cooldown rate limit, Ni(CO)4 monitoring at the vent",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -1304,6 +1382,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at Synthesis loop + recycle compressor",
@@ -1320,6 +1399,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at Synthesis loop + recycle compressor",
@@ -1336,6 +1416,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "HIGH P",
       "deviation": "HIGH P at Synthesis loop + recycle compressor",
@@ -1352,6 +1433,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "LOW P",
       "deviation": "LOW P at Synthesis loop + recycle compressor",
@@ -1368,6 +1450,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "HIGH T",
       "deviation": "HIGH T at Synthesis loop + recycle compressor",
@@ -1384,6 +1467,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "LOW T",
       "deviation": "LOW T at Synthesis loop + recycle compressor",
@@ -1400,6 +1484,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at Synthesis loop + recycle compressor",
@@ -1416,6 +1501,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at Synthesis loop + recycle compressor",
@@ -1432,6 +1518,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at Synthesis loop + recycle compressor",
@@ -1448,6 +1535,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at Synthesis loop + recycle compressor",
@@ -1464,6 +1552,7 @@
     {
       "node_id": "N08",
       "node": "Synthesis loop + recycle compressor",
+      "template_generic": true,
       "design_intent": "MeOH/FT/oxo/NH3 product",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at Synthesis loop + recycle compressor",
@@ -1480,6 +1569,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at SHUTDOWN / standby / Ni(CO)4",
@@ -1496,6 +1586,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at SHUTDOWN / standby / Ni(CO)4",
@@ -1512,6 +1603,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "HIGH P",
       "deviation": "HIGH P at SHUTDOWN / standby / Ni(CO)4",
@@ -1528,6 +1620,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "LOW P",
       "deviation": "LOW P at SHUTDOWN / standby / Ni(CO)4",
@@ -1544,6 +1637,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "HIGH T",
       "deviation": "HIGH T at SHUTDOWN / standby / Ni(CO)4",
@@ -1560,6 +1654,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "LOW T",
       "deviation": "LOW T at SHUTDOWN / standby / Ni(CO)4",
@@ -1576,6 +1671,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at SHUTDOWN / standby / Ni(CO)4",
@@ -1592,6 +1688,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at SHUTDOWN / standby / Ni(CO)4",
@@ -1608,6 +1705,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at SHUTDOWN / standby / Ni(CO)4",
@@ -1624,6 +1722,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at SHUTDOWN / standby / Ni(CO)4",
@@ -1640,6 +1739,7 @@
     {
       "node_id": "N09",
       "node": "SHUTDOWN / standby / Ni(CO)4",
+      "template_generic": true,
       "design_intent": "CO<10 ppm before T<200 C",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at SHUTDOWN / standby / Ni(CO)4",
@@ -1656,6 +1756,7 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": true,
       "design_intent": "protect against blocked outlet",
       "guideword": "NO/LOW FLOW",
       "deviation": "NO/LOW FLOW at PSV / flare / relief network",
@@ -1672,6 +1773,7 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": true,
       "design_intent": "protect against blocked outlet",
       "guideword": "HIGH FLOW",
       "deviation": "HIGH FLOW at PSV / flare / relief network",
@@ -1688,6 +1790,7 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": true,
       "design_intent": "protect against blocked outlet",
       "guideword": "HIGH P",
       "deviation": "HIGH P at PSV / flare / relief network",
@@ -1704,6 +1807,7 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": true,
       "design_intent": "protect against blocked outlet",
       "guideword": "LOW P",
       "deviation": "LOW P at PSV / flare / relief network",
@@ -1720,12 +1824,13 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": false,
       "design_intent": "protect against blocked outlet",
       "guideword": "HIGH T",
       "deviation": "HIGH T at PSV / flare / relief network",
       "cause": "firing maldistribution, loss of quench, exothermic runaway",
-      "consequence": "tube creep rupture (LMP), Ni sintering, Ni(CO)4 decomposition",
-      "safeguards": "skin thermocouples, high-high T trip, LMP-based tube life",
+      "consequence": "relief line / flare tip damage, radiant heating of adjacent equipment, flame impingement",
+      "safeguards": "flare tip temperature monitoring, radiation design cases, PSV back-pressure check",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -1736,12 +1841,13 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": false,
       "design_intent": "protect against blocked outlet",
       "guideword": "LOW T",
       "deviation": "LOW T at PSV / flare / relief network",
       "cause": "loss of preheat, excessive quench, ambient cooling during shutdown",
-      "consequence": "condensation, Ni(CO)4 formation, hydrate/ice, thermal shock",
-      "safeguards": "preheat interlock, CO purge before cooldown, tracing",
+      "consequence": "condensation, hydrate/ice, thermal shock",
+      "safeguards": "preheat interlock, CO purge before cooldowntracing",
       "severity": "S",
       "likelihood": "M",
       "risk_score": 2,
@@ -1752,6 +1858,7 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": true,
       "design_intent": "protect against blocked outlet",
       "guideword": "WRONG COMPOSITION",
       "deviation": "WRONG COMPOSITION at PSV / flare / relief network",
@@ -1768,6 +1875,7 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": true,
       "design_intent": "protect against blocked outlet",
       "guideword": "REVERSE FLOW",
       "deviation": "REVERSE FLOW at PSV / flare / relief network",
@@ -1784,11 +1892,12 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": false,
       "design_intent": "protect against blocked outlet",
       "guideword": "LEAK/RUPTURE",
       "deviation": "LEAK/RUPTURE at PSV / flare / relief network",
       "cause": "creep, corrosion, thermal fatigue, flange failure",
-      "consequence": "fire, toxic CO/H2/Ni(CO)4 release, escalation",
+      "consequence": "fire, toxic CO/H2, escalation",
       "safeguards": "gas detectors, fire detectors, ESD, deluge, zoning",
       "severity": "H",
       "likelihood": "L",
@@ -1800,6 +1909,7 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": true,
       "design_intent": "protect against blocked outlet",
       "guideword": "UTILITY FAILURE",
       "deviation": "UTILITY FAILURE at PSV / flare / relief network",
@@ -1816,12 +1926,13 @@
     {
       "node_id": "N10",
       "node": "PSV / flare / relief network",
+      "template_generic": false,
       "design_intent": "protect against blocked outlet",
       "guideword": "STARTUP/SHUTDOWN",
       "deviation": "STARTUP/SHUTDOWN at PSV / flare / relief network",
       "cause": "incomplete purge, wrong sequence, CO present while cooling",
-      "consequence": "Ni(CO)4 formation, explosive mixture, residual CO",
-      "safeguards": "written purge procedure, CO<10 ppm permit, Ni(CO)4 monitor",
+      "consequence": "air ingress into a cold flare header, explosive mixture at relight, loss of purgery pressure",
+      "safeguards": "continuous pilot + flame supervision, N2 purge of header, velocity/pressure interlocks",
       "severity": "H",
       "likelihood": "M",
       "risk_score": 6,
@@ -1840,6 +1951,39 @@
     "No consequence modelling (dispersion, fire, explosion, toxic Ni(CO)4 plume).",
     "No ATEX/IECEx hazardous-area classification or detector layout study.",
     "No MOC (management of change) record for the V2/V3 design modifications."
+  ],
+  "v5_note": "node-specific consequences added in V5: the earlier template attributed Ni(CO)4 and tube-creep wording to every node, which is wrong for the amine unit, the dryer and the flare header; 20 high-risk rows are no longer 10 copies of the same two entries",
+  "model_generated_inputs": [
+    {
+      "item": "Ammonia converter peak bed temperature 845.3 K vs an ASSUMED catalyst ceiling of 803.15 K (530 C)",
+      "source": "results_v2/converter_ammonia.json -> design.T_peak_K",
+      "hazop_question": "what protects the tubes/vessel if the bed runs hotter than the vendor ceiling, and is the ceiling itself guaranteed? (docs/28 item 12)"
+    },
+    {
+      "item": "Reformer bed pressure drop 2.83 bar against a 3.0 bar design limit, from an Ergun correlation that has never been checked against a measured bed",
+      "source": "results_v2/design_*.json -> equipment",
+      "hazop_question": "flow maldistribution and hot tubes on partial blockage; dP transmitter location and trip philosophy (docs/27 section 4)"
+    },
+    {
+      "item": "Equilibrium model overpredicts measured lab conversion by +0.287 in X_CH4 at 1-10 bar",
+      "source": "results_v2/pilot_comparison.csv",
+      "hazop_question": "if the real unit is kinetically limited, the S/C margin for carbon formation at part load is NOT what the design says - check low-load turndown case"
+    },
+    {
+      "item": "Extrapolated Ni-sintering t50 of 109 h against a 32 000 h design life (from coking data at S/C=1.5, not sintering)",
+      "source": "results_v2/pilot_data_summary.json -> deactivation",
+      "hazop_question": "hot-spot and tube-rupture scenarios in a late-changeout state; changeout interval is a safety-relevant parameter, not only an economic one"
+    },
+    {
+      "item": "Ni(CO)4 formation window during cooldown with CO present (log K = 7430/T - 21.90, OSTI 7349456, opened)",
+      "source": "docs/24 (Larsson), docs/19",
+      "hazop_question": "permit-to-work boundary: CO < 10 ppm before T < 200 C - who measures, where, and what stops the cooldown?"
+    },
+    {
+      "item": "Middle East case: cooling-water temperature raises the MDEA absorber and final-cooler approach; water dew point moves",
+      "source": "results_v2/full_matrix.csv",
+      "hazop_question": "site-specific: does the absorber overheat in the design ambient, and is amine carry-over to the methanator a credible scenario?"
+    }
   ],
   "disclaimer": "This is an automatically generated WORKSHEET TEMPLATE for a future certified study. It must NOT be used as a safety case, as a basis for construction, or as evidence of compliance."
 }

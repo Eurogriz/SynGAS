@@ -126,8 +126,8 @@
   },
   "loop5": {
     "status": "FAILED (now evidence-based, not just absence-of-data)",
-    "subchecks_passed": 4,
-    "subchecks_total": 13,
+    "subchecks_passed": 8,
+    "subchecks_total": 23,
     "mean_pilot_bias": 0.2867605845140648,
     "catalyst_datasheet_found": false
   },
@@ -135,8 +135,20 @@
     "certified": false,
     "worksheet_rows": 110
   },
+  "ammonia_converter": {
+    "reactor": "3 adiabatic beds with interbed cooling (V5)",
+    "space_velocity_basis": "normal m3/m3/h",
+    "k_scale_calibrated": 0.21339984916320956,
+    "per_pass_N2_conversion": 0.25353163160321224,
+    "per_pass_N2_conversion_published_k0": 0.31445077342273814,
+    "outlet_NH3_molpct": 14.626140774458001,
+    "catalyst_volume_m3": 52.90884710390271,
+    "T_peak_K": 845.3409367299781,
+    "peak_T_check": "EXCEEDED - lower the first-bed inlet temperature, raise the recycle ratio or add cold-shot; the assumed ceiling itself must be confirmed on the vendor datasheet",
+    "computed": true
+  },
   "overall_passed": false,
-  "runtime_s": 211.8,
+  "runtime_s": 215.4,
   "optional_packages": {
     "iapws": true
   }

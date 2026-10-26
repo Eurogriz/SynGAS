@@ -37,18 +37,18 @@
 
 | узел | слово | причина | последствие | защита | риск |
 |---|---|---|---|---|---|
-| Natural-gas feed / HDS-ZnO guard | HIGH T | firing maldistribution, loss of quench, ex | tube creep rupture (LMP), Ni sintering, Ni | skin thermocouples, high-high T trip, LMP- | 6 |
-| Natural-gas feed / HDS-ZnO guard | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation, explosive mixture, resi | written purge procedure, CO<10 ppm permit, | 6 |
+| Natural-gas feed / HDS-ZnO guard | HIGH T | firing maldistribution, loss of quench, ex | ZnO/HDS bed sintering, sulfur slip to refo | bed inlet TC high-high trip, online H2S an | 6 |
+| Natural-gas feed / HDS-ZnO guard | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | HDS catalyst not sulfided on first start,  | sulfiding procedure + permit, bed preheat  | 6 |
 | R-100 adiabatic pre-reformer | HIGH T | firing maldistribution, loss of quench, ex | tube creep rupture (LMP), Ni sintering, Ni | skin thermocouples, high-high T trip, LMP- | 6 |
-| R-100 adiabatic pre-reformer | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation, explosive mixture, resi | written purge procedure, CO<10 ppm permit, | 6 |
+| R-100 adiabatic pre-reformer | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation while CO-rich gas cools  | written purge procedure, CO < 10 ppm permi | 6 |
 | R-101 fired tubular reformer | HIGH T | firing maldistribution, loss of quench, ex | tube creep rupture (LMP), Ni sintering, Ni | skin thermocouples, high-high T trip, LMP- | 6 |
-| R-101 fired tubular reformer | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation, explosive mixture, resi | written purge procedure, CO<10 ppm permit, | 6 |
-| WHB / syngas cooler | HIGH T | firing maldistribution, loss of quench, ex | tube creep rupture (LMP), Ni sintering, Ni | skin thermocouples, high-high T trip, LMP- | 6 |
-| WHB / syngas cooler | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation, explosive mixture, resi | written purge procedure, CO<10 ppm permit, | 6 |
-| A-302 CO2 trim / A-301 MDEA | HIGH T | firing maldistribution, loss of quench, ex | tube creep rupture (LMP), Ni sintering, Ni | skin thermocouples, high-high T trip, LMP- | 6 |
-| A-302 CO2 trim / A-301 MDEA | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation, explosive mixture, resi | written purge procedure, CO<10 ppm permit, | 6 |
-| E-601 cooler + knockout + dryer | HIGH T | firing maldistribution, loss of quench, ex | tube creep rupture (LMP), Ni sintering, Ni | skin thermocouples, high-high T trip, LMP- | 6 |
-| E-601 cooler + knockout + dryer | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation, explosive mixture, resi | written purge procedure, CO<10 ppm permit, | 6 |
+| R-101 fired tubular reformer | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | Ni(CO)4 formation while CO-rich gas cools  | written purge procedure, CO < 10 ppm permi | 6 |
+| WHB / syngas cooler | HIGH T | firing maldistribution, loss of quench, ex | boiler tube creep rupture, steam-side over | drum level trips, skin TCs, steam relief t | 6 |
+| WHB / syngas cooler | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | thermal shock of boiler tubes on hot synga | warm-up rate limit, drum level permissive  | 6 |
+| A-302 CO2 trim / A-301 MDEA | HIGH T | firing maldistribution, loss of quench, ex | MDEA thermal degradation above ~120 C, reb | reboiler TC high trip, lean amine flow con | 6 |
+| A-302 CO2 trim / A-301 MDEA | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | amine solidification / freezing of lines,  | trace heating, commissioning procedure, CO | 6 |
+| E-601 cooler + knockout + dryer | HIGH T | firing maldistribution, loss of quench, ex | molecular-sieve adsorbent damage, breakthr | regeneration TC high trip, heater interloc | 6 |
+| E-601 cooler + knockout + dryer | STARTUP/SHUTDOWN | incomplete purge, wrong sequence, CO prese | wet adsorbent if regeneration is incomplet | regeneration completion permit, N2 blanket | 6 |
 
 ## 24.3 Что требуется для сертификации
 

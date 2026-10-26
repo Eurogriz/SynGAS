@@ -68,7 +68,7 @@ CO2 trim / hydraulics), `docs/21` (15-case matrix).
 - Measured packed-bed pressure drop at design velocity (Ergun is a correlation)
 - 200-1000 h Ni particle-size / sintering series for 15 wt% Ni/MgAl2O4
 - Commercial Ni/MgAl2O4 reforming CATALYST datasheet (Ni wt%, loaded density, crush strength, life)
-- Validated Xu-Froment kinetic parameter set (secondary set fails self-consistency)
+- Ammonia converter vendor data: bed-T ceiling, GHSV basis, pressure drop, catalyst size distribution (docs/28_v5_vendor_rfi.md items 12-18)
 
 ## 17.5 Next step
 
@@ -80,4 +80,24 @@ CLOSED (docs/20); stoichiometric
 synthesis loops (docs/18) are now complemented by VBF/Graaf and
 Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
 (docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
-loop 5 was rerun and remains FAILED with 4/13 subchecks passing (docs/25).
+loop 5 was rerun and remains FAILED with {l5["subchecks_passed"]} of
+{l5["subchecks_total"]} subchecks passing (docs/25, docs/26).
+
+## 17.6 V5 state
+
+The isothermal ammonia PFR was replaced by a **multi-bed adiabatic converter**
+(NIST Shomate energy balance, normal-basis space velocity, Temkin-Pyzhev with
+published alpha/Ea and ONE documented activity scalar k_scale), and the pilot
+data / vendor / HAZOP gaps were converted into executable handover documents:
+
+- `docs/26_v5_converter.md` - converter, calibration, loop-5 consequences;
+- `docs/27_v5_pilot_test_program.md` + `data/pilot_schema.json` +
+  `model/data_ingest.py` - campaign design, data contract, automatic loop-5
+  rerun on ingest;
+- `docs/28_v5_vendor_rfi.md` - the 18 datasheet items the model needs;
+- `docs/29_v5_hazop_tor.md` - terms of reference for a certified HAZOP team.
+
+Still true after V5: **no pilot campaign has been run, no vendor datasheet was
+obtained, no certified HAZOP took place, and no HYSYS run exists** - those are
+physical and organisational acts that a code agent cannot perform; they are
+prepared for, not faked. Loop 5 stays FAILED until the data arrive.

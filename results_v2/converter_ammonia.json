@@ -1,0 +1,542 @@
+{
+  "used": true,
+  "model": "multi-bed adiabatic ammonia converter, Temkin-Pyzhev",
+  "supersedes": "the V4 isothermal single-bed PFR, which was the wrong reactor type and used the actual-basis space velocity",
+  "benchmark_validation": {
+    "benchmark_source": "Humphreys et al., Adv. Energy Sustainability Res. 2021 (opened): 15-20 % per-pass at 425 C / 150 bar / SV 10 000-30 000 h-1; RSC EES 2020 (opened): 15-25 % per pass; COMSOL/Rase benchmark 13 mol % NH3 at converter outlet (opened)",
+    "opened_conditions": {
+      "T_K": 698.15,
+      "p_bar": 150.0,
+      "GHSV_normal_h1": [
+        10000.0,
+        30000.0
+      ]
+    },
+    "opened_per_pass_range": [
+      0.15,
+      0.2
+    ],
+    "outlet_NH3_benchmark_molpct": 13.0,
+    "rows": [
+      {
+        "case": "1 adiabatic bed (no interbed cooling)",
+        "GHSV_normal_h1": 10000.0,
+        "per_pass_N2_conversion": 0.14990066941012983,
+        "outlet_NH3_molpct": 8.572650780924413,
+        "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+        "T_peak_K": 830.9965203558914,
+        "catalyst_volume_per_100mol_h_feed_m3": 0.0009037673129648241
+      },
+      {
+        "case": "1 adiabatic bed (no interbed cooling)",
+        "GHSV_normal_h1": 20000.0,
+        "per_pass_N2_conversion": 0.14990066941012928,
+        "outlet_NH3_molpct": 8.572650780924421,
+        "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+        "T_peak_K": 830.9965203558913,
+        "catalyst_volume_per_100mol_h_feed_m3": 0.00045188365648241203
+      },
+      {
+        "case": "1 adiabatic bed (no interbed cooling)",
+        "GHSV_normal_h1": 30000.0,
+        "per_pass_N2_conversion": 0.1499006694101142,
+        "outlet_NH3_molpct": 8.572650780923434,
+        "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+        "T_peak_K": 830.9965203558763,
+        "catalyst_volume_per_100mol_h_feed_m3": 0.0003012557709882747
+      },
+      {
+        "case": "3 adiabatic beds, interbed cooling to 698 K",
+        "GHSV_normal_h1": 10000.0,
+        "per_pass_N2_conversion": 0.2803511346334318,
+        "outlet_NH3_molpct": 16.732536698101555,
+        "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+        "T_peak_K": 830.9965203558763,
+        "catalyst_volume_per_100mol_h_feed_m3": 0.0009037673129648241
+      },
+      {
+        "case": "3 adiabatic beds, interbed cooling to 698 K",
+        "GHSV_normal_h1": 20000.0,
+        "per_pass_N2_conversion": 0.2595046632541978,
+        "outlet_NH3_molpct": 15.347192797686645,
+        "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+        "T_peak_K": 830.9963836980401,
+        "catalyst_volume_per_100mol_h_feed_m3": 0.00045188365648241203
+      },
+      {
+        "case": "3 adiabatic beds, interbed cooling to 698 K",
+        "GHSV_normal_h1": 30000.0,
+        "per_pass_N2_conversion": 0.23838421747770114,
+        "outlet_NH3_molpct": 13.976776327115342,
+        "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+        "T_peak_K": 830.9732287655349,
+        "catalyst_volume_per_100mol_h_feed_m3": 0.0003012557709882747
+      }
+    ],
+    "n_rows": 6,
+    "n_rows_in_band": 0,
+    "band_reached_without_any_fit": false,
+    "closest_row": {
+      "case": "3 adiabatic beds, interbed cooling to 698 K",
+      "GHSV_normal_h1": 30000.0,
+      "per_pass_N2_conversion": 0.23838421747770114,
+      "outlet_NH3_molpct": 13.976776327115342,
+      "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+      "T_peak_K": 830.9732287655349,
+      "catalyst_volume_per_100mol_h_feed_m3": 0.0003012557709882747
+    },
+    "closest_to_lower_edge": {
+      "case": "1 adiabatic bed (no interbed cooling)",
+      "GHSV_normal_h1": 10000.0,
+      "per_pass_N2_conversion": 0.14990066941012983,
+      "outlet_NH3_molpct": 8.572650780924413,
+      "equilibrium_NH3_molpct_at_inlet_T": 24.758741248877527,
+      "T_peak_K": 830.9965203558914,
+      "catalyst_volume_per_100mol_h_feed_m3": 0.0009037673129648241
+    },
+    "note2": "the single-bed rows sit at the adiabatic equilibrium pinch; the lower opened edge is reached there without any fitting, while the 3-bed case overshoots the band by 19% at the highest opened space velocity",
+    "note": "single-bed runs hit the adiabatic equilibrium pinch, so they are insensitive to space velocity - that is physics, not a bug; multi-bed operation with interbed cooling is what makes conversion depend on catalyst volume",
+    "status": "[ПОДТВЕРЖДЕНО] comparison; parameters from opened sources"
+  },
+  "calibration": {
+    "objective": "per-pass N2 conversion at the benchmark point",
+    "target_per_pass_conversion": 0.175,
+    "opened_band_per_pass": [
+      0.15,
+      0.2
+    ],
+    "alternative_objective": {
+      "outlet_NH3_molpct": 13.0,
+      "k_scale_needed": 0.5039665850488267,
+      "per_pass_conversion_at_that_factor": null
+    },
+    "benchmark_conditions": {
+      "target_per_pass_conversion": 0.175,
+      "T_K": 698.15,
+      "p_bar": 150.0,
+      "GHSV_normal_h1": 20000.0,
+      "n_beds": 3,
+      "method": "single scalar k_scale, bisection on log10(k_scale); alpha, Ea, Ka and the energy balance are left at their source values",
+      "source_of_target": "Humphreys et al., Advanced Energy Sustainability Research 2021 (opened): 15-20 % per-pass N2 conversion at 425 C / 150 bar / SV 10 000-30 000 h-1 -> midpoint 17.5 % used as the objective",
+      "report_both": true,
+      "note": "Calibration on ONE literature benchmark is not pilot validation; loop 5 stays open until pilot data at design conditions are measured."
+    },
+    "method": "bisection on log10(k_scale); one scalar; alpha/Ea/Ka/energy balance untouched",
+    "k_scale": 0.21339984916320956,
+    "k0_published_kmol_m3cat_h": 65000000000000.0,
+    "k0_effective_kmol_m3cat_h": 13870990195608.621,
+    "uncalibrated": {
+      "per_pass_N2_conversion": 0.2595046632541978,
+      "outlet_NH3_molpct": 15.347192797686645,
+      "T_bed_out_K": [
+        830.9963836980401,
+        763.9055897579686,
+        731.7134707576403
+      ]
+    },
+    "calibrated": {
+      "per_pass_N2_conversion": 0.17500000000002744,
+      "outlet_NH3_molpct": 10.052814738998665,
+      "T_bed_out_K": [
+        813.9663098639087,
+        720.7717468219289,
+        715.096288243584
+      ]
+    },
+    "deviation_before_pct": 48.28837900239875,
+    "deviation_after_pct": 0.0,
+    "uncertainty_on_k0_band": [
+      0.21339984916320956,
+      0.5039665850488267
+    ],
+    "k0_uncertainty_factor": 2.3616070349861866,
+    "what_this_is": "a single fitted activity multiplier reconciling published rate constants with a published plant benchmark. It is NOT pilot validation: the benchmark comes from another plant, another catalyst and another internals design, so loop 5 stays open until pilot data at design conditions exist.",
+    "status": "[ЧАСТИЧНО] relative rate calibrated on one opened industrial benchmark; absolute catalyst life and deactivation unconfirmed"
+  },
+  "equilibrium_check": {
+    "reaction": "N2 + 3H2 -> 2NH3 (Kp in bar^-2, ideal-gas reference state 1 bar)",
+    "rows": [
+      {
+        "T_K": 673.15,
+        "dG0_kJ_per_mol": 48.2693530805077,
+        "Kp_from_NIST_Shomate": 0.00017968027561145308,
+        "Kp_from_Ka_correlation": 0.0001595581728404003,
+        "ratio": 1.1261113887984924,
+        "deviation_pct": 12.611138879849237
+      },
+      {
+        "T_K": 698.15,
+        "dG0_kJ_per_mol": 53.958220683617355,
+        "Kp_from_NIST_Shomate": 9.183275941077208e-05,
+        "Kp_from_Ka_correlation": 8.220104913734433e-05,
+        "ratio": 1.117172595417058,
+        "deviation_pct": 11.717259541705793
+      },
+      {
+        "T_K": 703.15,
+        "dG0_kJ_per_mol": 55.09846803852625,
+        "Kp_from_NIST_Shomate": 8.072363551301155e-05,
+        "Kp_from_Ka_correlation": 7.236163627289291e-05,
+        "ratio": 1.1155584598527257,
+        "deviation_pct": 11.555845985272573
+      },
+      {
+        "T_K": 723.15,
+        "dG0_kJ_per_mol": 59.667222229100076,
+        "Kp_from_NIST_Shomate": 4.899995086988254e-05,
+        "Kp_from_Ka_correlation": 4.4159199374858937e-05,
+        "ratio": 1.1096204542553272,
+        "deviation_pct": 10.962045425532718
+      },
+      {
+        "T_K": 773.15,
+        "dG0_kJ_per_mol": 71.13883397581569,
+        "Kp_from_NIST_Shomate": 1.5627755861699434e-05,
+        "Kp_from_Ka_correlation": 1.4234971934878339e-05,
+        "ratio": 1.0978424076417401,
+        "deviation_pct": 9.784240764174012
+      },
+      {
+        "T_K": 823.15,
+        "dG0_kJ_per_mol": 82.67198398510084,
+        "Kp_from_NIST_Shomate": 5.675253861713045e-06,
+        "Kp_from_Ka_correlation": 5.209896041778194e-06,
+        "ratio": 1.0893219012823179,
+        "deviation_pct": 8.932190128231788
+      }
+    ],
+    "max_abs_deviation_pct": 12.611138879849237,
+    "mean_abs_deviation_pct": 10.927120120794356,
+    "passed_within_15pct": true,
+    "source": "NIST WebBook Shomate (Chase 1998 NIST-JANAF) for NH3/N2/H2 vs COMSOL/Rase log10 Ka correlation (both opened)",
+    "note": "a ~10% difference in Kp shifts the equilibrium NH3 ceiling by ~1-2 mol% at converter conditions, i.e. it is the smaller uncertainty in this model - the rate scale is the larger one",
+    "status": "[ПОДТВЕРЖДЕНО] two independent thermo routes compared"
+  },
+  "design": {
+    "model": "Temkin-Pyzhev / Dyson-Simon in a multi-bed ADIABATIC converter",
+    "reactor": {
+      "type": "axial-flow converter, adiabatic beds with interbed cooling to the bed inlet temperature",
+      "n_beds": 3,
+      "T_in_bed_K": [
+        703.15,
+        703.15,
+        703.15
+      ],
+      "cold_shot_fraction": 0.0
+    },
+    "space_velocity_basis": "NORMAL m3 gas per m3 catalyst per hour (0 C / 101325 Pa) - same basis as every capacity number in this model",
+    "GHSV_normal_h1": 10000.0,
+    "p_bar": 200.0,
+    "reactor_inlet_total_mol_h": 23605299.33068649,
+    "reactor_inlet_Nm3_h": 529088.4710390271,
+    "fresh_feed_N2_mol_h": 1434257.840488902,
+    "recycle_ratio_configured": 3.0,
+    "recycle_ratio_implied_by_kinetics": 2.94428101013069,
+    "recycle_closure": {
+      "N2_converted_per_pass_mol_h": 1454518.9217554042,
+      "fresh_N2_mol_h": 1434257.840488902,
+      "fraction_of_fresh_N2_converted": 1.0,
+      "closure_criterion": "X*(1+RR) >= 1 for the loop to consume all fresh N2 with no purge loss",
+      "note": "with a 100 %-efficient separator the loop consumes all fresh N2 only if X*(1+RR) >= 1; here that product is 1.014, so the configured recycle of 3.00 closes the loop at this per-pass conversion. The unreacted gas is purged to hold inerts, and the loop block already assumes 0.97 overall conversion",
+      "status": "[ЧАСТИЧНО] closure checked kinetically; purge rate not optimised"
+    },
+    "catalyst_volume_m3": 52.90884710390271,
+    "catalyst_mass_t_at_1775kgm3": 93.91320360942731,
+    "per_pass_N2_conversion": 0.25353163160321224,
+    "per_pass_N2_conversion_uncalibrated": 0.31445077342273814,
+    "outlet_NH3_molpct": 14.626140774458001,
+    "outlet_NH3_molpct_uncalibrated": 18.632814016652116,
+    "T_bed_in_out_K": [
+      [
+        703.1,
+        845.3
+      ],
+      [
+        703.1,
+        750.7
+      ],
+      [
+        703.1,
+        731.0
+      ]
+    ],
+    "adiabatic_rise_K": [
+      142.19,
+      47.58,
+      27.88
+    ],
+    "T_peak_K": 845.3409367299781,
+    "T_out_K": 731.0269975735041,
+    "catalyst_T_max_assumed_K": 803.15,
+    "peak_T_margin_K": -42.19093672997815,
+    "peak_T_check": "EXCEEDED - lower the first-bed inlet temperature, raise the recycle ratio or add cold-shot; the assumed ceiling itself must be confirmed on the vendor datasheet",
+    "dH_rxn_at_bed_T_kJ_per_mol_NH3": -53.39975956221214,
+    "dH_note": "the adiabatic bed temperature rise uses the Shomate reaction enthalpy at bed temperature (-53.4 kJ/mol NH3), not the 298 K value of -45.9; the stoichiometric loop block in model/synthesis.py still uses the opened -46 kJ/mol and is reported unchanged",
+    "reaction_heat_MW": 43.15053372245934,
+    "interbed_cooling_duty_MW": 37.204863832992984,
+    "equilibrium_NH3_molpct_at_inlet_T": 27.10646580978522,
+    "equilibrium_NH3_molpct_at_outlet_T": 22.16153258786224,
+    "approach_to_equilibrium": 0.5395812525725165,
+    "NH3_formed_in_converter_t_h": 49.54236899391082,
+    "net_NH3_from_loop_t_h": 47.38668861574572,
+    "converter_vs_loop_NH3_ratio": 1.045491264343143,
+    "energy_balance_max_rel_residual": 4.440892098500626e-16,
+    "k_scale_applied": 0.21339984916320956,
+    "k_scale_source": "calibrate_k0(): single scalar fitted to the opened industrial per-pass benchmark",
+    "k_at_inlet_T_kmol_m3cat_h": 20.000954590998724,
+    "K_a_at_inlet_T": 0.008506564304870264,
+    "alpha": 0.654,
+    "k0_published_kmol_m3cat_h": 65000000000000.0,
+    "Ea_J_mol": 159400.0,
+    "bed_profile": [
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.0008333333333333334,
+        "T_K": 711.147,
+        "r_kmol_m3cat_h": 2477.649776831762,
+        "y_NH3_molpct": 0.9672593773271304
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.034166666666666665,
+        "T_K": 767.256,
+        "r_kmol_m3cat_h": 275.0451035172441,
+        "y_NH3_molpct": 4.344093274552222
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.0675,
+        "T_K": 797.385,
+        "r_kmol_m3cat_h": 193.80501639742675,
+        "y_NH3_molpct": 6.235291664460606
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.10083333333333333,
+        "T_K": 818.66,
+        "r_kmol_m3cat_h": 131.30330231265344,
+        "y_NH3_molpct": 7.607108939809883
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.13416666666666668,
+        "T_K": 832.132,
+        "r_kmol_m3cat_h": 76.15640235714329,
+        "y_NH3_molpct": 8.492324932024463
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.16749999999999998,
+        "T_K": 839.395,
+        "r_kmol_m3cat_h": 37.872040109681365,
+        "y_NH3_molpct": 8.975066045291845
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.20083333333333334,
+        "T_K": 842.831,
+        "r_kmol_m3cat_h": 17.027221068389757,
+        "y_NH3_molpct": 9.204861799465641
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.23416666666666666,
+        "T_K": 844.336,
+        "r_kmol_m3cat_h": 7.267645795436802,
+        "y_NH3_molpct": 9.305797818387365
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.2675,
+        "T_K": 844.971,
+        "r_kmol_m3cat_h": 3.0296101901196892,
+        "y_NH3_molpct": 9.348419551946044
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.30083333333333334,
+        "T_K": 845.234,
+        "r_kmol_m3cat_h": 1.250222133192338,
+        "y_NH3_molpct": 9.36610492228745
+      },
+      {
+        "bed": 1,
+        "V_over_Vtot": 0.3333333333333333,
+        "T_K": 845.341,
+        "r_kmol_m3cat_h": 0.5253178266287682,
+        "y_NH3_molpct": 9.373274762221346
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.33416666666666667,
+        "T_K": 703.277,
+        "r_kmol_m3cat_h": 38.18745350781488,
+        "y_NH3_molpct": 9.3817655565683
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.3675,
+        "T_K": 708.348,
+        "r_kmol_m3cat_h": 38.080673913932294,
+        "y_NH3_molpct": 9.722058111035146
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.4008333333333334,
+        "T_K": 713.404,
+        "r_kmol_m3cat_h": 37.87417345381235,
+        "y_NH3_molpct": 10.063069291577037
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.43416666666666665,
+        "T_K": 718.429,
+        "r_kmol_m3cat_h": 37.54503105228171,
+        "y_NH3_molpct": 10.403783834001107
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.4675,
+        "T_K": 723.405,
+        "r_kmol_m3cat_h": 37.06912266227748,
+        "y_NH3_molpct": 10.742946163995153
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.5008333333333334,
+        "T_K": 728.312,
+        "r_kmol_m3cat_h": 36.4221786415354,
+        "y_NH3_molpct": 11.079047363487998
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.5341666666666667,
+        "T_K": 733.122,
+        "r_kmol_m3cat_h": 35.58137510577939,
+        "y_NH3_molpct": 11.410324532893133
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.5675,
+        "T_K": 737.81,
+        "r_kmol_m3cat_h": 34.52747650593161,
+        "y_NH3_molpct": 11.734778401660913
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.6008333333333333,
+        "T_K": 742.346,
+        "r_kmol_m3cat_h": 33.2474317709838,
+        "y_NH3_molpct": 12.050214932355415
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.6341666666666667,
+        "T_K": 746.697,
+        "r_kmol_m3cat_h": 31.737163799095494,
+        "y_NH3_molpct": 12.354315142682802
+      },
+      {
+        "bed": 2,
+        "V_over_Vtot": 0.6666666666666666,
+        "T_K": 750.732,
+        "r_kmol_m3cat_h": 30.050015682419946,
+        "y_NH3_molpct": 12.637658670778471
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.6675,
+        "T_K": 703.223,
+        "r_kmol_m3cat_h": 21.75101280263596,
+        "y_NH3_molpct": 12.642787732993568
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.7008333333333333,
+        "T_K": 706.139,
+        "r_kmol_m3cat_h": 21.679906140995556,
+        "y_NH3_molpct": 12.848019977192568
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.7341666666666667,
+        "T_K": 709.044,
+        "r_kmol_m3cat_h": 21.567460175843976,
+        "y_NH3_molpct": 13.05312764647542
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.7675000000000001,
+        "T_K": 711.933,
+        "r_kmol_m3cat_h": 21.40972094225845,
+        "y_NH3_molpct": 13.257691718870008
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.8008333333333333,
+        "T_K": 714.798,
+        "r_kmol_m3cat_h": 21.202844616713083,
+        "y_NH3_molpct": 13.461249768074826
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.8341666666666666,
+        "T_K": 717.634,
+        "r_kmol_m3cat_h": 20.94323398543082,
+        "y_NH3_molpct": 13.663297036380145
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.8675,
+        "T_K": 720.432,
+        "r_kmol_m3cat_h": 20.62769821462562,
+        "y_NH3_molpct": 13.863289025087605
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.9008333333333334,
+        "T_K": 723.185,
+        "r_kmol_m3cat_h": 20.253631962300968,
+        "y_NH3_molpct": 14.060645857281378
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.9341666666666667,
+        "T_K": 725.884,
+        "r_kmol_m3cat_h": 19.8192067295579,
+        "y_NH3_molpct": 14.25475861795675
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 0.9674999999999999,
+        "T_K": 728.522,
+        "r_kmol_m3cat_h": 19.32356391332996,
+        "y_NH3_molpct": 14.444997790675497
+      },
+      {
+        "bed": 3,
+        "V_over_Vtot": 1.0,
+        "T_K": 731.027,
+        "r_kmol_m3cat_h": 18.781642481446752,
+        "y_NH3_molpct": 14.626140774458
+      }
+    ],
+    "source": "Temkin & Pyzhev 1940 / Dyson & Simon 1968 rate law; COMSOL blog K_a correlation (opened); alpha=0.654, k0=6.5e13 kmol/(m3cat h), Ea=159.4 kJ/mol from ChemCatChem 2024 (open PDF)",
+    "thermo_source": "NIST WebBook Shomate (NH3 added in V5); inert = CH4 coefficients",
+    "status": "[ЧАСТИЧНО] adiabatic energy balance from NIST Shomate NH3/N2/H2 enthalpies; single scalar k_scale calibrated against an opened industrial per-pass benchmark"
+  },
+  "peak_temperature_remedy": {
+    "objective": "peak bed temperature <= catalyst ceiling",
+    "bed_T_max_K_assumed": 803.15,
+    "recommended_common_bed_inlet_K": 644.0,
+    "achieved_peak_T_K": 802.2,
+    "per_pass_N2_conversion_at_that_inlet": 0.22540885820361217,
+    "outlet_NH3_molpct_at_that_inlet": 12.866402233323509,
+    "catalyst_volume_m3_unchanged": 52.90884710390271,
+    "method": "bisection on the common bed inlet temperature, peak T monotonic in inlet T, one pass per trial",
+    "caveat": "the adiabatic rise scales with per-pass conversion, so the peak can also be limited by splitting the same catalyst volume over more beds with cold-shot quench (4-5 beds) instead of cooling every inlet; a lower common inlet also moves more duty onto the feed/effluent exchangers, which this model does not size",
+    "status": "[ЧАСТИЧНО] remedy computed with the calibrated activity; the ceiling itself is an assumption pending the vendor datasheet (docs/28)"
+  },
+  "report_both_scales": true,
+  "note": "uncalibrated (published k0) and calibrated results are both reported; the calibration is one documented scalar, not a silent refit"
+}

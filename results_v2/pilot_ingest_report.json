@@ -1,0 +1,65 @@
+{
+ "contract": {
+  "name": "syngas_pilot_record",
+  "version": "1.0",
+  "schema_file": "data/pilot_schema.json"
+ },
+ "input_file": "/home/user/SynGAS/data/pilot_campaign_TEMPLATE.csv",
+ "input_meta": {},
+ "n_records_read": 0,
+ "n_records_usable": 0,
+ "issues": [],
+ "n_errors": 0,
+ "n_warnings": 0,
+ "comparison": {
+  "n_points": 0,
+  "rows": [],
+  "mean_bias": null,
+  "mean_bias_equilibrium_regime_only": null,
+  "n_agreements_within_2u": 0
+ },
+ "dP": {
+  "n_usable": 0,
+  "rows": [],
+  "ergun_confirmed": false,
+  "status": "[НЕ ПОДТВЕРЖДЕНО] no file given"
+ },
+ "sintering": {
+  "n_usable_series": 0,
+  "series": [],
+  "status": "[НЕ ПОДТВЕРЖДЕНО] no file given"
+ },
+ "regime": {
+  "rows": [],
+  "n": 0
+ },
+ "loop5_subcheck_status": [
+  {
+   "check": "pilot data at model design point (20-31 bar, 15 wt% Ni/MgAl2O4)",
+   "passed": false,
+   "value": {
+    "n_design_point_records": 0,
+    "mean_bias": null
+   },
+   "note": "needs >= 12 points inside the design window and |mean bias| <= 0.05 (on equilibrium-regime points only when flagged)"
+  },
+  {
+   "check": "measured packed-bed dP",
+   "passed": false,
+   "value": {
+    "n_usable": 0,
+    "mean_ratio": null
+   },
+   "note": ">= 6 usable points and measured/Ergun within 0.7-1.4"
+  },
+  {
+   "check": "200-1000 h sintering series",
+   "passed": false,
+   "value": 0,
+   "note": ">= 2 independent series with >= 3 points reaching >= 200 h, so that the GPLE vs cubic-law disagreement can be decided"
+  }
+ ],
+ "loop5_subchecks_passed_from_this_data": 0,
+ "loop5_overall": "cannot pass from this data alone: catalyst datasheet, certified HAZOP and independent flowsheet run are separate subchecks",
+ "status": "[НЕ ПОДТВЕРЖДЕНО] no usable campaign data"
+}
