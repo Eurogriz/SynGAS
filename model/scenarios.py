@@ -30,6 +30,9 @@ def _compact(r):
         "Q_reformer_kW": float(u["Q_reformer_kW"]),
         "fuel_Nm3_h": float(u["fuel_Nm3_h"]),
         "CO2_total_t_h": float(u["total_CO2_t_h"]),
+        "CO2_net_t_h": float(u["CO2_net_t_h"]),
+        "CO2_captured_t_h": float(u["CO2_captured_t_h"]),
+        "CO2_import_t_h": float(u["CO2_import_t_h"]),
         "steam_net_export_t_h": float(u["steam_net_export_t_h"]),
         "cooling_duty_kW": float(u["cooling_duty_kW"]),
         "cooling_water_m3_h": float(u["cooling_water_m3_h"]),
@@ -47,6 +50,20 @@ def _compact(r):
         "tubes_installed": eq["tubes_installed"],
         "T_wall_max_K": eq["T_wall_max_K"],
         "dP_bar": eq["Ergun_dP_bar"],
+        "tubes_for_heat": eq["tubes_for_heat"],
+        "tubes_for_dp": eq["tubes_for_dp"],
+        "pre_reformer_T_out_K": r["reformer"].get("prereformer", {}).get("T_out_K")
+                                 if r["reformer"].get("prereformer") else None,
+        "C2plus_conversion": r["reformer"].get("prereformer", {}).get("C2plus_conversion")
+                             if r["reformer"].get("prereformer") else None,
+        "saleable_product_t_h": r["synthesis"].get("methanol_t_h") or
+                                r["synthesis"].get("C5plus_t_h") or
+                                r["synthesis"].get("aldehyde_t_h") or
+                                r["synthesis"].get("H2_t_h") or
+                                r["synthesis"].get("NH3_t_h"),
+        "synthesis_heat_MW": r["synthesis"].get("heat_released_MW"),
+        "synthesis_compression_MW": r["synthesis"].get("compression_power_MW"),
+        "NiCO4_normal_ppb": r["safety"]["Ni_CO_4"]["normal_operation"]["NiCO4_ppb"],
         "CAPEX_USD": e["CAPEX_USD"], "OPEX_USD_y": e["total_OPEX_USD_y"],
         "levelised_cost": e["levelised_cost"], "cost_unit": e["unit"],
         "limit_checks_pass": all(v["pass"] for v in s["limit_checks"].values()),
@@ -142,6 +159,66 @@ def run_ni_life_sensitivity(base):
     return rows
 
 
+def run_full_matrix(base):
+    """All 5 products x (base, ISO 15C, Middle East) - 15 compact rows.
+
+    Re-uses the TUNED knobs from the base designs and re-runs the model with
+    do_tune=False, so each extra case costs one equilibrium evaluation.
+    """
+    rows = []
+    for prod, rb in base.items():
+        tuned = rb["knobs"]
+        knob_ov = {f"products.{prod}.knobs.{k}": v for k, v in tuned.items()}
+        cases = [("0C_russia", {}),
+                 ("15C_russia", {"active.normal": "15C"}),
+                 ("0C_middle_east", {"active.climate": "middle_east"})]
+        for label, ov in cases:
+            if label == "0C_russia":
+                r = rb
+            else:
+                cfg = load_config(overrides={**knob_ov, **ov}, product=prod)
+                r = design(cfg, do_tune=False)
+            row = _compact(r); row["case"] = label
+            rows.append(row)
+    return rows
+
+
+def run_synthesis_summary(base):
+    rows = []
+    for prod, r in base.items():
+        sy = r["synthesis"]
+        rows.append({"product": prod, "p_synthesis_bar": sy.get("p_synthesis_bar"),
+                     "T_synthesis_C": sy.get("T_synthesis_C"),
+                     "key_conversion": sy.get("overall_C_conversion") or
+                                       sy.get("CO_conversion") or
+                                       sy.get("olefin_conversion") or
+                                       sy.get("per_pass_conversion") or
+                                       sy.get("overall_conversion"),
+                     "saleable_t_h": sy.get("methanol_t_h") or sy.get("C5plus_t_h") or
+                                     sy.get("aldehyde_t_h") or sy.get("H2_t_h") or
+                                     sy.get("NH3_t_h"),
+                     "saleable_t_y": sy.get("methanol_t_y") or sy.get("C5plus_t_y") or
+                                     sy.get("aldehyde_t_y") or sy.get("NH3_t_y"),
+                     "heat_released_MW": sy.get("heat_released_MW"),
+                     "compression_power_MW": sy.get("compression_power_MW"),
+                     "status": sy.get("status"), "note": sy.get("note")})
+    return rows
+
+
+def run_safety_summary(base):
+    rows = []
+    for prod, r in base.items():
+        sa = r["safety"]
+        rows.append({"product": prod,
+                     "NiCO4_normal_ppb": sa["Ni_CO_4"]["normal_operation"]["NiCO4_ppb"],
+                     "CO_purge_ppm": sa["Ni_CO_4"]["CO_purge_ppm"],
+                     "safe_T_C": sa["Ni_CO_4"]["safe_temperature_C"],
+                     "ZnO_kg": sa["sulfur_guard"]["ZnO_mass_kg"],
+                     "PSV_orifice_mm": sa["relief"]["orifice_diameter_mm"],
+                     "HAZOP_nodes": len(sa["HAZOP_nodes"])})
+    return rows
+
+
 def run_all():
     base = run_base()
     scenarios = {
@@ -151,5 +228,8 @@ def run_all():
         "eos_sensitivity": run_eos_sensitivity(),
         "regulation_sweep": run_regulation_sweep(),
         "ni_life_sensitivity": run_ni_life_sensitivity(base),
+        "full_matrix": run_full_matrix(base),
+        "synthesis_summary": run_synthesis_summary(base),
+        "safety_summary": run_safety_summary(base),
     }
     return base, scenarios

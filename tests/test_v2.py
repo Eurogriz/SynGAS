@@ -112,3 +112,71 @@ def test_config_lists_all_user_requirements():
     assert raw["catalyst"]["basis"] == "Ni/MgAl2O4"
     assert raw["eos"]["enabled"] is True
     assert raw["active"]["steam_table"] == "IAPWS97"
+
+
+# ---------------- V3 continuation ----------------
+def test_methanol_co2_inside_licensor_window():
+    r = design(load_config(product="methanol"))
+    assert 4.0 <= r["spec"]["CO2_molpct"] <= 8.0
+    assert r["spec"]["limit_checks"]["min_CO2_molpct"]["pass"]
+    assert r["spec"]["limit_checks"]["max_CO2_molpct"]["pass"]
+    assert any(u["unit"].startswith("A-302") for u in r["downstream"]["units"])
+    assert r["utilities"]["CO2_net_t_h"] <= r["utilities"]["total_CO2_t_h"]
+
+
+def test_prereformer_converts_c2plus_and_closes_enthalpy():
+    from model.prereformer import adiabatic_prereformer
+    from model.config import load_config
+    from model.products import build_feed
+    c = load_config(product="methanol")
+    f = build_feed(c, c.knobs)[0]
+    f.pop("O2", None)
+    r = adiabatic_prereformer(f, 25.0, 623.15, eos_kset="base")
+    assert r["converged"]
+    assert r["C2plus_conversion"] > 0.99
+    assert not r["carbon_stable"]
+    assert r["H_balance_mismatch_pct"] < 0.1
+
+
+def test_synthesis_and_safety_blocks_present():
+    r = design(load_config(product="methanol"))
+    assert r["synthesis"]["methanol_t_h"] > 0
+    assert r["safety"]["Ni_CO_4"]["normal_operation"]["NiCO4_ppb"] < 1.0
+    assert len(r["safety"]["HAZOP_nodes"]) >= 8
+    assert r["safety"]["relief"]["orifice_diameter_mm"] > 0
+
+
+def test_ni_carbonyl_purge_rule():
+    from model.safety_v2 import ni_carbonyl_ppb
+    # normal operation: 1123 K, p_CO = 3 bar -> negligible
+    assert ni_carbonyl_ppb(1123.15, 3.0)["NiCO4_ppb"] < 1e-3
+    # 200 C with unpurged CO -> equilibrium risk; with 10 ppm CO -> < 1 ppb
+    assert ni_carbonyl_ppb(473.15, 3.0)["NiCO4_ppb"] > 1.0
+    assert ni_carbonyl_ppb(473.15, 10e-6 * 25.0)["NiCO4_ppb"] < 1.0
+
+
+def test_ergun_dp_is_in_bar_and_within_limit():
+    r = design(load_config(product="methanol"))
+    dp = r["equipment"]["Ergun_dP_bar"]
+    assert 0 < dp < 10          # bar, not Pa
+    assert r["equipment"]["dP_within_limit"]
+    assert r["equipment"]["tubes_installed"] >= r["equipment"]["tubes_for_heat"]
+
+
+def test_scipy_independent_pr_agrees():
+    from model.verify_v2 import scipy_pr_minimisation
+    r = scipy_pr_minimisation(make_feed(SC=3.0, CO2C=0.237), 1123.15, 25.0, "base")
+    if not r.get("available"):
+        pytest.skip("scipy not installed")
+    assert r["success"]
+    assert r["max_dy_wet"] < 1e-4
+
+
+def test_v21_claims_and_full_matrix():
+    d = json.load(open(os.path.join(ROOT, "data", "v2_claims.json"), encoding="utf-8"))
+    assert len(d["claims"]) >= 44
+    p = os.path.join(ROOT, "results_v2", "full_matrix.csv")
+    if os.path.exists(p):
+        import csv
+        rows = list(csv.DictReader(open(p, encoding="utf-8")))
+        assert len(rows) == 15

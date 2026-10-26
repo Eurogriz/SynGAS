@@ -181,6 +181,62 @@ def make_plots(designs, scenarios, verification):
     fig.tight_layout(); fig.savefig(os.path.join(OUT, "07_nickel_inventory.png")); plt.close(fig)
 
 
+    # 8 synthesis products --------------------------------------------------
+    ss = scenarios["synthesis_summary"]
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3.8))
+    labels = [r["product"] for r in ss]
+    vals = [r["saleable_t_h"] or 0 for r in ss]
+    ax[0].bar(labels, vals, color=[colours[p] for p in labels])
+    ax[0].set_ylabel("t/h"); ax[0].set_title("Saleable product (different products!)")
+    heats = [r["heat_released_MW"] or 0 for r in ss]
+    ax[1].bar(labels, heats, color=[colours[p] for p in labels])
+    ax[1].set_ylabel("MW"); ax[1].set_title("Synthesis-loop heat release")
+    fig.suptitle("Downstream synthesis loops (stoichiometric, docs/18)", fontsize=11)
+    fig.tight_layout(); fig.savefig(os.path.join(OUT, "08_synthesis_products.png")); plt.close(fig)
+
+    # 9 Ni(CO)4 shutdown ----------------------------------------------------
+    sa = designs["methanol"]["safety"]["Ni_CO_4"]["shutdown_scenarios"]
+    Ts = [x["T_C"] for x in sa]
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3.8))
+    ax[0].semilogy(Ts, [max(x["NiCO4_ppb_unpurged"], 1e-30) for x in sa], "o-",
+                   color="#f85149", label="CO not purged")
+    ax[0].semilogy(Ts, [max(x["NiCO4_ppb_after_purge"], 1e-30) for x in sa], "o-",
+                   color="#3fb950", label="CO < 10 ppm")
+    ax[0].axvline(200, color="k", ls="--", label="200 C safe T")
+    ax[0].axhline(1.0, color="#d29922", ls=":", label="1 ppb")
+    ax[0].set_xlabel("T [C]"); ax[0].set_ylabel("Ni(CO)4 [ppb]")
+    ax[0].set_title("Equilibrium Ni(CO)4 during shutdown")
+    ax[0].legend(fontsize=8)
+    dp = [r["equipment"]["Ergun_dP_bar"] for r in designs.values()]
+    ax[1].bar(list(designs), dp, color=[colours[p] for p in designs])
+    ax[1].axhline(load_config().equipment["dP_max_bar"], color="k", ls="--",
+                  label="3 bar limit")
+    ax[1].set_ylabel("bar"); ax[1].set_title("Ergun dP after tube-count sizing")
+    ax[1].legend(fontsize=8)
+    fig.suptitle("Safety and hydraulic screening (docs/19)", fontsize=11)
+    fig.tight_layout(); fig.savefig(os.path.join(OUT, "09_safety_dP.png")); plt.close(fig)
+
+    # 10 pre-reformer + CO2 trim -------------------------------------------
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3.8))
+    pres = [(p, r["reformer"].get("prereformer")) for p, r in designs.items()]
+    names = [p for p, pr in pres]
+    tpre = [(pr["T_out_C"] if pr else 0) for p, pr in pres]
+    ax[0].bar(names, tpre, color=[colours[p] for p in names])
+    ax[0].set_ylabel("T out [C]"); ax[0].set_title("Adiabatic pre-reformer (ATR bypassed = 0)")
+    net = [designs[p]["utilities"]["CO2_net_t_h"] for p in designs]
+    imp = [designs[p]["utilities"]["CO2_import_t_h"] for p in designs]
+    cap = [designs[p]["utilities"]["CO2_captured_t_h"] for p in designs]
+    x = np.arange(len(designs)); w = 0.27
+    ax[1].bar(x - w, imp, w, label="imported")
+    ax[1].bar(x, cap, w, label="captured")
+    ax[1].bar(x + w, net, w, label="net to atmosphere")
+    ax[1].set_xticks(x, names); ax[1].set_ylabel("t/h CO2")
+    ax[1].set_title("CO2 balance (import / capture / net)")
+    ax[1].legend(fontsize=8)
+    fig.suptitle("Pre-reformer and CO2 trim (docs/12, docs/18)", fontsize=11)
+    fig.tight_layout(); fig.savefig(os.path.join(OUT, "10_prereformer_CO2.png")); plt.close(fig)
+
+
 # --------------------------------------------------------------------------
 # reports
 # --------------------------------------------------------------------------
@@ -266,12 +322,16 @@ capacity without the normal condition is a 5.5% error.
 
 ## 12.5 Open items
 
-- Methanol make-up gas contains {fnum(designs["methanol"]["spec"]["CO2_molpct"],2)} mol% CO2,
-  above the 3-8 mol% typical of licensed methanol loops. An acid-gas trim
-  (with re-tuning of CO2/C) is required before a licence-grade design.
-  Status [ЧАСТИЧНО]; no methanol-licensor spec was opened.
-- Ammonia-loop compression and synthesis, methanol/FT/oxo synthesis loops and
-  their recycle/ purge systems are outside this boundary. [НЕ ПОДТВЕРЖДЕНО]
+- Methanol make-up gas now contains {fnum(designs["methanol"]["spec"]["CO2_molpct"],2)} mol% CO2,
+  INSIDE the opened 4-8 mol% licensor window (Applied Sciences 2017 7,1213).
+  This required CO2/C = {fnum(designs["methanol"]["knobs"]["CO2C"],4)} plus a partial
+  MDEA CO2 trim (recovery {fnum(next((u["recovery_fraction"] for u in designs["methanol"]["downstream"]["units"] if u["unit"].startswith("A-302")), 0),3)}).
+  Status [ЧАСТИЧНО]: the trim reboiler duty is modelled, but a licensor
+  kinetic methanol-loop model was NOT opened.
+- Stoichiometric synthesis loops (methanol, FT, oxo, NH3) and H2 compression
+  are now included in `docs/18`; their KINETIC models, licensor reactor designs,
+  crude-methanol distillation, FT wax upgrading, Rh recycle and the cost of
+  external oxo propylene remain outside this boundary. [НЕ ПОДТВЕРЖДЕНО]
 - C4+ is lumped into C3H8 on a carbon-equivalent basis (preserves C, overstates H).
   [ДОПУЩЕНИЕ]
 """
@@ -335,6 +395,14 @@ PSA tail gas and dryer water.
   {fnum(L['4_thermo']['dew_point_diff_K'],2)} K. This is why IF97 is the primary
   water/steam property source in V2.
 - PR vs ideal X_CH4: {fnum(L['4_thermo']['PR_vs_ideal']['X_ideal'],5)} -> {fnum(L['4_thermo']['PR_vs_ideal']['X_PR'],5)} (delta {fnum(L['4_thermo']['PR_vs_ideal']['delta_X'],5)}); k_ij spread in X_CH4 = {fnum(L['4_thermo']['kij_X_CH4_spread'],6)}.
+- **Independent SciPy SLSQP** real-gas minimisation: success = {L['4_thermo']['scipy_independent_PR'].get('success')}, max |Δy_wet| = {L['4_thermo']['scipy_independent_PR'].get('max_dy_wet')}, X_CH4 SciPy {fnum(L['4_thermo']['scipy_independent_PR'].get('X_CH4_scipy'),6)} vs model {fnum(L['4_thermo']['scipy_independent_PR'].get('X_CH4_model'),6)}. [ПОДТВЕРЖДЕНО] numerical cross-check.
+- Extra V3 checks: {L['4_thermo']['extra_checks_passed']}. Pre-reformer C2+ conversion >0,99; saleable product >0; Ni(CO)4 in normal operation <1 ppb; Ergun Δp ≤ 3 bar after tube-count sizing.
+{md_table(['продукт','C2+ конверсия','продукт т/ч','Ni(CO)4 ppb','Δp бар','труб'],
+          [[x['product'], fnum(x['pre_reformer_C2plus_conversion'],4),
+            fnum(x['saleable_product_t_h'],2),
+            f"{x['NiCO4_normal_ppb']:.3g}",
+            fnum(x['dP_bar'],3), x['tubes_installed']]
+           for x in L['4_thermo']['extra_checks']])}
 
 ## 13.6 Loop 5 - validation / falsification
 
@@ -478,8 +546,10 @@ The `me_rich` feed case (user answer 8 "possibly Middle East") is an
 
 1. **Edit `cases/config.json`** - the single source of truth. Section map:
    `active` (product/normal/climate/feed/eos), `normal_conditions`,
-   `climates`, `feeds`, `products.*.knobs`, `process`, `catalyst`, `eos`,
-   `equipment`, `economics`, `adjust`.
+   `climates`, `feeds`, `products.*.knobs`, `process` (incl. `prereformer_enabled`),
+   `catalyst`, `eos`, `equipment`, `synthesis`, `safety`, `economics`, `adjust`.
+   New V3 knobs: `products.methanol.co2_trim_target_molpct`,
+   `synthesis.<product>.*`, `safety.Ni_CO_4.CO_purge_ppm`.
 2. **Dotted overrides** in Python:
    ```python
    from model.config import load_config
@@ -543,10 +613,13 @@ file was produced and no HYSYS run is claimed.
 HYSYS не запускался) для пяти целевых продуктов - метанол, Фишер-Тропш,
 оксо-синтез, водород, аммиак. Все пять вариантов выводятся на целевые
 показатели настраиваемыми параметрами; обеспечены оба определения нормального
-кубометра, площадки России и Ближнего Востока, расчёт объёмов катализатора
-Ni/MgAl2O4 и потребности в никеле. Проверка: циклы 1-4 пройдены, цикл 5
-(валидация/фальсификация) **не пройден** - нет экспериментальных данных и
-коммерческого даташита Ni/MgAl2O4. Модель не объявляется «завершённой».
+кубометра, площадки России и Ближнего Востока, PR+IF97, адиабатический
+предреформер, CO2-трим метанола (6 мол.% внутри окна 4-8), стехиометрические
+контуры синтеза, скрининг Ni(CO)4/HAZOP/PSV, независимый SciPy SLSQP,
+расчёт объёмов катализатора Ni/MgAl2O4 и потребности в никеле. Проверка:
+циклы 1-4 пройдены, цикл 5 (валидация/фальсификация) **не пройден** -
+нет экспериментальных данных и коммерческого даташита Ni/MgAl2O4.
+Модель не объявляется «завершённой».
 
 ## 17.1 Key numbers (methanol base, Russia, 0 C/101325 Pa)
 
@@ -559,7 +632,13 @@ Ni/MgAl2O4 и потребности в никеле. Проверка: цикл
            ["Z (PR)", fnum(key["eos"]["Z"],5), "-", "[ЧАСТИЧНО] k_ij"],
            ["fired duty", fnum(key["utilities"]["Q_reformer_kW"],0), "kW", "[ЧАСТИЧНО]"],
            ["fuel", fnum(key["utilities"]["fuel_Nm3_h"],0), "Nm3/h", "[ЧАСТИЧНО]"],
-           ["total CO2", fnum(key["utilities"]["total_CO2_t_h"],2), "t/h", "[ЧАСТИЧНО]"],
+           ["CO2 in make-up gas", fnum(key["spec"]["CO2_molpct"],2), "mol%", "[ПОДТВЕРЖДЕНО] 4-8 window"],
+           ["total CO2 handled", fnum(key["utilities"]["total_CO2_t_h"],2), "t/h", "[ЧАСТИЧНО]"],
+           ["net CO2 to atmosphere", fnum(key["utilities"]["CO2_net_t_h"],2), "t/h", "[ЧАСТИЧНО] recycle assumption"],
+           ["methanol product", fnum(key["synthesis"]["methanol_t_h"],2), "t/h", "[ЧАСТИЧНО] stoichiometry"],
+           ["pre-reformer T_out", fnum(key["reformer"]["prereformer"]["T_out_K"],1), "K", "[ЧАСТИЧНО] equilibrium"],
+           ["Ergun dP", fnum(key["equipment"]["Ergun_dP_bar"],3), "bar", "[ЧАСТИЧНО] sized to <=3 bar"],
+           ["Ni(CO)4 at operation", f"{key['safety']['Ni_CO_4']['normal_operation']['NiCO4_ppb']:.3g}", "ppb", "[ЧАСТИЧНО] equilibrium"],
            ["cooling water", fnum(key["utilities"]["cooling_water_m3_h"],0), "m3/h", "[ЧАСТИЧНО]"],
            ["catalyst volume", fnum(key["catalyst"]["total_catalyst_volume_m3"],2), "m3", "[ЧАСТИЧНО] proxy density"],
            ["Ni inventory", fnum(key["catalyst"]["total_Ni_inventory_t"],3), "t", "[ЧАСТИЧНО]"],
@@ -569,11 +648,17 @@ Ni/MgAl2O4 и потребности в никеле. Проверка: цикл
 
 ## 17.2 All five variants
 
-{md_table(["product", "metric", "achieved", "cost", "unit", "Ni t", "CO2 t/h"],
+{md_table(["product", "metric", "achieved", "saleable t/h", "cost", "unit", "Ni t", "net CO2 t/h"],
           [[p, r["spec"]["metric"], fnum(r["spec"]["achieved"],4),
+            fnum(r["synthesis"].get("methanol_t_h") or r["synthesis"].get("C5plus_t_h") or
+                 r["synthesis"].get("aldehyde_t_h") or r["synthesis"].get("H2_t_h") or
+                 r["synthesis"].get("NH3_t_h"),2),
             fnum(r["economics"]["levelised_cost"],2), r["economics"]["unit"],
             fnum(r["catalyst"]["total_Ni_inventory_t"],2),
-            fnum(r["utilities"]["total_CO2_t_h"],2)] for p, r in designs.items()])}
+            fnum(r["utilities"]["CO2_net_t_h"],2)] for p, r in designs.items()])}
+
+Detail: `docs/18` (synthesis), `docs/19` (safety), `docs/20` (pre-reformer /
+CO2 trim / hydraulics), `docs/21` (15-case matrix).
 
 ## 17.3 Five verification loops
 
@@ -589,9 +674,199 @@ Ni/MgAl2O4 и потребности в никеле. Проверка: цикл
 Obtain an experimental/pilot dataset for 15 wt% Ni/MgAl2O4 (conversion vs T,
 p, S/C, CO2/C; pressure drop; 200-1000 h sintering) and a vendor MgAl2O4
 catalyst datasheet (bulk density, Ni loading, crush strength, life). Re-run
-loop 5, then close the methanol CO2 trim and the downstream synthesis loops.
+loop 5. The V2 methanol CO2 gap is CLOSED (docs/20) and stoichiometric
+synthesis loops are included (docs/18); the remaining gap is their kinetic
+validation plus a certified HAZOP/API 520 study (docs/19).
 """
     open(os.path.join(DOCS, "17_v2_final_report.md"), "w", encoding="utf-8").write(txt)
+
+    # 18 synthesis loops ----------------------------------------------------
+    sy_rows = scenarios["synthesis_summary"]
+    syn_rows = []
+    for prod, r in designs.items():
+        sy = r["synthesis"]
+        syn_rows.append([prod, fnum(sy.get("p_synthesis_bar"), 0),
+                         fnum(sy.get("T_synthesis_C"), 0),
+                         fnum(sy.get("methanol_t_h") or sy.get("C5plus_t_h") or
+                              sy.get("aldehyde_t_h") or sy.get("H2_t_h") or
+                              sy.get("NH3_t_h"), 2),
+                         fnum(sy.get("heat_released_MW"), 1),
+                         fnum(sy.get("compression_power_MW"), 2),
+                         str(sy.get("status"))[:60]])
+    txt = f"""# 18. Downstream synthesis loops (V3 continuation)
+
+Stoichiometric + recycle balances, **NOT** a kinetic reactor simulation.
+All conversions/selectivities are adjustable in `cases/config.json -> synthesis`.
+
+{md_table(['product','p bar','T C','saleable t/h','heat MW','compression MW','status'], syn_rows)}
+
+## 18.1 Chemistry and opened sources
+
+- **Methanol**: CO + 2H₂ → CH₃OH (−90,7 кДж/моль), CO₂ + 3H₂ → CH₃OH + H₂O
+  (−49,7 кДж/моль), 50–100 бар, 200–300 °C, Cu/ZnO/Al₂O₃.
+  Applied Sciences 2017, 7, 1213 (opened): 4–8 мол.% CO₂ в подпиточном газе,
+  S-модуль чуть выше 2. OSTI 2424604 (opened): конверсия за проход 25–30 %,
+  поэтому нужен рецикл 2:1–5:1 (opened review). Итоговая конверсия углерода 0,97.
+- **FT**: CO + 2H₂ → –CH₂– + H₂O. ACS Catalysis 2017 (opened): в промышленности
+  0,85 < α < 0,95; Hywax (opened): конверсия CO за проход 60–80 %;
+  распределение Андерсона–Шульца–Флори Wₙ = n(1−α)²αⁿ⁻¹, доля C₅₊ = α⁴(5−4α).
+- **Оксо**: C₃H₆ + CO + H₂ → C₄H₈O (масляный альдегид). US7582802B2 (opened):
+  материальный баланс пропилена; MDPI Catalysts 2020 10,510 (opened): селективность
+  ~99 % в мягких условиях; JM LP Oxo (opened): n:iso ≈ 7:1. **Внешний пропилен
+  не включён в OPEX** — это открытый пункт.
+- **Водород**: сжатие до 200 бар. Processes 2026 14(2),319 (opened): 9,2 МВт
+  на 2966 кмоль/ч. Мощность показана отдельно от базового баланса утилит.
+- **Аммиак**: N₂ + 3H₂ → 2NH₃, ΔH = −46 кДж/моль NH₃ (C-THRU brief, opened),
+  150–250 бар, 400–450 °C, 15–25 % за проход (RSC EES 2020, opened),
+  97 % суммарно с рециклом (Haber process, opened).
+
+## 18.2 Результаты
+
+{md_table(['product','saleable t/h','saleable t/y','heat MW','compression MW'],
+          [[r['product'], fnum(r['saleable_t_h'],2), fnum(r['saleable_t_y'],0),
+            fnum(r['heat_released_MW'],2), fnum(r['compression_power_MW'],2)]
+           for r in sy_rows])}
+
+Внимание: тоннажи разных продуктов **нельзя сравнивать напрямую** — это разные
+химические продукты. Метанол {fnum(designs['methanol']['synthesis']['methanol_t_y'],0)} т/год,
+FT C₅₊ {fnum(designs['ft']['synthesis']['C5plus_t_y'],0)} т/год,
+альдегид {fnum(designs['oxo']['synthesis']['aldehyde_t_y'],0)} т/год,
+H₂ {fnum(designs['hydrogen']['synthesis']['H2_t_h']*8000,0)} т/год,
+NH₃ {fnum(designs['ammonia']['synthesis']['NH3_t_day'],0)} т/сут.
+
+## 18.3 Не проверено
+
+Кинетика синтеза, катализаторы синтеза, ректификация метанола-сырца,
+гидроформилирование с рециклом родия, сепарация FT-восков, стоимость пропилена,
+дополнительная мощность компрессоров в OPEX. [НЕ ПОДТВЕРЖДЕНО]
+"""
+    open(os.path.join(DOCS, "18_v3_synthesis_loops.md"), "w", encoding="utf-8").write(txt)
+
+    # 19 safety -------------------------------------------------------------
+    sa = designs["methanol"]["safety"]
+    sc_rows = [[fnum(x["T_C"],0), f"{x['NiCO4_ppb_unpurged']:.3g}",
+                f"{x['NiCO4_ppb_after_purge']:.3g}"] for x in sa["Ni_CO_4"]["shutdown_scenarios"]]
+    haz = [[h["node"], h["deviation"], h["safeguard"][:90]] for h in sa["HAZOP_nodes"]]
+    txt = f"""# 19. Safety screening: Ni(CO)₄, HAZOP, PSV (V3 continuation)
+
+**Статус: скрининг, НЕ сертифицированный HAZOP / API 520/521.**
+Полный текст API 520/521 в сессии открыт не был.
+
+## 19.1 Ni(CO)₄
+
+Ni(т) + 4CO(г) ⇌ Ni(CO)₄(г); log₁₀K = 7430/T − 21,90,
+K = p(Ni(CO)₄)/p(CO)⁴ (OSTI 7349456, opened: ΔH = −142,3 кДж/моль,
+ΔS = −419,2 Дж/моль/К). NIST WebBook по Ni(CO)₄ (opened).
+
+- При нормальной работе T = {fnum(designs['methanol']['reformer']['T_out_K'],0)} K:
+  {sa['Ni_CO_4']['normal_operation']['NiCO4_ppb']:.3g} ppb — пренебрежимо мало.
+- При остановке ниже {fnum(sa['Ni_CO_4']['safe_temperature_C'],0)} °C и **непродутом CO**
+  равновесие предсказывает заметный Ni(CO)₄ (см. таблицу). Продувка до
+  CO < {fnum(sa['Ni_CO_4']['CO_purge_ppm'],0)} ppm перед охлаждением удерживает
+  Ni(CO)₄ ниже 1 ppb — это совпадает с рекомендацией Becht (opened).
+- **[ЧАСТИЧНО]** равновесный скрининг; кинетика на 15 мас.% Ni/MgAl₂O₄
+  и активность поверхности Ni не моделировались.
+
+{md_table(['T C','Ni(CO)4 ppb без продувки','Ni(CO)4 ppb после продувки'], sc_rows)}
+
+## 19.2 Предохранительный клапан (скрининг)
+
+Заблокированный выход на линии питания реформера:
+расход {fnum(sa['relief']['relief_load_kg_s'],2)} кг/с,
+p_уст = {fnum(sa['relief']['p_set_bar'],1)} бар,
+поток {fnum(sa['relief']['choked_mass_flux_kg_m2_s'],0)} кг/(м²·с),
+требуемое отверстие {fnum(sa['relief']['orifice_diameter_mm'],1)} мм.
+{sa['relief']['status']}
+
+## 19.3 HAZOP-узлы (скрининг)
+
+{md_table(['узел','отклонение','защита'], haz)}
+
+## 19.4 Сера
+
+H₂S на входе {fnum(sa['sulfur_guard']['H2S_in_ppmv'],1)} ppmv → после ZnO
+{fnum(sa['sulfur_guard']['H2S_after_guard_ppmv'],3)} ppmv;
+масса ZnO {fnum(sa['sulfur_guard']['ZnO_mass_kg'],0)} кг (lead-lag, [ЧАСТИЧНО]).
+
+## 19.5 Не проверено
+
+{chr(10).join('- '+x for x in sa['unchecked'])}
+"""
+    open(os.path.join(DOCS, "19_v3_safety.md"), "w", encoding="utf-8").write(txt)
+
+    # 20 pre-reformer + CO2 trim -------------------------------------------
+    pr_rows = []
+    for prod, r in designs.items():
+        pr = r["reformer"].get("prereformer")
+        pr_rows.append([prod,
+                        fnum(pr["T_out_K"],1) if pr else "ATR bypass",
+                        fnum(pr["C2plus_conversion"],4) if pr else "-",
+                        fnum(pr["H_balance_mismatch_pct"],4) if pr else "-",
+                        fnum(r["utilities"]["CO2_import_t_h"],2),
+                        fnum(r["utilities"]["CO2_captured_t_h"],2),
+                        fnum(r["utilities"]["CO2_net_t_h"],2),
+                        fnum(r["equipment"]["Ergun_dP_bar"],3)])
+    txt = f"""# 20. Pre-reformer, CO₂ trim and hydraulics (V3 continuation)
+
+## 20.1 Адиабатический предреформер
+
+Реализован в `model/prereformer.py`: равновесие Гиббса при H_вх(T_вх) =
+H_вых(T_ад), бисекция 500–800 K (быстрее, чем общий решатель 298–3418 K).
+C₄₊ по-прежнему объединены в C₃H₈ по углероду ([ДОПУЩЕНИЕ]).
+Для ATR/FT/оксо предреформер **пропущен**: кислород в питании ATR расходовался
+бы внутри предреформера — требуется отдельная схема с подачей O₂ после
+предреформера. [НЕ ПОДТВЕРЖДЕНО]
+
+{md_table(['продукт','T вых K','конверсия C2+','небаланс H %','CO2 импорт т/ч','CO2 улов т/ч','CO2 нетто т/ч','Δp бар'], pr_rows)}
+
+## 20.2 CO₂-trim метанола
+
+Открытый источник Applied Sciences 2017, 7, 1213: подпиточный газ метанола
+должен содержать **4–8 мол.% CO₂**. Без трима при S/C = 3 и SN = 2,05 получалось
+11,6 мол.% CO₂. Добавлен частичный MDEA-трим (`A-302`) с целевым значением
+{fnum(load_config().P.get('co2_trim_target_molpct',6.0),1)} мол.% и повторная
+настройка CO₂/C = **{fnum(designs['methanol']['knobs']['CO2C'],4)}**. Финальное
+значение **{fnum(designs['methanol']['spec']['CO2_molpct'],2)} мол.%** — внутри окна.
+Цена: рост удельной стоимости с 225 до
+{fnum(designs['methanol']['economics']['levelised_cost'],2)} USD/1000 нм³.
+
+Импортированный CO₂ частично рециклизуется из уловленного: чистый выброс
+{fnum(designs['methanol']['utilities']['CO2_net_t_h'],2)} т/ч вместо
+{fnum(designs['methanol']['utilities']['total_CO2_t_h'],2)} т/ч «оборотного» CO₂.
+[ДОПУЩЕНИЕ] считается, что уловленный CO₂ возвращается до величины импорта.
+
+## 20.3 Гидравлика: Δp по Эргуну
+
+Исправлена размерность: `ergun_dp_bar()` возвращает **Па**, результат делится
+на 10⁵. Число труб теперь определяется **одновременно** по тепловому потоку и
+по допустимому Δp ≤ {fnum(load_config().equipment['dP_max_bar'],1)} бар:
+для метанола {designs['methanol']['equipment']['tubes_for_heat']} труб по теплу →
+{designs['methanol']['equipment']['tubes_installed']} труб по Δp,
+итого Δp = {fnum(designs['methanol']['equipment']['Ergun_dP_bar'],3)} бар.
+Это закрывает прежний провал проверки `dP_within_limit`.
+"""
+    open(os.path.join(DOCS, "20_v3_prereformer_trim.md"), "w", encoding="utf-8").write(txt)
+
+    # 21 full matrix --------------------------------------------------------
+    fm = scenarios["full_matrix"]
+    txt = f"""# 21. Complete product × normal × climate matrix (V3 continuation)
+
+15 расчётных случаев: 5 продуктов × (0 °C/Россия, 15 °C/Россия, 0 °C/Ближний Восток).
+Используются настроенные параметры базового случая, пересчёт без повторной настройки.
+
+{md_table(['продукт','случай','метрика','значение','CO2 мол.%','Ni т','стоимость','ед.'],
+          [[r['product'], r['case'], r['metric'], fnum(r['achieved'],4),
+            fnum(r['CO2_molpct'],2), fnum(r['Ni_inventory_t'],2),
+            fnum(r['levelised_cost'],2), r['cost_unit']] for r in fm])}
+
+Переход 0 °C → 15 °C меняет объёмные потоки на +5,49 % при неизменном молярном
+заводе. Ближний Восток поднимает температуру продукта с 40 до 55 °C, меняет
+конденсацию и требует осушителя (регенерация [НЕ ПОДТВЕРЖДЕНО]).
+
+Сводка синтеза: `results_v2/synthesis_summary.csv`; безопасность:
+`results_v2/safety_summary.csv`; полная матрица: `results_v2/full_matrix.csv`.
+"""
+    open(os.path.join(DOCS, "21_v3_full_matrix.md"), "w", encoding="utf-8").write(txt)
 
     # claims register markdown ---------------------------------------------
     claims = json.load(open(os.path.join(ROOT, "data", "v2_claims.json"), encoding="utf-8"))
@@ -617,7 +892,8 @@ def main():
     write_csv(os.path.join(OUT, "product_comparison.csv"),
               [_compact(base[p]) for p in PRODUCTS])
     for name in ("normal_comparison", "climate_comparison", "feed_comparison",
-                 "eos_sensitivity", "regulation_sweep", "ni_life_sensitivity"):
+                 "eos_sensitivity", "regulation_sweep", "ni_life_sensitivity",
+                 "full_matrix", "synthesis_summary", "safety_summary"):
         write_csv(os.path.join(OUT, name + ".csv"), sc[name])
     dump_json(os.path.join(OUT, "verification_v2.json"), v)
     dump_json(os.path.join(OUT, "scenarios_v2.json"), sc)
@@ -639,6 +915,15 @@ def main():
             "Ni_inventory_t": base[p]["catalyst"]["total_Ni_inventory_t"],
             "catalyst_volume_m3": base[p]["catalyst"]["total_catalyst_volume_m3"],
             "total_CO2_t_h": base[p]["utilities"]["total_CO2_t_h"],
+            "CO2_net_t_h": base[p]["utilities"]["CO2_net_t_h"],
+            "CO2_molpct": base[p]["spec"]["CO2_molpct"],
+            "saleable_product_t_h": base[p]["synthesis"].get("methanol_t_h") or
+                base[p]["synthesis"].get("C5plus_t_h") or
+                base[p]["synthesis"].get("aldehyde_t_h") or
+                base[p]["synthesis"].get("H2_t_h") or
+                base[p]["synthesis"].get("NH3_t_h"),
+            "tubes_installed": base[p]["equipment"]["tubes_installed"],
+            "Ergun_dP_bar": base[p]["equipment"]["Ergun_dP_bar"],
         } for p in PRODUCTS},
         "verification_summary": v["summary"],
         "overall_passed": v["overall_passed"],
@@ -650,7 +935,7 @@ def main():
     make_plots(base, sc, v)
     print("[v2] writing reports ...")
     write_reports(base, sc, v)
-    print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/ and docs/12..17")
+    print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/ and docs/12..21")
     print("[v2] verification:", v["summary"])
     return 0
 

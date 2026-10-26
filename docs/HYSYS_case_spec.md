@@ -83,3 +83,59 @@ SN = (H₂−CO₂)/(CO+CO₂); `Recycle` — **отсутствует** в ба
 
 `python3 -m model.run` (или `.venv/bin/python -m model.run`). Журнал, версии и время —
 `results/summary.json`; проверки — `results/verification.json`; тесты — `pytest -q`.
+
+## 9. Дополнение V3 (что добавить в HYSYS-кейс)
+
+Разделы 1–8 описывают **V1** метанольный базовый кейс. Для эквивалента V2/V3
+(`results_v2/`) добавьте следующие блоки; номера потоков — целевые, их надо
+сверить с установленной версией HYSYS. **Расчёт в HYSYS по-прежнему не
+выполнялся.**
+
+```
+Feed (Russian H-gas, C4+ -> C3H8 carbon-equivalent)
+  -> HDS/ZnO lead-lag
+  -> MIX S-102 (+ steam S/C, + imported CO2 CO2/C, + H2 recycle)
+  -> E-100 preheater (623 K)
+  -> R-100 adiabatic pre-reformer (Gibbs, 500-800 K bracket, C2+ conversion > 0.99)
+  -> R-101 fired tubular reformer (1123 K, 25 bar, approach 10 K, PR EOS)
+  -> E-101 WHB -> steam (IF97, 30 bar / 673 K)
+  -> A-302 partial MDEA CO2 TRIM (target 6 mol% CO2 in make-up gas)
+  -> E-601 final cooler (climate T: 40 C Russia / 55 C Middle East, IF97 psat)
+  -> V-601 knockout + A-701 dryer
+  -> K-801 compression to 75 bar
+  -> R-801 methanol loop (RStoic/RGibbs, 25-30% per pass, recycle 3:1,
+     purge for CH4/N2 inerts) -> crude methanol -> distillation
+```
+
+Варианты продуктов (заменить хвостовую часть):
+- **FT** — `R-100` пропущен (ATR с O₂), `R-101` = adiabatic ATR (O₂/C ≈ 0,656,
+  S/C = 0,6, T_ad ≈ 1509 K), `A-301` = полное MDEA, затем FT-синтез
+  (CO + 2H₂ → –CH₂– + H₂O, α = 0,90, ASF-распределение).
+- **Оксо** — ATR + CO₂ (O₂/C ≈ 0,702, CO₂/C = 0,9, T_ad ≈ 1325 K), MDEA,
+  затем гидроформилирование пропилена (внешний C₃H₆, конверсия 0,90,
+  селективность 0,95 по C₄H₈O).
+- **Водород** — SMR + HTS/LTS WGS + MDEA + PSA ( recovery 0,88,
+  ISO 14687:2025 grade D: H₂ ≥ 99,97 %, CO ≤ 0,2 ppm, CO₂ ≤ 2 ppm ),
+  затем дожатие H₂ до 200 бар.
+- **Аммиак** — первичный риформинг + воздушный вторичный (air ratio ≈ 1,28),
+  WGS + MDEA + метанатор (CO+CO₂ < 10 ppm) + осушка + дожатие до 200 бар +
+  конвертер NH₃ (18 % за проход, 97 % суммарно с рециклом).
+
+Свойства: **Peng–Robinson** с kᵢⱼ из `model/eos.py` (наборы zero/base/high)
+для углеводородных/синтез-газовых потоков; **IAPWS-IF97** (или Steam Tables)
+для воды/пара; NASA7/Shomate для энтальпий реакций. Для R-100/R-101/A-302
+проверять Q·Kφ/K = 1, баланс элементов ≤ 1e-8 %, баланс энергии ≤ 1e-8 %.
+
+`Adjust`:
+1. `CO2C` → SN = 2,05 **при включённом A-302** (V3: CO₂/C ≈ 0,7615);
+2. `O2C` → H₂/CO = 2,10 (FT) или 1,05 (оксо);
+3. `air_ratio` → H₂/N₂ = 3,00 (аммиак);
+4. число труб → Δp Эргуна ≤ 3 бар **одновременно** с q = 80 кВт/м²;
+5. `MDEA recovery` → CO₂ make-up = 6 мол.% (метанол).
+
+Безопасность: добавить `Spreadsheet` для log₁₀K = 7430/T − 21,90 (Ni(CO)₄) и
+проверку продувки CO < 10 ppm до охлаждения ниже 200 °C; PSV по choked flow —
+только скрининг, **не** сертификация API 520/521.
+
+Воспроизведение без HYSYS: `PYTHONPATH=. .venv/bin/python -m model.run_v2`
+→ `results_v2/summary_v2.json`, `verification_v2.json`, `full_matrix.csv`.

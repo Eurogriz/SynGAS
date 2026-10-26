@@ -4,8 +4,10 @@
 
 1. **Edit `cases/config.json`** - the single source of truth. Section map:
    `active` (product/normal/climate/feed/eos), `normal_conditions`,
-   `climates`, `feeds`, `products.*.knobs`, `process`, `catalyst`, `eos`,
-   `equipment`, `economics`, `adjust`.
+   `climates`, `feeds`, `products.*.knobs`, `process` (incl. `prereformer_enabled`),
+   `catalyst`, `eos`, `equipment`, `synthesis`, `safety`, `economics`, `adjust`.
+   New V3 knobs: `products.methanol.co2_trim_target_molpct`,
+   `synthesis.<product>.*`, `safety.Ni_CO_4.CO_purge_ppm`.
 2. **Dotted overrides** in Python:
    ```python
    from model.config import load_config

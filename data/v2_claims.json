@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "2.0",
+    "version": "2.1",
     "created": "2026-10-26",
     "rule": "every numeric used in a RESULT must have a source and a status; [НЕ ПОДТВЕРЖДЕНО] claims may not be used in results",
     "allowed_status": [
@@ -339,6 +339,116 @@
       "source": "HYSYS/DWSIM/COCO not installed; user answer 11 confirms Python/DWSIM-equivalent",
       "url": "local:docs/HYSYS_case_spec.md",
       "status": "[НЕ ПОДТВЕРЖДЕНО]",
+      "used_in_result": false
+    },
+    {
+      "id": "C34",
+      "name": "Methanol make-up gas CO2 window",
+      "value": "4-8 mol%",
+      "unit": "mol%",
+      "source": "Applied Sciences 2017 7(12) 1213 (opened full text, section 2): 'feed gas composition ... adjusted to contain 4-8% CO2 for maximum activity and selectivity'; S module slightly above 2",
+      "url": "https://www.mdpi.com/2076-3417/7/12/1213",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C35",
+      "name": "Methanol synthesis conditions and reaction enthalpy",
+      "value": "50-100 bar, 200-300 C, dH CO -90.7, CO2 -49.7 kJ/mol",
+      "unit": "-",
+      "source": "Applied Sciences 2017 7,1213 (opened): reactions (2),(3), Cu-based catalyst, 50-100 bar, 200-300 C; SLAC/HTE (opened): same window",
+      "url": "https://www.mdpi.com/2076-3417/7/12/1213",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C36",
+      "name": "Methanol single-pass conversion and recycle",
+      "value": "0.25-0.30 per pass, recycle 2:1-5:1, overall 0.97",
+      "unit": "-",
+      "source": "OSTI 2424604 (opened): 'single-pass conversions are generally low around 25-30%'; A Review of The Methanol Economy (opened): 5-15% one-pass, recycle 2:1-5:1; overall 0.97 is a [ДОПУЩЕНИЕ]",
+      "url": "https://www.osti.gov/pages/servlets/purl/2424604",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C37",
+      "name": "FT alpha and CO conversion",
+      "value": "alpha 0.85-0.95, CO conversion 0.60-0.80",
+      "unit": "-",
+      "source": "ACS Catalysis 2017 7 (opened): industrial 0.85<alpha<0.95 at 10-15 bar CO; Hywax (opened): single-pass CO conversion 60-80%; OSTI 20840761 (opened): alpha(paraffin) 0.91",
+      "url": "https://pubs.acs.org/doi/10.1021/acscatal.7b02758",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C38",
+      "name": "ASF chain-length distribution",
+      "value": "W_n = n(1-a)^2 a^(n-1); C5+ mass fraction = a^4(5-4a)",
+      "unit": "-",
+      "source": "ACS Catal 2017 / Catalysts 2019 9,259 (opened): ASF distribution; NETL review (opened): alpha up to 0.95 for cobalt",
+      "url": "https://www.mdpi.com/2073-4344/9/3/259",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C39",
+      "name": "Oxo hydroformylation yield",
+      "value": "propylene conversion 0.90, aldehyde selectivity 0.95, n:iso 7:1",
+      "unit": "-",
+      "source": "US7582802B2 (opened): propylene->butyraldehyde mass balance; MDPI Catalysts 2020 10,510 (opened): selectivity ~99% at mild conditions; JM LP Oxo 45 years (opened): n:i ~7:1 for phosphine-modified Rh",
+      "url": "https://patents.google.com/patent/US7582802",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C40",
+      "name": "Ammonia loop conversion and enthalpy",
+      "value": "15-25% per pass, 97% overall, dH -46 kJ/mol NH3, 150-250 bar",
+      "unit": "-",
+      "source": "RSC EES 2020 13,331 (opened): 15-25 MPa, 400-450 C, ~15% single pass; C-THRU ammonia technical brief (opened): dH=-46 kJ/mol NH3, 20-30% per pass; Haber process (opened): 97% overall with recycle",
+      "url": "https://pubs.rsc.org/en/content/articlehtml/2020/ee/d0ee01187h",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C41",
+      "name": "Ni(CO)4 equilibrium correlation",
+      "value": "log10 K = 7430/T - 21.90, dH -142.3 kJ/mol, dS -419.2 J/mol/K",
+      "unit": "-",
+      "source": "OSTI 7349456 (opened): 'Iron and Nickel Carbonyl Formation in Steel Pipes and Its Prevention'; NIST WebBook Ni(CO)4 (opened); Becht (opened): keep T>200 C until CO<10 ppm to stay below 1 ppb",
+      "url": "https://www.osti.gov/servlets/purl/7349456",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C42",
+      "name": "Adiabatic pre-reformer",
+      "value": "equilibrium Gibbs, 500-800 K bracket, C2+ conversion >0.99",
+      "unit": "-",
+      "source": "THIS MODEL + opened reforming literature: pre-reformer removes C2+ before fired tubes; no vendor kinetic model opened",
+      "url": "local:docs/20_v3_prereformer_trim.md",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C43",
+      "name": "PSV / relief sizing",
+      "value": "choked ideal-gas mass flux, p_set = 1.10*p_op",
+      "unit": "-",
+      "source": "[ASSUMPTION] API 520/521 full text NOT opened; screening choked-flow formula only",
+      "url": "local:docs/19_v3_safety.md",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C44",
+      "name": "SciPy SLSQP independent PR minimisation",
+      "value": "max |dy_wet| < 1e-4",
+      "unit": "-",
+      "source": "THIS MODEL - independent numerical optimiser (SciPy SLSQP) applied to the same Shomate+PR physics; success criterion 1e-4",
+      "url": "local:model/verify_v2.py",
+      "status": "[ПОДТВЕРЖДЕНО]",
       "used_in_result": false
     }
   ]

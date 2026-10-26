@@ -14,6 +14,8 @@ from .routes import make_feed
 from .steam import (saturation_temperature_K, saturation_pressure_bar,
                     steam_enthalpy_kJ_per_mol, available as iapws_available)
 from .eos import KIJ, peng_robinson
+from .thermo import (SPECIES, GASES, COMPOSITION, R_KJ, P0_BAR, g0 as _g0,
+                     COMPOSITION as _COMP)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -136,6 +138,60 @@ def loop3_conservation(designs):
                     "PSA tail gas and dryer water as explicit withdrawal streams."}
 
 
+def scipy_pr_minimisation(feed, T, p_bar, kset="base"):
+    """Independent SLSQP numerical minimiser with the PR fugacity correction.
+
+    Physics (Shomate g0 + PR lnphi) is the same as the main solver; the
+    NUMERICAL method is independent (SciPy SLSQP with linear element
+    constraints vs. the in-house extent-space Newton solver).
+    """
+    try:
+        import numpy as np
+        from scipy.optimize import minimize
+    except Exception as exc:
+        return {"available": False, "reason": str(exc)}
+    from .equilibrium import (vec_from_dict, dict_from_vec, _seed)
+    NG = len(GASES)
+    f = vec_from_dict(feed)
+    b = element_vector(f)
+    Amat = np.array([[_COMP[s].get(e, 0) for s in SPECIES]
+                     for e in ELEMENTS], dtype=float)
+    bvec = np.array([b[e] for e in ELEMENTS], dtype=float)
+    r = equilibrate(feed, T, p_bar, eos_kset=kset)
+    lnphi = r["eos"].get("lnphi_last", {})
+    corr = np.array([R_KJ * T * lnphi.get(sp, 0.0) for sp in SPECIES[:NG]]
+                    + [0.0], dtype=float)
+    g0s = np.array([_g0(sp, T, "shomate") for sp in SPECIES], dtype=float) + corr
+    Rt = R_KJ * T
+
+    def mu(n):
+        ng = n[:NG].sum()
+        m = np.array(g0s, dtype=float)
+        m[:NG] += Rt * np.log(np.maximum(n[:NG], 1e-300) / ng * p_bar / P0_BAR)
+        return m
+
+    def G(n):
+        return float(np.dot(n, mu(n)))
+
+    cons = [{"type": "eq", "fun": lambda n: Amat @ n - bvec,
+             "jac": lambda n: Amat}]
+    x0 = np.array(_seed(f, 1e-9 * max(sum(f), 1.0)), dtype=float)
+    res = minimize(G, x0, method="SLSQP", jac=lambda n: mu(n),
+                   bounds=[(1e-12, None)] * NG + [(0.0, None)],
+                   constraints=cons, options={"ftol": 1e-11, "maxiter": 900})
+    y_scipy = {SPECIES[i]: float(res.x[i] / res.x[:NG].sum()) for i in range(NG)}
+    dy = max(abs(y_scipy[k] - r["y_wet"].get(k, 0.0)) for k in y_scipy)
+    return {"available": True, "success": bool(res.success),
+            "message": str(res.message), "max_dy_wet": dy,
+            "X_CH4_scipy": (1 - (res.x[SPECIES.index("CH4")] +
+                                  2 * res.x[SPECIES.index("C2H6")] +
+                                  3 * res.x[SPECIES.index("C3H8")]) /
+                            (f[SPECIES.index("CH4")] +
+                             2 * f[SPECIES.index("C2H6")] +
+                             3 * f[SPECIES.index("C3H8")])),
+            "X_CH4_model": r["CH4_conversion"]}
+
+
 def loop4_thermo(designs, scenarios):
     T = 1123.15
     # two independent thermochemical datasets
@@ -178,7 +234,36 @@ def loop4_thermo(designs, scenarios):
               if kij else None)
     worst_eq = max(x["deviation_pct"] for x in eq_rows)
     worst_dH = max(abs(v["diff_kJ_per_mol"]) for v in dH.values())
-    return {"passed": worst_eq < 0.01 and worst_dH < 5.0,
+    sci = scipy_pr_minimisation(f, T, 25.0, "base")
+    # pre-reformer / synthesis / safety / dP self-checks
+    extra = []
+    for prod, r in designs.items():
+        pre = r["reformer"].get("prereformer")
+        eq2 = r["equipment"]
+        extra.append({"product": prod,
+                      "pre_reformer_C2plus_conversion":
+                          pre.get("C2plus_conversion") if pre else None,
+                      "pre_reformer_H_mismatch_pct":
+                          pre.get("H_balance_mismatch_pct") if pre else None,
+                      "saleable_product_t_h": r["synthesis"].get("methanol_t_h") or
+                          r["synthesis"].get("C5plus_t_h") or
+                          r["synthesis"].get("aldehyde_t_h") or
+                          r["synthesis"].get("H2_t_h") or
+                          r["synthesis"].get("NH3_t_h"),
+                      "NiCO4_normal_ppb":
+                          r["safety"]["Ni_CO_4"]["normal_operation"]["NiCO4_ppb"],
+                      "dP_bar": eq2["Ergun_dP_bar"],
+                      "dP_within_limit": eq2["dP_within_limit"],
+                      "tubes_installed": eq2["tubes_installed"]})
+    sci_ok = (not sci.get("available")) or (sci.get("success") and
+                                            sci.get("max_dy_wet", 9) < 1e-4)
+    pre_ok = all((x["pre_reformer_C2plus_conversion"] is None or
+                  x["pre_reformer_C2plus_conversion"] > 0.99) for x in extra)
+    syn_ok = all((x["saleable_product_t_h"] or 0) > 0 for x in extra)
+    safe_ok = all(x["NiCO4_normal_ppb"] < 1.0 for x in extra)
+    dp_ok = all(x["dP_within_limit"] for x in extra)
+    return {"passed": (worst_eq < 0.01 and worst_dH < 5.0 and sci_ok and
+                       pre_ok and syn_ok and safe_ok and dp_ok),
             "reaction_enthalpies": dH,
             "PR_equilibrium": eq_rows, "worst_PR_deviation_pct": worst_eq,
             "IAPWS": iap,
@@ -189,6 +274,10 @@ def loop4_thermo(designs, scenarios):
                             "SN_ideal": a["stoichiometric_number_SN"],
                             "SN_PR": b["stoichiometric_number_SN"]},
             "kij_sets": list(KIJ.keys()), "kij_X_CH4_spread": spread,
+            "scipy_independent_PR": sci, "extra_checks": extra,
+            "extra_checks_passed": {"scipy": sci_ok, "prereformer": pre_ok,
+                                    "synthesis": syn_ok, "safety": safe_ok,
+                                    "dP": dp_ok},
             "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual "
                     "is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."}
 
@@ -205,8 +294,10 @@ def loop5_validation(designs):
         "API 530 / ASME certified tube creep calculation (LMP slope is an assumption)",
         "Regional gas/electricity/CO2 price quotes for Russia and the Middle East",
         "GOST 5542:2022 full standard text (only a status page was opened)",
-        "Ammonia-loop compression and synthesis duty, methanol/FT/oxo downstream synthesis loops",
-        "Safety study: HAZOP, Ni(CO)4 formation during shutdown, relief sizing",
+        "Kinetic (not stoichiometric) synthesis-loop models for methanol/FT/oxo/NH3; "
+        "external propylene cost for the oxo variant; loop compression duty is reported but not in OPEX",
+        "Certified HAZOP / LOPA, API 520/521 PSV text, Ni(CO)4 kinetics on 15 wt% Ni/MgAl2O4; "
+        "only an equilibrium screening HAZOP is included in V2",
     ]
     return {"passed": False, "status": "FAILED (honestly reported)",
             "reason": "No independent experimental or commercial-licensor validation of the "

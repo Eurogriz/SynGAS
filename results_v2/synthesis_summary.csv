@@ -1,0 +1,6 @@
+product,p_synthesis_bar,T_synthesis_C,key_conversion,saleable_t_h,saleable_t_y,heat_released_MW,compression_power_MW,status,note
+methanol,75.0,250.0,0.97,40.24377626765243,321950.21014121943,28.686221878470768,5.468454305368177,"[PARTIAL] loop stoichiometry + opened ranges, not a licensor kinetic model",
+ft,20.0,230.0,0.7,12.89940049093887,103195.20392751096,45.886834572070384,,"[PARTIAL] ASF ideal distribution, no detailed product slate","CH4 in the fresh syngas is counted as inert, not FT product"
+oxo,20.0,100.0,0.9,65.98595942261186,527887.6753808948,,,"[PARTIAL] stoichiometric aldehyde yield, heat of reaction NOT modelled",hydroformylation heat of reaction [NOT MODELLED] - no opened dH for C3H6/C4H8O in this session; external propylene feed cost is NOT in the OPEX
+hydrogen,,,,8.993855354141951,,,12.289863479432485,"[PARTIAL] ideal multistage compression, no intercooling model","compression duty is an ADDITIONAL utility, not in the base utility balance (documented separately)"
+ammonia,200.0,450.0,0.18,47.38668861574572,379093.50892596575,35.55365824589712,14.035361887736624,"[PARTIAL] loop stoichiometry + opened ranges, not a converter simulation","compression to the NH3 loop pressure is an ADDITIONAL utility shown here, not in the base utility balance"

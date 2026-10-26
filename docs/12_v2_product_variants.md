@@ -7,10 +7,10 @@ All numbers are model results; status labels follow the user's rule.
 
 | product | metric | target | achieved | hit | graphite stable | X_CH4 | T_out K | p bar | CO2 mol% | CH4 mol% | cost | unit |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| methanol | SN | 2.05000 | 2.05000 | YES | no | 0.7852 | 1123.2 | 25.0 | 11.58 | 5.67 | 225.06 | USD/1000 Nm3 dry syngas |
+| methanol | SN | 2.05000 | 2.05000 | YES | no | 0.8053 | 1123.2 | 25.0 | 6.00 | 5.25 | 261.60 | USD/1000 Nm3 dry syngas |
 | ft | H2_CO | 2.10000 | 2.10000 | YES | no | 0.9988 | 1508.9 | 25.0 | 0.26 | 0.05 | 214.39 | USD/1000 Nm3 dry syngas |
-| oxo | H2_CO | 1.05000 | 1.05000 | YES | no | 0.7918 | 1173.2 | 20.0 | 0.63 | 6.15 | 249.50 | USD/1000 Nm3 dry syngas |
-| hydrogen | H2_purity | 0.99970 | 0.99970 | YES | no | 0.7795 | 1123.2 | 25.0 | 0.00 | 0.00 | 364.98 | USD/1000 Nm3 H2 |
+| oxo | H2_CO | 1.05000 | 1.05001 | YES | no | 0.9978 | 1324.5 | 20.0 | 1.24 | 0.08 | 253.97 | USD/1000 Nm3 dry syngas |
+| hydrogen | H2_purity | 0.99970 | 0.99970 | YES | no | 0.7729 | 1123.2 | 25.0 | 0.00 | 0.00 | 364.98 | USD/1000 Nm3 H2 |
 | ammonia | H2_N2 | 3.00000 | 3.00123 | YES | no | 0.8915 | 1207.0 | 30.7 | 0.00 | 2.26 | 600.09 | USD/t NH3 |
 
 **Target sources (all opened):** methanol SN 2.0-2.1 [Uhde 2010 Table 1, RSC EES 2020];
@@ -24,9 +24,9 @@ each range are design decisions.
 
 | product | route | tuned knob | S/C | CO2/C | O2/C | p bar | air ratio | T_out K |
 |---|---|---|---|---|---|---|---|---|
-| methanol | bi_reforming | CO2C | 3.000 | 0.2371 | 0.0000 | 25.00 | n/a | 1123.2 |
+| methanol | bi_reforming | CO2C | 3.000 | 0.7615 | 0.0000 | 25.00 | n/a | 1123.2 |
 | ft | ATR | O2C | 0.600 | 0.0000 | 0.6559 | 25.00 | n/a | 1508.9 |
-| oxo | CO2_reforming | CO2C | 0.600 | 1.1690 | 0.0000 | 20.00 | n/a | 1173.2 |
+| oxo | ATR_CO2 | O2C | 0.600 | 0.9000 | 0.7016 | 20.00 | n/a | 1324.5 |
 | hydrogen | SMR_WGS_PSA | PSA_H2_recovery | 3.000 | 0.0000 | 0.0000 | 25.00 | n/a | 1123.2 |
 | ammonia | SMR_air_secondary | air_ratio | 3.000 | 0.0000 | 0.0000 | 30.70 | 1.282 | 1207.0 |
 
@@ -44,8 +44,8 @@ each range are design decisions.
 
 | normal | T K | Vm m3/mol | dry feed Nm3/h | product Nm3/h | cost |
 |---|---|---|---|---|---|
-| 0C | 273.15 | 0.02241397 | 25950.5 | 100000.0 | 225.06 |
-| 15C | 288.15 | 0.02364483 | 25950.5 | 100000.0 | 218.70 |
+| 0C | 273.15 | 0.02241397 | 27011.2 | 100000.0 | 261.60 |
+| 15C | 288.15 | 0.02364483 | 27011.2 | 100000.0 | 254.21 |
 
 The 15 C / 101325 Pa ISO 13443 molar volume is 5.49% larger than the 0 C value.
 The **molar** plant is identical; only the volumetric labels change. Quoting a
@@ -55,18 +55,22 @@ capacity without the normal condition is a 5.5% error.
 
 | k_ij set | Z | X_CH4 | SN | cost |
 |---|---|---|---|---|
-| zero | 1.00286 | 0.78504 | 2.0500 | 225.12 |
-| base | 1.00295 | 0.78521 | 2.0500 | 225.06 |
-| high | 1.00297 | 0.78523 | 2.0500 | 225.06 |
-| ideal_gas_disabled | n/a | 0.78689 | 2.0500 | 224.58 |
+| zero | 1.00302 | 0.80519 | 2.0500 | 261.69 |
+| base | 1.00313 | 0.80534 | 2.0500 | 261.60 |
+| high | 1.00315 | 0.80536 | 2.0500 | 261.58 |
+| ideal_gas_disabled | n/a | 0.80697 | 2.0500 | 261.21 |
 
 ## 12.5 Open items
 
-- Methanol make-up gas contains 11.58 mol% CO2,
-  above the 3-8 mol% typical of licensed methanol loops. An acid-gas trim
-  (with re-tuning of CO2/C) is required before a licence-grade design.
-  Status [ЧАСТИЧНО]; no methanol-licensor spec was opened.
-- Ammonia-loop compression and synthesis, methanol/FT/oxo synthesis loops and
-  their recycle/ purge systems are outside this boundary. [НЕ ПОДТВЕРЖДЕНО]
+- Methanol make-up gas now contains 6.00 mol% CO2,
+  INSIDE the opened 4-8 mol% licensor window (Applied Sciences 2017 7,1213).
+  This required CO2/C = 0.7615 plus a partial
+  MDEA CO2 trim (recovery 0.703).
+  Status [ЧАСТИЧНО]: the trim reboiler duty is modelled, but a licensor
+  kinetic methanol-loop model was NOT opened.
+- Stoichiometric synthesis loops (methanol, FT, oxo, NH3) and H2 compression
+  are now included in `docs/18`; their KINETIC models, licensor reactor designs,
+  crude-methanol distillation, FT wax upgrading, Rh recycle and the cost of
+  external oxo propylene remain outside this boundary. [НЕ ПОДТВЕРЖДЕНО]
 - C4+ is lumped into C3H8 on a carbon-equivalent basis (preserves C, overstates H).
   [ДОПУЩЕНИЕ]

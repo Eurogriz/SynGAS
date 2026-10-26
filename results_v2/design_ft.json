@@ -61,26 +61,32 @@
       "max_CO2_molpct": {
         "limit": 3.0,
         "value": 0.2620188913144756,
+        "mode": "max",
         "pass": true
       },
       "max_CH4_molpct": {
         "limit": 5.0,
         "value": 0.04533087543450348,
+        "mode": "max",
         "pass": true
       },
       "max_N2_molpct": {
         "limit": 3.0,
         "value": 0.31488397288063763,
+        "mode": "max",
         "pass": true
       },
       "max_H2O_molpct": {
         "limit": 0.5,
         "value": 0.2953770994827812,
+        "mode": "max",
         "pass": true
       }
     }
   },
   "reformer": {
+    "prereformer": null,
+    "prereformer_bypassed": "O2-containing ATR feed; pre-reformer would consume O2",
     "carbon_per_100mol_NG": 101.80999999999997,
     "T_out_K": 1508.9283219605954,
     "p_bar": 25.0,
@@ -191,6 +197,16 @@
     "H2": 1.0,
     "O2": 66.77552856445313
   },
+  "reformer_feed_main_mol_per_100mol_NG": {
+    "CH4": 96.96,
+    "C2H6": 1.37,
+    "C3H8": 0.7033333333333334,
+    "CO2": 0.18,
+    "N2": 0.86,
+    "H2O": 61.085999999999984,
+    "H2": 1.0,
+    "O2": 66.77552856445313
+  },
   "reformer_units": [
     {
       "unit": "R-101 autothermal / partial-oxidation reformer",
@@ -291,6 +307,9 @@
     "MDEA_reboiler_steam_t_h": 12.432024633266522,
     "steam_net_export_t_h": 53.812515778773914,
     "CO2_captured_t_h": 9.774934649963422,
+    "CO2_import_t_h": 0.0,
+    "CO2_recycled_t_h": 0.0,
+    "CO2_net_t_h": 9.774934649963422,
     "total_CO2_t_h": 9.774934649963422,
     "cooling_duty_kW": 46722.254454874506,
     "cooling_water_m3_h": 4023.9262209939766,
@@ -310,11 +329,14 @@
     "vessel_length_m": 6.310786050705518,
     "required_area_m2": 0.0,
     "tubes_calculated": 0.0,
+    "tubes_for_heat": 0,
+    "tubes_for_dp": 1,
     "tubes_installed": 1,
     "superficial_velocity_m_s": 1.5,
     "gas_density_kg_m3": 3.5898101396881525,
-    "Ergun_dP_bar": 22633.342178708124,
-    "dP_within_limit": false,
+    "Ergun_dP_bar": 0.22633342178708124,
+    "dP_within_limit": true,
+    "dP_limit_bar": 3.0,
     "tube_thermal_profile": null,
     "T_wall_max_K": 1508.9283219605954,
     "creep": {
@@ -436,5 +458,268 @@
   "status": {
     "hysys": "NOT RUN - Python/DWSIM-equivalent (user confirmation #11)",
     "validation": "no experimental campaign; see docs/13"
+  },
+  "synthesis": {
+    "product": "ft",
+    "p_synthesis_bar": 20.0,
+    "T_synthesis_C": 230.0,
+    "source": "Hywax (opened): single-pass CO conversion 60-80%; ACS Catal 2017 (opened): industrial alpha 0.85-0.95; ASF W_n=n(1-a)^2 a^(n-1); OSTI 20840761 (opened): alpha(paraffin) 0.91",
+    "status": "[PARTIAL] ASF ideal distribution, no detailed product slate",
+    "method": "stoichiometric loop balance, NOT a kinetic simulation",
+    "dry_syngas_mol_h": 4461503.340547032,
+    "inert_mol_h": 16071.002772646923,
+    "inert_molpct": 0.36021496670394587,
+    "reaction": "CO + 2H2 -> -CH2- + H2O",
+    "CO_in_mol_h": 1430238.9996489475,
+    "H2_in_mol_h": 3003503.356536578,
+    "CO_conversion": 0.7,
+    "CO_converted_mol_h": 1001167.2997542631,
+    "alpha": 0.9,
+    "ASF_C5plus_mass_fraction": 0.9185399999999999,
+    "hydrocarbons_t_h": 14.043373713653049,
+    "C5plus_t_h": 12.89940049093887,
+    "C5plus_t_y": 103195.20392751096,
+    "water_t_h": 18.036329255262977,
+    "heat_released_MW": 45.886834572070384,
+    "ASF_first_12": [
+      {
+        "n": 1,
+        "mass_fraction": 9.999999999999985e-07,
+        "mass_fraction_norm": 0.026409262993050693
+      },
+      {
+        "n": 2,
+        "mass_fraction": 1.7999999999999974e-06,
+        "mass_fraction_norm": 0.047536673387491256
+      },
+      {
+        "n": 3,
+        "mass_fraction": 2.4299999999999962e-06,
+        "mass_fraction_norm": 0.06417450907311319
+      },
+      {
+        "n": 4,
+        "mass_fraction": 2.915999999999996e-06,
+        "mass_fraction_norm": 0.07700941088773583
+      },
+      {
+        "n": 5,
+        "mass_fraction": 3.2804999999999955e-06,
+        "mass_fraction_norm": 0.08663558724870282
+      },
+      {
+        "n": 6,
+        "mass_fraction": 3.542939999999995e-06,
+        "mass_fraction_norm": 0.09356643422859905
+      },
+      {
+        "n": 7,
+        "mass_fraction": 3.720086999999994e-06,
+        "mass_fraction_norm": 0.09824475594002897
+      },
+      {
+        "n": 8,
+        "mass_fraction": 3.826375199999994e-06,
+        "mass_fraction_norm": 0.10105174896688696
+      },
+      {
+        "n": 9,
+        "mass_fraction": 3.874204889999995e-06,
+        "mass_fraction_norm": 0.10231489582897306
+      },
+      {
+        "n": 10,
+        "mass_fraction": 3.874204889999995e-06,
+        "mass_fraction_norm": 0.10231489582897306
+      },
+      {
+        "n": 11,
+        "mass_fraction": 3.835462841099995e-06,
+        "mass_fraction_norm": 0.10129174687068333
+      },
+      {
+        "n": 12,
+        "mass_fraction": 3.765727153079995e-06,
+        "mass_fraction_norm": 0.09945007874576181
+      }
+    ],
+    "note": "CH4 in the fresh syngas is counted as inert, not FT product"
+  },
+  "safety": {
+    "status": "screening only; NOT a certified HAZOP / API 520 study",
+    "Ni_CO_4": {
+      "correlation": "7430/T - 21.90",
+      "source": "OSTI 7349456 (opened): dH=-142.3 kJ/mol, dS=-419.2 J/mol/K -> log K = 7430/T - 21.90; NIST WebBook Ni(CO)4 (opened); Becht (opened): keep T>200 C until CO<10 ppm to stay below 1 ppb Ni(CO)4",
+      "normal_operation": {
+        "T_K": 1508.9283219605954,
+        "p_CO_bar": 8.014333345055748,
+        "log10K": -16.97597551728237,
+        "K": 1.0568770874377726e-17,
+        "p_NiCO4_bar": 4.360076327636793e-14,
+        "p_NiCO4_bar_uncapped": 4.360076327636793e-14,
+        "limited_by_stoichiometry": false,
+        "NiCO4_ppb": 4.3600763276367935e-05,
+        "status": "[PARTIAL] equilibrium only; kinetics/Ni surface activity can dominate below 200 C (OSTI 7349456, opened)"
+      },
+      "CO_purge_ppm": 10.0,
+      "safe_temperature_C": 200.0,
+      "shutdown_scenarios": [
+        {
+          "T_K": 300.0,
+          "T_C": 26.850000000000023,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 2003583336.263937,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 0.0028736025564829776
+        },
+        {
+          "T_K": 323.15,
+          "T_C": 50.0,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 2003583336.263937,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 4.832572923424567e-05
+        },
+        {
+          "T_K": 348.15,
+          "T_C": 75.0,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 2003583336.263937,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 1.0792843468911913e-06
+        },
+        {
+          "T_K": 373.15,
+          "T_C": 100.0,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 2003583336.263937,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 4.011656590005443e-08
+        },
+        {
+          "T_K": 398.15,
+          "T_C": 125.0,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 2003583336.263937,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 2.254595245069224e-09
+        },
+        {
+          "T_K": 423.15,
+          "T_C": 150.0,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 188042020.97740144,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 1.7805137645576415e-10
+        },
+        {
+          "T_K": 473.15,
+          "T_C": 200.0,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 2622617.5231647315,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 2.4832782454119964e-12
+        },
+        {
+          "T_K": 500.0,
+          "T_C": 226.85000000000002,
+          "unpurged_CO_bar": 8.014333345055748,
+          "NiCO4_ppb_unpurged": 376244.0229321367,
+          "purged_CO_bar": 0.00025,
+          "NiCO4_ppb_after_purge": 3.56254234123403e-13
+        }
+      ],
+      "conclusion": "Normal operation at 1509 K gives negligible Ni(CO)4; during shutdown below 200 C with unpurged CO the equilibrium predicts significant Ni(CO)4. Purging CO below 10 ppm before cooling below 200 C keeps Ni(CO)4 below 1 ppb."
+    },
+    "relief": {
+      "relief_load_kg_s": 21.81534336422794,
+      "p_set_bar": 27.500000000000004,
+      "T_K": 1508.9283219605954,
+      "M_kg_mol": 0.021,
+      "k": 1.3,
+      "Z": 1.0,
+      "choked_mass_flux_kg_m2_s": 2374.037447110699,
+      "orifice_area_mm2": 9189.131953574746,
+      "orifice_diameter_mm": 108.16638195428766,
+      "status": "[ДОПУЩЕНИЕ] screening choked-flow estimate, not a certified PSV size"
+    },
+    "sulfur_guard": {
+      "H2S_in_ppmv": 5.0,
+      "H2S_after_guard_ppmv": 0.02,
+      "ZnO_mass_kg": 42018.50542883634
+    },
+    "HAZOP_nodes": [
+      {
+        "node": "Feed desulfurization / ZnO guard",
+        "deviation": "High H2S",
+        "cause": "guard bed exhausted / breakthrough",
+        "consequence": "Ni/MgAl2O4 poisoning, reformer hot bands, carbon",
+        "safeguard": "lead-lag ZnO + online H2S analyser; <0.02 ppmv after guard [ЧАСТИЧНО]"
+      },
+      {
+        "node": "R-100 pre-reformer",
+        "deviation": "Low S/C / low T",
+        "cause": "steam flow failure",
+        "consequence": "C2+ cracking, graphite, bed plugging",
+        "safeguard": "S/C low-low trip, high Δp trip, carbon boundary check in model"
+      },
+      {
+        "node": "R-101 fired reformer tubes",
+        "deviation": "High tube-wall T",
+        "cause": "firing maldistribution / low flow",
+        "consequence": "creep rupture (LMP), Ni sintering",
+        "safeguard": "T_wall monitoring, 100000 h LMP design, Δp<=3 bar, skin thermocouples [ЧАСТИЧНО]"
+      },
+      {
+        "node": "WHB / syngas cooler",
+        "deviation": "Low level / high T",
+        "cause": "BFW pump failure",
+        "consequence": "tube rupture, steam/water into gas",
+        "safeguard": "low-low level trip, PSV, IF97 dew-point margin"
+      },
+      {
+        "node": "CO2 trim / MDEA",
+        "deviation": "High CO2 slip",
+        "cause": "lean-amine flow loss",
+        "consequence": "methanol SN out of 2.05, oxo/FT ratio drift",
+        "safeguard": "online SN analyser, reboiler steam ratio control"
+      },
+      {
+        "node": "PSA / H2 product",
+        "deviation": "CO/CO2 breakthrough",
+        "cause": "adsorbent saturation",
+        "consequence": "ISO 14687:2025 grade D violation",
+        "safeguard": "product GC, automatic product diversion"
+      },
+      {
+        "node": "R-401 methanator (ammonia)",
+        "deviation": "High T runaway",
+        "cause": "CO2 breakthrough from absorber",
+        "consequence": "catalyst damage, >10 ppm poisons to NH3 loop",
+        "safeguard": "high-high T trip, feed analyser, <10 ppm spec"
+      },
+      {
+        "node": "Synthesis loop (all products)",
+        "deviation": "Inert accumulation",
+        "cause": "purge closed",
+        "consequence": "low partial pressures, runaway exotherm",
+        "safeguard": "purge ratio control, recycle compressor trip"
+      },
+      {
+        "node": "SHUTDOWN / standby",
+        "deviation": "Low T + CO present",
+        "cause": "cooling before CO purge",
+        "consequence": "Ni(CO)4 formation (extremely toxic)",
+        "safeguard": "keep T>200 C until CO<10 ppm; N2 purge; Ni(CO)4 monitoring [ПОДТВЕРЖДЕНО] per Becht guidance"
+      }
+    ],
+    "unchecked": [
+      "certified HAZOP / LOPA",
+      "API 520/521 PSV full text",
+      "Ni(CO)4 kinetic rate on 15 wt% Ni/MgAl2O4",
+      "toxic gas dispersion and detector layout",
+      "ATEX/IECEx zoning",
+      "SIS SIL verification"
+    ]
   }
 }

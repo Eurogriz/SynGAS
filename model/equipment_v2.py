@@ -92,6 +92,7 @@ def size_reformer(cfg, Q_kW, feed_mol_h, T_avg, p_bar, eos_kset=None,
     Q_act_m3_s = feed_mol_h * R_J * T_avg / (p_bar * 1e5) / 3600.0
     area_free = math.pi * E["tube_ID_m"] ** 2 / 4.0
     n_tubes_real = 0 if atr else max(1.0, math.ceil(tubes))
+    tubes_for_heat = n_tubes_real
     if atr:
         # refractory-lined ATR vessel: size from volumetric flow at 1.5 m/s
         v = 1.5
@@ -110,9 +111,25 @@ def size_reformer(cfg, Q_kW, feed_mol_h, T_avg, p_bar, eos_kset=None,
     mw = sum(MM.get(k, 28.0) * val for k, val in f.items()) / ftot / 1000.0
     rho = mw * p_bar * 1e5 / (R_J * T_avg)
     L_bed = 3.0 * D_vessel if atr else E["tube_heated_length_m"]
-    dp = ergun_dp_bar(L_bed, E["pellet_d_m"],
-                      E["bed_voidage"], E["pellet_d_m"], E["gas_viscosity_Pa_s"],
-                      rho, v)
+
+    def dp_at(n_tubes, vel):
+        raw = ergun_dp_bar(L_bed, E["pellet_d_m"], E["bed_voidage"],
+                           E["pellet_d_m"], E["gas_viscosity_Pa_s"], rho, vel)
+        return raw / 1e5       # ergun_dp_bar returns Pa despite its name
+
+    dp = dp_at(n_tubes_real, v)
+    # Size by BOTH heat flux and allowable pressure drop (Ergun). Increasing
+    # the installed tube count lowers velocity and hence dP ~ 1/n^2.
+    tubes_for_dp = n_tubes_real
+    if not atr and dp > E["dP_max_bar"]:
+        for _ in range(30):
+            factor = math.sqrt(dp / E["dP_max_bar"]) * 1.03
+            n_tubes_real = max(n_tubes_real + 1, math.ceil(n_tubes_real * factor))
+            v = Q_act_m3_s / (n_tubes_real * area_free * E["bed_voidage"])
+            dp = dp_at(n_tubes_real, v)
+            if dp <= E["dP_max_bar"]:
+                break
+        tubes_for_dp = n_tubes_real
     prof = None
     if not atr and feed_for_dp:
         prof = tube_thermal_profile(cfg, feed_for_dp, cfg.process["T_feed_preheat_K"] + 100.0,
@@ -128,9 +145,11 @@ def size_reformer(cfg, Q_kW, feed_mol_h, T_avg, p_bar, eos_kset=None,
         "vessel_diameter_m": D_vessel if atr else None,
         "vessel_length_m": L_bed if atr else None,
         "required_area_m2": area, "tubes_calculated": tubes,
+        "tubes_for_heat": tubes_for_heat, "tubes_for_dp": tubes_for_dp,
         "tubes_installed": n_tubes_real,
         "superficial_velocity_m_s": v, "gas_density_kg_m3": rho,
         "Ergun_dP_bar": dp, "dP_within_limit": dp <= E["dP_max_bar"],
+        "dP_limit_bar": E["dP_max_bar"],
         "tube_thermal_profile": prof,
         "T_wall_max_K": Tw,
         "creep": {**lmp, "required_wall_thickness_m": None if atr else t_req,

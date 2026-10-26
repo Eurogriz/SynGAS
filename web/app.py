@@ -71,6 +71,8 @@ def _brief(r):
                        "Ergun_dP_bar", "creep", "vessel_diameter_m")},
         "economics": e,
         "eos": r["eos"], "steam": r["steam"], "status": r["status"],
+        "synthesis": r.get("synthesis"), "safety": r.get("safety"),
+        "prereformer": r["reformer"].get("prereformer"),
     }
 
 
@@ -276,6 +278,8 @@ a{color:var(--acc)}
 <div><label>Пар p, bar</label><input id="steam_p" type="number" step="1"></div>
 <div><label>Пар T, K</label><input id="steam_T" type="number" step="5"></div>
 </div>
+<label style="margin-top:12px">Дополнительные переопределения (JSON, точечные ключи)</label>
+<textarea id="extra_ov" rows="3" placeholder='{"products.hydrogen.knobs.PSA_H2_recovery":0.90,"process.prereformer_enabled":false}' style="width:100%;background:#0d1117;color:#e6edf3;border:1px solid #30363d;border-radius:5px;font:12px monospace;padding:6px"></textarea>
 <div style="margin-top:14px">
 <button class="primary" onclick="runOne()">▶ Рассчитать</button>
 <button onclick="compare()">Сравнить 5 продуктов</button>
@@ -293,10 +297,13 @@ a{color:var(--acc)}
 <button onclick="tab('t4',this)">Оборудование</button>
 <button onclick="tab('t5',this)">Экономика</button>
 <button onclick="tab('t6',this)">Сравнение / графики</button>
-<button onclick="tab('t7',this)">JSON</button></div>
+<button onclick="tab('t7',this)">JSON</button>
+<button onclick="tab('t8',this)">Синтез</button>
+<button onclick="tab('t9',this)">Безопасность</button></div>
 <div id="t1"></div><div id="t2" class="hidden"></div><div id="t3" class="hidden"></div>
 <div id="t4" class="hidden"></div><div id="t5" class="hidden"></div>
 <div id="t6" class="hidden"></div><div id="t7" class="hidden"><pre id="raw"></pre></div>
+<div id="t8" class="hidden"></div><div id="t9" class="hidden"></div>
 </main></div>
 <script>
 let CFG=null, LAST=null;
@@ -305,7 +312,7 @@ const fmt=(x,n=3)=>x===null||x===undefined||Number.isNaN(+x)?'—':(+x).toFixed(
 const tbl=(head,rows)=>'<table><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+
  rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
 const say=(m,bad=false)=>{$('status').textContent=m;$('status').style.borderLeftColor=bad?'#f85149':'#d29922'};
-function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
 async function init(){CFG=(await (await fetch('/api/config')).json());
  const P=CFG.raw.products, A=CFG.raw.active, C=CFG.raw.catalyst, E=CFG.raw.economics, PR=CFG.raw.process;
  const fill=(id,arr,val)=>{$(id).innerHTML=arr.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('')};
@@ -325,26 +332,39 @@ async function init(){CFG=(await (await fetch('/api/config')).json());
  $('steam_p').value=PR.steam_p_bar_abs;$('steam_T').value=PR.steam_T_K;
  say('Конфигурация загружена. Нажмите «Рассчитать».');}
 function reset(){init();}
-function overrides(){const p=$('product').value,k='products.'+p+'.knobs.';
- return {'active.product':p,'active.normal':$('normal').value,'active.climate':$('climate').value,
- 'active.feed':$('feed').value,'eos.kset':$('kij').value,'active.steam_table':$('steam_table').value,
- 'products.'+p+'.capacity':+$('capacity').value,k+'SC':+$('SC').value,k+'CO2C':+$('CO2C').value,
- k+'O2C':+$('O2C').value,k+'T_K':+$('T_K').value,k+'p_bar':+$('p_bar').value,
- k+'approach_K':+$('approach_K').value,'process.furnace_efficiency_LHV':+$('furnace_eff').value,
- 'catalyst.Ni_wt_pct_metal':+$('ni_wt').value,'catalyst.life_years':+$('life').value,
- 'catalyst.GHSV_reformer_Nm3_per_m3cat_h':+$('ghsv').value,
- 'catalyst.commercial_proxy_loaded_density_kg_m3':+$('rho').value,
- 'catalyst.Ni_price_USD_per_t':+$('ni_price').value,
- 'economics.gas_USD_per_MMBtu':+$('gas').value,'economics.electricity_USD_per_MWh':+$('power_price').value,
- 'economics.CO2_USD_per_t':+$('co2_price').value,'economics.steam_USD_per_t':+$('steam_price').value,
- 'process.steam_p_bar_abs':+$('steam_p').value,'process.steam_T_K':+$('steam_T').value};}
+function overrides(){
+ const p=$('product').value, k='products.'+p+'.knobs.', o={};
+ o['active.product']=p; o['active.normal']=$('normal').value;
+ o['active.climate']=$('climate').value; o['active.feed']=$('feed').value;
+ o['eos.kset']=$('kij').value; o['active.steam_table']=$('steam_table').value;
+ o['products.'+p+'.capacity']=+$('capacity').value;
+ o[k+'SC']=+$('SC').value; o[k+'CO2C']=+$('CO2C').value;
+ o[k+'O2C']=+$('O2C').value; o[k+'T_K']=+$('T_K').value;
+ o[k+'p_bar']=+$('p_bar').value; o[k+'approach_K']=+$('approach_K').value;
+ o['process.furnace_efficiency_LHV']=+$('furnace_eff').value;
+ o['catalyst.Ni_wt_pct_metal']=+$('ni_wt').value;
+ o['catalyst.life_years']=+$('life').value;
+ o['catalyst.GHSV_reformer_Nm3_per_m3cat_h']=+$('ghsv').value;
+ o['catalyst.commercial_proxy_loaded_density_kg_m3']=+$('rho').value;
+ o['catalyst.Ni_price_USD_per_t']=+$('ni_price').value;
+ o['economics.gas_USD_per_MMBtu']=+$('gas').value;
+ o['economics.electricity_USD_per_MWh']=+$('power_price').value;
+ o['economics.CO2_USD_per_t']=+$('co2_price').value;
+ o['economics.steam_USD_per_t']=+$('steam_price').value;
+ o['process.steam_p_bar_abs']=+$('steam_p').value;
+ o['process.steam_T_K']=+$('steam_T').value;
+ try{Object.assign(o,JSON.parse($('extra_ov').value||'{}'));}
+ catch(e){say('Ошибка JSON в доп. переопределениях: '+e.message,true);throw e;}
+ return o;
+}
 function cards(b){$('cards').innerHTML=[
  ['Метрика',fmt(b.achieved,4),b.metric+' · цель '+fmt(b.target,3)],
  ['Попадание','<span class="'+(b.hit_target?'pass':'fail')+'">'+(b.hit_target?'ДА':'НЕТ')+'</span>','лимиты: '+(Object.values(b.limit_checks).every(x=>x.pass)?'<span class="pass">все</span>':'<span class="fail">есть нарушения</span>')],
  ['X_CH4',fmt(b.X_CH4,4),'T '+fmt(b.T_reformer_K,0)+' K · Z '+fmt(b.Z,5)],
  ['Ni инвентарь',fmt(b.catalyst.total_Ni_inventory_t,2),'т · '+fmt(b.catalyst.total_catalyst_volume_m3,1)+' м³'],
  ['Стоимость',fmt(b.economics.levelised_cost,2),b.economics.unit],
- ['CO₂ всего',fmt(b.utilities.total_CO2_t_h,2),'т/ч'],
+ ['CO₂ нетто',fmt(b.utilities.CO2_net_t_h,2),'т/ч'],
+ ['Продукт',fmt((b.synthesis||{}).methanol_t_h||(b.synthesis||{}).C5plus_t_h||(b.synthesis||{}).aldehyde_t_h||(b.synthesis||{}).H2_t_h||(b.synthesis||{}).NH3_t_h,2),'т/ч'],
 ].map(x=>'<div class="card"><div class="k">'+x[0]+'</div><div class="v">'+x[1]+'</div><div class="u">'+x[2]+'</div></div>').join('');}
 function render(b){cards(b);
  const lc=Object.entries(b.limit_checks).map(([k,v])=>[k,fmt(v.limit,4),fmt(v.value,4),
@@ -384,6 +404,21 @@ function render(b){cards(b);
  ['Аннуитет CAPEX',fmt(e.annualised_CAPEX_USD_y,0)]])
  +'<div class="note">Удельная стоимость: <b>'+fmt(e.levelised_cost,2)+' '+e.unit+'</b>. '
  +e.status+'</div>';
+ const sy=b.synthesis||{}, saf=b.safety||{};
+ $('t8').innerHTML='<h2>Контур синтеза (стехиометрия, не кинетика)</h2>'+tbl(['параметр','значение'],
+  Object.entries(sy).filter(([k,v])=>typeof v!=='object'&&v!==null&&k!=='source'&&k!=='note')
+   .map(([k,v])=>[k,(typeof v==='number'?fmt(v,3):String(v))]))
+  +'<div class="note">'+(sy.status||'')+' '+(sy.note||'')+'</div>';
+ const sc=(saf.Ni_CO_4||{}).shutdown_scenarios||[];
+ $('t9').innerHTML='<h2>Ni(CO)₄ при остановке</h2>'+tbl(['T C','без продувки ppb','после продувки ppb'],
+  sc.map(x=>[fmt(x.T_C,0),x.NiCO4_ppb_unpurged.toExponential(2),x.NiCO4_ppb_after_purge.toExponential(2)]))
+  +'<h2>Предохранительный клапан (скрининг)</h2>'+tbl(['параметр','значение'],
+   [['отверстие, мм',fmt((saf.relief||{}).orifice_diameter_mm,1)],
+    ['p уст., бар',fmt((saf.relief||{}).p_set_bar,1)],
+    ['нагрузка, кг/с',fmt((saf.relief||{}).relief_load_kg_s,2)]])
+  +'<div class="note">'+((saf.Ni_CO_4||{}).conclusion||'')+'</div>'
+  +'<h2>HAZOP (скрининг)</h2>'+tbl(['узел','отклонение','защита'],
+   (saf.HAZOP_nodes||[]).map(h=>[h.node,h.deviation,h.safeguard]));
  $('raw').textContent=JSON.stringify(b,null,2);}
 async function call(url,body){say('Расчёт…');const t=Date.now();
  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});

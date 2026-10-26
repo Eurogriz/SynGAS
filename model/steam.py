@@ -48,13 +48,22 @@ def saturation_pressure_bar(T):
 def steam_enthalpy_kJ_per_mol(T, p_bar):
     """Superheated/saturated steam enthalpy [kJ/mol], absolute IF97 reference."""
     if _HAS_IAPWS:
-        return IAPWS97(P=p_bar / 10.0, T=T).h * 0.0180153   # kJ/kg -> kJ/mol
+        try:
+            return IAPWS97(P=p_bar / 10.0, T=T).h * 0.0180153   # kJ/kg -> kJ/mol
+        except Exception:
+            # IF97 region 5 is bounded (T<=2273.15 K, p<=100 MPa). Above that
+            # fall back to NIST Shomate h0, which is on the SAME reference as
+            # the shift applied in thermo.stream_enthalpy.
+            return h0("H2O", T)
     return h0("H2O", T)
 
 
 def liquid_enthalpy_kJ_per_mol(T, p_bar=1.0):
     if _HAS_IAPWS:
-        return IAPWS97(P=p_bar / 10.0, T=T).h * 0.0180153
+        try:
+            return IAPWS97(P=p_bar / 10.0, T=T).h * 0.0180153
+        except Exception:
+            return h_liquid_water(T)
     return h_liquid_water(T)
 
 

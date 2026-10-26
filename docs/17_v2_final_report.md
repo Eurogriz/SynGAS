@@ -4,10 +4,13 @@
 HYSYS не запускался) для пяти целевых продуктов - метанол, Фишер-Тропш,
 оксо-синтез, водород, аммиак. Все пять вариантов выводятся на целевые
 показатели настраиваемыми параметрами; обеспечены оба определения нормального
-кубометра, площадки России и Ближнего Востока, расчёт объёмов катализатора
-Ni/MgAl2O4 и потребности в никеле. Проверка: циклы 1-4 пройдены, цикл 5
-(валидация/фальсификация) **не пройден** - нет экспериментальных данных и
-коммерческого даташита Ni/MgAl2O4. Модель не объявляется «завершённой».
+кубометра, площадки России и Ближнего Востока, PR+IF97, адиабатический
+предреформер, CO2-трим метанола (6 мол.% внутри окна 4-8), стехиометрические
+контуры синтеза, скрининг Ni(CO)4/HAZOP/PSV, независимый SciPy SLSQP,
+расчёт объёмов катализатора Ni/MgAl2O4 и потребности в никеле. Проверка:
+циклы 1-4 пройдены, цикл 5 (валидация/фальсификация) **не пройден** -
+нет экспериментальных данных и коммерческого даташита Ni/MgAl2O4.
+Модель не объявляется «завершённой».
 
 ## 17.1 Key numbers (methanol base, Russia, 0 C/101325 Pa)
 
@@ -15,29 +18,38 @@ Ni/MgAl2O4 и потребности в никеле. Проверка: цикл
 |---|---|---|---|
 | dry syngas | 100000 | Nm3/h | [ЧАСТИЧНО] - design basis |
 | SN | 2.0500 | - | [ПОДТВЕРЖДЕНО] target range |
-| X_CH4 | 0.7852 | - | [ЧАСТИЧНО] equilibrium + approach |
+| X_CH4 | 0.8053 | - | [ЧАСТИЧНО] equilibrium + approach |
 | T_out | 1123.2 | K | [ДОПУЩЕНИЕ] |
 | p | 25.0 | bar(a) | [ДОПУЩЕНИЕ] |
-| Z (PR) | 1.00295 | - | [ЧАСТИЧНО] k_ij |
-| fired duty | 75008 | kW | [ЧАСТИЧНО] |
-| fuel | 8875 | Nm3/h | [ЧАСТИЧНО] |
-| total CO2 | 17.43 | t/h | [ЧАСТИЧНО] |
-| cooling water | 6550 | m3/h | [ЧАСТИЧНО] |
-| catalyst volume | 67.05 | m3 | [ЧАСТИЧНО] proxy density |
-| Ni inventory | 9.052 | t | [ЧАСТИЧНО] |
-| Ni make-up | 2.263 | t/y | [НЕ ПОДТВЕРЖДЕНО] life |
+| Z (PR) | 1.00313 | - | [ЧАСТИЧНО] k_ij |
+| fired duty | 90254 | kW | [ЧАСТИЧНО] |
+| fuel | 10679 | Nm3/h | [ЧАСТИЧНО] |
+| CO2 in make-up gas | 6.00 | mol% | [ПОДТВЕРЖДЕНО] 4-8 window |
+| total CO2 handled | 48.88 | t/h | [ЧАСТИЧНО] |
+| net CO2 to atmosphere | 20.97 | t/h | [ЧАСТИЧНО] recycle assumption |
+| methanol product | 40.24 | t/h | [ЧАСТИЧНО] stoichiometry |
+| pre-reformer T_out | 615.0 | K | [ЧАСТИЧНО] equilibrium |
+| Ergun dP | 2.828 | bar | [ЧАСТИЧНО] sized to <=3 bar |
+| Ni(CO)4 at operation | 0.00057 | ppb | [ЧАСТИЧНО] equilibrium |
+| cooling water | 7325 | m3/h | [ЧАСТИЧНО] |
+| catalyst volume | 78.45 | m3 | [ЧАСТИЧНО] proxy density |
+| Ni inventory | 10.590 | t | [ЧАСТИЧНО] |
+| Ni make-up | 2.648 | t/y | [НЕ ПОДТВЕРЖДЕНО] life |
 | T_wall,max | 1271.2 | K | [ЧАСТИЧНО] |
-| levelised cost | 225.06 | USD/1000 Nm3 dry syngas | [ЧАСТИЧНО] class 5 |
+| levelised cost | 261.60 | USD/1000 Nm3 dry syngas | [ЧАСТИЧНО] class 5 |
 
 ## 17.2 All five variants
 
-| product | metric | achieved | cost | unit | Ni t | CO2 t/h |
-|---|---|---|---|---|---|---|
-| methanol | SN | 2.0500 | 225.06 | USD/1000 Nm3 dry syngas | 9.05 | 17.43 |
-| ft | H2_CO | 2.1000 | 214.39 | USD/1000 Nm3 dry syngas | 6.79 | 9.77 |
-| oxo | H2_CO | 1.0500 | 249.50 | USD/1000 Nm3 dry syngas | 3.30 | 23.85 |
-| hydrogen | H2_purity | 0.9997 | 364.98 | USD/1000 Nm3 H2 | 11.86 | 75.77 |
-| ammonia | H2_N2 | 3.0012 | 600.09 | USD/t NH3 | 10.18 | 71.21 |
+| product | metric | achieved | saleable t/h | cost | unit | Ni t | net CO2 t/h |
+|---|---|---|---|---|---|---|---|
+| methanol | SN | 2.0500 | 40.24 | 261.60 | USD/1000 Nm3 dry syngas | 10.59 | 20.97 |
+| ft | H2_CO | 2.1000 | 12.90 | 214.39 | USD/1000 Nm3 dry syngas | 6.79 | 9.77 |
+| oxo | H2_CO | 1.0500 | 65.99 | 253.97 | USD/1000 Nm3 dry syngas | 4.95 | 0.00 |
+| hydrogen | H2_purity | 0.9997 | 8.99 | 364.98 | USD/1000 Nm3 H2 | 11.86 | 75.77 |
+| ammonia | H2_N2 | 3.0012 | 47.39 | 600.09 | USD/t NH3 | 10.18 | 71.21 |
+
+Detail: `docs/18` (synthesis), `docs/19` (safety), `docs/20` (pre-reformer /
+CO2 trim / hydraulics), `docs/21` (15-case matrix).
 
 ## 17.3 Five verification loops
 
@@ -63,4 +75,6 @@ Ni/MgAl2O4 и потребности в никеле. Проверка: цикл
 Obtain an experimental/pilot dataset for 15 wt% Ni/MgAl2O4 (conversion vs T,
 p, S/C, CO2/C; pressure drop; 200-1000 h sintering) and a vendor MgAl2O4
 catalyst datasheet (bulk density, Ni loading, crush strength, life). Re-run
-loop 5, then close the methanol CO2 trim and the downstream synthesis loops.
+loop 5. The V2 methanol CO2 gap is CLOSED (docs/20) and stoichiometric
+synthesis loops are included (docs/18); the remaining gap is their kinetic
+validation plus a certified HAZOP/API 520 study (docs/19).

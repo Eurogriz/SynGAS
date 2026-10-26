@@ -6,8 +6,8 @@ air-cooler approach, product temperature and BFW temperature.
 
 | product | climate | product T C | air-cooler outlet C | trim cooling? | CW m3/h | cooling kW | cost | unit |
 |---|---|---|---|---|---|---|---|---|
-| methanol | russia | 40 | 42.0 | yes | 6550.1 | 76053 | 225.06 | USD/1000 Nm3 dry syngas |
-| methanol | middle_east | 55 | 60.0 | yes | 6420.7 | 74551 | 224.97 | USD/1000 Nm3 dry syngas |
+| methanol | russia | 40 | 42.0 | yes | 7325.2 | 85054 | 261.60 | USD/1000 Nm3 dry syngas |
+| methanol | middle_east | 55 | 60.0 | yes | 7187.4 | 83454 | 261.51 | USD/1000 Nm3 dry syngas |
 | hydrogen | russia | 40 | 42.0 | yes | 7874.8 | 91435 | 364.98 | USD/1000 Nm3 H2 |
 | hydrogen | middle_east | 55 | 60.0 | yes | 7711.1 | 89535 | 364.87 | USD/1000 Nm3 H2 |
 | ammonia | russia | 40 | 42.0 | yes | 9634.6 | 111868 | 600.09 | USD/t NH3 |
@@ -35,5 +35,5 @@ The `me_rich` feed case (user answer 8 "possibly Middle East") is an
 
 | feed | dry feed Nm3/h | X_CH4 | SN | cost |
 |---|---|---|---|---|
-| russia_h | 25950.5 | 0.7852 | 2.0500 | 225.06 |
-| me_rich | 24696.7 | 0.7946 | 2.0500 | 219.32 |
+| russia_h | 27011.2 | 0.8053 | 2.0500 | 261.60 |
+| me_rich | 25698.7 | 0.8083 | 2.0500 | 255.04 |

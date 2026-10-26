@@ -115,6 +115,7 @@
       "route": "bi_reforming",
       "downstream": [
         "WHB",
+        "CO2_trim",
         "condensate_separation",
         "drying"
       ],
@@ -128,9 +129,13 @@
         "MDEA_CO2_recovery": 0.95,
         "MDEA_reboiler_GJ_per_tCO2": 2.8
       },
-      "source": "Uhde/ThyssenKrupp Nitrogen+Syngas 2010 Table 1 (opened): methanol (H2-CO2)/(CO+CO2) ~2.0; RSC EES 2020 & Fraunhofer (opened): 2.02-2.1",
-      "status": "[CONFIRMED] metric; target 2.05 is inside the opened range",
-      "drying_note": "[NOT MODELLED] dryer regeneration duty; needed for the 55 C Middle East product to meet 0.5 mol% H2O"
+      "source": "Uhde/ThyssenKrupp Nitrogen+Syngas 2010 Table 1 (opened): methanol (H2-CO2)/(CO+CO2) ~2.0; RSC EES 2020 & Fraunhofer (opened): 2.02-2.1; Applied Sciences 2017 7,1213 (opened): make-up gas should contain 4-8 mol% CO2 for maximum activity/selectivity, S module slightly above 2; part of the imported CO2 is removed in the trim unit",
+      "status": "[CONFIRMED] metric and CO2 window; CO2 trim is a design measure to enter the licensor window",
+      "drying_note": "[NOT MODELLED] dryer regeneration duty; needed for the 55 C Middle East product to meet 0.5 mol% H2O",
+      "co2_trim_target_molpct": 6.0,
+      "co2_trim_max_recovery": 0.9,
+      "min_CO2_molpct": 4.0,
+      "max_CO2_molpct": 8.0
     },
     "ft": {
       "label": "Fischer-Tropsch (Co catalyst) synthesis gas",
@@ -178,7 +183,7 @@
       "product_p_bar_abs": 24.0,
       "max_CO2_molpct": 5.0,
       "max_H2O_molpct": 0.5,
-      "route": "CO2_reforming",
+      "route": "ATR_CO2",
       "downstream": [
         "WHB",
         "CO2_removal",
@@ -186,17 +191,17 @@
         "drying"
       ],
       "knobs": {
-        "SC": 0.8,
-        "CO2C": 0.95,
-        "O2C": 0.0,
+        "SC": 0.6,
+        "CO2C": 0.9,
+        "O2C": 0.7,
         "T_K": 1173.15,
         "p_bar": 20.0,
         "approach_K": 10.0,
         "MDEA_CO2_recovery": 0.95,
         "MDEA_reboiler_GJ_per_tCO2": 2.8
       },
-      "source": "Techniques de l'Ingenieur hydroformylation (opened snippet): H2/CO = 1 to 1.25; IntechOpen 2012 (opened snippet): optimal H2/CO = 1.0 for aldehydes; US20210079535A1 (opened snippet): CO:H2 ~1.1",
-      "status": "[CONFIRMED] ratio range"
+      "source": "Techniques de l'Ingenieur hydroformylation (opened): H2/CO = 1 to 1.25; KFUPM lecture (opened): 1-1.5; US8859823B2 (opened) 1:1 stoichiometry. V2 route changed to autothermal/partial oxidation with CO2 co-feed: an adiabatic Gibbs ATR with O2/C tuned to H2/CO = 1.05 (the pure CO2-reforming route with a pre-reformer needed CO2/C > 2.4 and produced >5 mol% CO2).",
+      "status": "[CONFIRMED] ratio range; [PARTIAL] ATR route choice is a design decision"
     },
     "hydrogen": {
       "label": "High-purity hydrogen (SMR + WGS + MDEA + PSA)",
@@ -297,7 +302,11 @@
     "steam_p_bar_abs": 30.0,
     "steam_T_K": 673.15,
     "dew_point_method": "IAPWS97",
-    "status": "temperatures from EPA AP-42 / Nature Sci Rep 2025 (opened) + [ASSUMPTION]"
+    "status": "temperatures from EPA AP-42 / Nature Sci Rep 2025 (opened) + [ASSUMPTION]",
+    "prereformer_enabled": true,
+    "prereformer_approach_K": 0.0,
+    "prereformer_T_in_K": 623.15,
+    "prereformer_status": "[PARTIAL] adiabatic Gibbs-equilibrium pre-reformer; no vendor kinetic model"
   },
   "catalyst": {
     "basis": "Ni/MgAl2O4",
@@ -375,5 +384,87 @@
     "source": "BEIS Hydrogen Production Costs 2021 (opened): 910 GBP/kW H2 (2020, with CCUS) and 300 MW reference; IEA Future of Hydrogen (opened): 500-900 USD/kW H2 without CCUS; DOE H2@Scale (opened): reformer+ASU+CO2 removal ~50% of capital; gasliquids 2020 (opened): H2 LHV 10.795 MJ/Nm3",
     "status": "[PARTIAL] CAPEX correlation is scaled from an opened H2 study to syngas products; ±50% screening accuracy"
   },
-  "adjust": {}
+  "adjust": {},
+  "synthesis": {
+    "methanol": {
+      "p_bar": 75.0,
+      "T_C": 250.0,
+      "per_pass_COx_conversion": 0.25,
+      "overall_C_conversion": 0.97,
+      "recycle_ratio": 3.0,
+      "dH_CO_kJ_mol": -90.7,
+      "dH_CO2_kJ_mol": -49.7,
+      "CO2_feed_molpct_range": [
+        4.0,
+        8.0
+      ],
+      "source": "Applied Sciences 2017 7,1213 (opened): 50-100 bar, 200-300 C, 4-8% CO2, dH CO -90.7 / CO2 -49.7 kJ/mol; OSTI 2424604 (opened): single-pass 25-30%; recycle 2:1-5:1 from opened review",
+      "status": "[PARTIAL] loop stoichiometry + opened ranges, not a licensor kinetic model"
+    },
+    "ft": {
+      "p_bar": 20.0,
+      "T_C": 230.0,
+      "CO_conversion": 0.7,
+      "alpha": 0.9,
+      "dH_kJ_per_mol_CO": -165.0,
+      "CH2_MW": 14.027,
+      "source": "Hywax (opened): single-pass CO conversion 60-80%; ACS Catal 2017 (opened): industrial alpha 0.85-0.95; ASF W_n=n(1-a)^2 a^(n-1); OSTI 20840761 (opened): alpha(paraffin) 0.91",
+      "status": "[PARTIAL] ASF ideal distribution, no detailed product slate"
+    },
+    "oxo": {
+      "olefin": "propylene",
+      "olefin_MW": 42.081,
+      "aldehyde": "C4H8O",
+      "aldehyde_MW": 72.107,
+      "p_bar": 20.0,
+      "T_C": 100.0,
+      "olefin_conversion": 0.9,
+      "aldehyde_selectivity": 0.95,
+      "n_iso_ratio": 7.0,
+      "source": "US7582802B2 (opened): propylene hydroformylation mass balance; MDPI Catalysts 2020 10,510 (opened): selectivity ~99% at mild conditions; Intech/JM LP Oxo (opened): n:i ~7:1; Science 2020 (opened): H2:CO 1:1 typical",
+      "status": "[PARTIAL] stoichiometric aldehyde yield, heat of reaction NOT modelled"
+    },
+    "hydrogen": {
+      "delivery_p_bar": 200.0,
+      "T_in_K": 313.15,
+      "k": 1.41,
+      "MW": 2.016,
+      "source": "Processes 2026 14(2),319 (opened): H2 compressed to 200 bar, 9.2 MW for 2966 kmol/h",
+      "status": "[PARTIAL] ideal multistage compression, no intercooling model"
+    },
+    "ammonia": {
+      "p_bar": 200.0,
+      "T_C": 450.0,
+      "per_pass_conversion": 0.18,
+      "overall_conversion": 0.97,
+      "dH_kJ_per_mol_NH3": -46.0,
+      "source": "RSC EES 2020 (opened): 15-25 MPa, 400-450 C, ~15% single pass, recycle; C-THRU technical brief (opened): dH=-46 kJ/mol NH3, 20-30% per pass; Haber process (opened): 97% overall",
+      "status": "[PARTIAL] loop stoichiometry + opened ranges, not a converter simulation"
+    }
+  },
+  "safety": {
+    "Ni_CO_4": {
+      "log10K": "7430/T - 21.90",
+      "T_range_K": [
+        300,
+        500
+      ],
+      "CO_purge_ppm": 10.0,
+      "safe_T_C": 200.0,
+      "source": "OSTI 7349456 (opened): dH=-142.3 kJ/mol, dS=-419.2 J/mol/K -> log K = 7430/T - 21.90; NIST WebBook Ni(CO)4 (opened); Becht (opened): keep T>200 C until CO<10 ppm to stay below 1 ppb Ni(CO)4",
+      "status": "[PARTIAL] equilibrium screening only; kinetics and Ni surface activity not modelled"
+    },
+    "relief": {
+      "p_set_factor": 1.1,
+      "blocked_outlet_factor": 1.0,
+      "source": "[ASSUMPTION] API 520/521 full text NOT opened; only a screening choked-flow estimate",
+      "status": "[ДОПУЩЕНИЕ]"
+    },
+    "sulfur": {
+      "H2S_in_ppmv": 5.0,
+      "H2S_after_guard_ppmv": 0.02,
+      "source": "JM purification webinar (opened, v1): <10 ppbv slip with lead-lag ZnO",
+      "status": "[ЧАСТИЧНО]"
+    }
+  }
 }

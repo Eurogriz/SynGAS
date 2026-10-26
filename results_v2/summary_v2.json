@@ -39,13 +39,18 @@
     "methanol": {
       "metric": "SN",
       "target": 2.05,
-      "achieved": 2.0500001381882607,
+      "achieved": 2.050004623007731,
       "within_tolerance": true,
-      "levelised_cost": 225.061945565958,
+      "levelised_cost": 261.6002770808037,
       "cost_unit": "USD/1000 Nm3 dry syngas",
-      "Ni_inventory_t": 9.05202774193929,
-      "catalyst_volume_m3": 67.05205734769844,
-      "total_CO2_t_h": 17.42593772023215
+      "Ni_inventory_t": 10.590154741929398,
+      "catalyst_volume_m3": 78.4455906809585,
+      "total_CO2_t_h": 48.88334791383613,
+      "CO2_net_t_h": 20.96805036801037,
+      "CO2_molpct": 6.0,
+      "saleable_product_t_h": 40.24377626765243,
+      "tubes_installed": 509,
+      "Ergun_dP_bar": 2.8284350947878703
     },
     "ft": {
       "metric": "H2_CO",
@@ -56,40 +61,60 @@
       "cost_unit": "USD/1000 Nm3 dry syngas",
       "Ni_inventory_t": 6.789676077285656,
       "catalyst_volume_m3": 50.29389686878264,
-      "total_CO2_t_h": 9.774934649963422
+      "total_CO2_t_h": 9.774934649963422,
+      "CO2_net_t_h": 9.774934649963422,
+      "CO2_molpct": 0.2620188913144756,
+      "saleable_product_t_h": 12.89940049093887,
+      "tubes_installed": 1,
+      "Ergun_dP_bar": 0.22633342178708124
     },
     "oxo": {
       "metric": "H2_CO",
       "target": 1.05,
-      "achieved": 1.0499989049408873,
+      "achieved": 1.0500140596562404,
       "within_tolerance": true,
-      "levelised_cost": 249.49543869967613,
+      "levelised_cost": 253.97427462883286,
       "cost_unit": "USD/1000 Nm3 dry syngas",
-      "Ni_inventory_t": 3.301705033215875,
-      "catalyst_volume_m3": 24.457074320117595,
-      "total_CO2_t_h": 23.8513717637543
+      "Ni_inventory_t": 4.9502119325957255,
+      "catalyst_volume_m3": 36.66823653774611,
+      "total_CO2_t_h": 23.0411005688176,
+      "CO2_net_t_h": 0.0,
+      "CO2_molpct": 1.2352417365224033,
+      "saleable_product_t_h": 65.98595942261186,
+      "tubes_installed": 1,
+      "Ergun_dP_bar": 0.18475786119527549
     },
     "hydrogen": {
       "metric": "H2_purity",
       "target": 0.9997,
       "achieved": 0.9997000000000001,
       "within_tolerance": true,
-      "levelised_cost": 364.9813736316433,
+      "levelised_cost": 364.9813736316436,
       "cost_unit": "USD/1000 Nm3 H2",
-      "Ni_inventory_t": 11.86160324561519,
-      "catalyst_volume_m3": 87.86372774529771,
-      "total_CO2_t_h": 75.77427640773526
+      "Ni_inventory_t": 11.861603245615202,
+      "catalyst_volume_m3": 87.86372774529778,
+      "total_CO2_t_h": 75.77427640773529,
+      "CO2_net_t_h": 75.77427640773529,
+      "CO2_molpct": 0.00012177368239486319,
+      "saleable_product_t_h": 8.993855354141951,
+      "tubes_installed": 512,
+      "Ergun_dP_bar": 2.8300301359953255
     },
     "ammonia": {
       "metric": "H2_N2",
       "target": 3.0,
-      "achieved": 3.001234137183584,
+      "achieved": 3.001234137183583,
       "within_tolerance": true,
-      "levelised_cost": 600.0931402123921,
+      "levelised_cost": 600.0931402123919,
       "cost_unit": "USD/t NH3",
-      "Ni_inventory_t": 10.179795726128217,
-      "catalyst_volume_m3": 75.40589426761643,
-      "total_CO2_t_h": 71.21065977673001
+      "Ni_inventory_t": 10.17979572612822,
+      "catalyst_volume_m3": 75.40589426761645,
+      "total_CO2_t_h": 71.21065977672987,
+      "CO2_net_t_h": 71.21065977672987,
+      "CO2_molpct": 0.00026194644828577785,
+      "saleable_product_t_h": 47.38668861574572,
+      "tubes_installed": 411,
+      "Ergun_dP_bar": 2.829810674540234
     }
   },
   "verification_summary": {
@@ -100,7 +125,7 @@
     "5_validation_falsification": false
   },
   "overall_passed": false,
-  "runtime_s": 99.6,
+  "runtime_s": 208.4,
   "optional_packages": {
     "iapws": true
   }

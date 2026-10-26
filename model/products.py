@@ -75,9 +75,30 @@ def reformer(cfg, knobs, secondary_air=0.0):
     eos = cfg.eos_kset
     proc = cfg.process
     units = []
+    # --- adiabatic pre-reformer for C2+ feed (fired reformers only) ----------
+    # O2 is intentionally excluded: with O2C>0 the ATR burner needs its oxygen,
+    # which would otherwise be consumed inside the pre-reformer.
+    pre = None
+    f_main = f
+    if proc.get("prereformer_enabled") and knobs["O2C"] == 0.0:
+        from .prereformer import adiabatic_prereformer
+        f_pre = {k: v for k, v in f.items() if k != "O2"}
+        pre = adiabatic_prereformer(f_pre, p, proc["prereformer_T_in_K"],
+                                    eos_kset=eos,
+                                    approach_K=proc["prereformer_approach_K"],
+                                    use_iapws=cfg.use_iapws)
+        if pre["converged"]:
+            f_main = dict(pre["equilibrium"]["n_mol"])
+            f_main.pop("C_GR", None)
+            units.append({"unit": "R-100 adiabatic pre-reformer",
+                          "T_in_K": pre["T_in_K"], "T_out_K": pre["T_out_K"],
+                          "C2plus_conversion": pre["C2plus_conversion"],
+                          "Q_kJ_per_100mol_NG": 0.0,
+                          "H_balance_mismatch_pct": pre["H_balance_mismatch_pct"],
+                          "status": pre["status"]})
     if cfg.P["route"] == "SMR_air_secondary":
         # Stage 1: primary reformer at fixed outlet T.
-        r1 = equilibrate(f, proc["T_primary_out_K"], p,
+        r1 = equilibrate(f_main, proc["T_primary_out_K"], p,
                          approach_K=knobs["approach_K"], eos_kset=eos)
         H1 = _H(r1["n_mol"], proc["T_primary_out_K"], p, cfg)
         H0 = _H(f, proc["T_feed_preheat_K"], p, cfg)
@@ -123,7 +144,8 @@ def reformer(cfg, knobs, secondary_air=0.0):
                           "T_out_K": Tad, "Q_kJ_per_100mol_NG": 0.0,
                           "H_balance_error_pct": abs(H2 - H_in_mixed) / max(abs(H_in_mixed), 1) * 100,
                           "equilibrium": r2})
-            return {"feed": f, "feed_secondary": n2, "carbon_per_100mol_NG": carbon,
+            return {"feed": f, "feed_main": f_main, "feed_secondary": n2,
+                    "prereformer": pre, "carbon_per_100mol_NG": carbon,
                     "T_out_K": Tad, "p_bar": p, "equilibrium": r2,
                     "Q_primary_kJ_per_100mol_NG": Q_primary,
                     "Q_total_kJ_per_100mol_NG": Q_primary,
@@ -141,20 +163,25 @@ def reformer(cfg, knobs, secondary_air=0.0):
         Tad = a["T_ad_K"]
         units.append({"unit": "R-101 autothermal / partial-oxidation reformer",
                       "T_out_K": Tad, "Q_kJ_per_100mol_NG": 0.0, "equilibrium": r})
-        return {"feed": f, "carbon_per_100mol_NG": carbon, "T_out_K": Tad,
+        return {"feed": f, "feed_main": f, "prereformer": None,
+                "prereformer_bypassed": "O2-containing ATR feed; pre-reformer would consume O2",
+                "carbon_per_100mol_NG": carbon, "T_out_K": Tad,
                 "p_bar": p, "equilibrium": r,
                 "Q_total_kJ_per_100mol_NG": 0.0,
                 "H_in_kJ_per_100mol_NG": a["H_in_kJ"],
                 "H_out_kJ_per_100mol_NG": a["H_out_kJ"],
                 "units": units, "adiabatic_solve": {"converged": True, "T_ad_K": Tad}}
     T = knobs["T_K"]
-    r = equilibrate(f, T, p, approach_K=knobs["approach_K"], eos_kset=eos)
+    r = equilibrate(f_main, T, p, approach_K=knobs["approach_K"], eos_kset=eos)
+    # H_in is the ORIGINAL feed at the preheat temperature; the pre-reformer is
+    # adiabatic, so H(main outlet) - H(original inlet) is the total fired duty.
     H_in = _H(f, proc["T_feed_preheat_K"], p, cfg)
     H_out = _H(r["n_mol"], T, p, cfg)
     Q = H_out - H_in
     units.append({"unit": "R-101 fired tubular / CO2 reformer", "T_out_K": T,
                   "Q_kJ_per_100mol_NG": Q, "equilibrium": r})
-    return {"feed": f, "carbon_per_100mol_NG": carbon, "T_out_K": T, "p_bar": p,
+    return {"feed": f, "feed_main": f_main, "prereformer": pre,
+            "carbon_per_100mol_NG": carbon, "T_out_K": T, "p_bar": p,
             "equilibrium": r, "Q_total_kJ_per_100mol_NG": Q,
             "H_in_kJ_per_100mol_NG": H_in, "H_out_kJ_per_100mol_NG": H_out,
             "units": units}
@@ -281,6 +308,30 @@ def downstream(cfg, knobs, rx):
                       "Q_removed_kJ_per_100mol_NG": Q,
                       "status": "[ASSUMPTION] conversion set by knob, not a kinetic model"})
         T_cur = proc["WGS_HTS_T_K"]
+    # 2b. CO2 TRIM - partial acid-gas removal to enter the methanol licensor
+    # 4-8 mol% CO2 window (Applied Sciences 2017 7,1213, opened).
+    if "CO2_trim" in D:
+        target = cfg.P.get("co2_trim_target_molpct", 6.0) / 100.0
+        rec_max = cfg.P.get("co2_trim_max_recovery", 0.90)
+        dry0 = _dry(n)
+        co2 = n.get("CO2", 0.0)
+        x = (co2 - target * dry0) / (1.0 - target) if target < 1 else 0.0
+        x = min(max(x, 0.0), rec_max * co2)
+        n["CO2"] = co2 - x
+        tco2 = x * M["CO2"] / 1e6
+        qreg = knobs.get("MDEA_reboiler_GJ_per_tCO2", 2.80)
+        Qtrim = qreg * tco2 * 1e6
+        y_after = _y_dry(n)
+        units.append({"unit": "A-302 CO2 trim (partial MDEA)",
+                      "T_K": proc["MDEA_T_K"],
+                      "target_CO2_molpct": 100 * target,
+                      "CO2_removed_mol_per_100mol_NG": x,
+                      "CO2_captured_t_per_100mol_NG": tco2,
+                      "recovery_fraction": (x / co2) if co2 else 0.0,
+                      "achieved_CO2_molpct": 100 * y_after.get("CO2", 0.0),
+                      "reboiler_duty_kJ_per_100mol_NG": Qtrim,
+                      "reboiler_GJ_per_tCO2": qreg})
+        withdraw("CO2", x)
     # 3. syngas cooler ahead of MDEA / PSA (condenses most of the steam)
     if "CO2_removal" in D or "PSA" in D:
         T_abs = max(proc["MDEA_T_K"], cfg.climate_T_product_K)
@@ -385,8 +436,9 @@ def tune(cfg, verbose=False):
     target = cfg.P["target"]
     trace = []
     if product == "methanol":
-        lo, hi = 0.0, 0.6
-        for i in range(22):
+        # CO2 trim requires a much larger CO2 import than the untrimmed case
+        lo, hi = 0.0, 1.5
+        for i in range(16):
             mid = (lo + hi) / 2
             k["CO2C"] = mid
             r = _evaluate(cfg, k)
@@ -411,18 +463,22 @@ def tune(cfg, verbose=False):
         k["O2C"] = (lo + hi) / 2
         key = "O2C"
     elif product == "oxo":
+        # ATR + CO2 co-feed: O2/C is the control knob; CO2/C is fixed at 0.90
+        # so the product CO2 stays inside the 5 mol% oxo limit.
         k["SC"] = 0.60
-        lo, hi = 0.4, 2.0
-        for i in range(18):
+        k["CO2C"] = 0.90
+        lo, hi = 0.50, 0.85
+        for i in range(14):
             mid = (lo + hi) / 2
-            k["CO2C"] = mid
+            k["O2C"] = mid
             r = _evaluate(cfg, k)
-            if r is None: lo = mid; continue
-            trace.append({"CO2C": mid, "H2_CO": r["metric"]})
+            if r is None: hi = mid; continue
+            trace.append({"O2C": mid, "H2_CO": r["metric"],
+                          "T_ad_K": r["rx"]["T_out_K"]})
             if r["metric"] > target: lo = mid
             else: hi = mid
-        k["CO2C"] = (lo + hi) / 2
-        key = "CO2C"
+        k["O2C"] = (lo + hi) / 2
+        key = "O2C"
     elif product == "hydrogen":
         key = "PSA_H2_recovery"
     elif product == "ammonia":
@@ -454,6 +510,15 @@ def tune(cfg, verbose=False):
 # --------------------------------------------------------------------------
 # full design
 # --------------------------------------------------------------------------
+def _compact_reformer(rx):
+    d = {k: v for k, v in rx.items()
+         if k not in ("units", "feed", "feed_secondary", "feed_main")}
+    if isinstance(d.get("prereformer"), dict):
+        d["prereformer"] = {k: v for k, v in d["prereformer"].items()
+                            if k != "equilibrium"}
+    return d
+
+
 def design(cfg, do_tune=True):
     if do_tune:
         tuned = tune(cfg)
@@ -499,12 +564,19 @@ def design(cfg, do_tune=True):
                                               cfg.C["bfw_T_C"] + 273.15)
     steam_mol_h = max(Q_whb_kJ_100, 0.0) * scale / max(dh_steam, 1.0)
     U["steam_generated_t_h"] = steam_mol_h * M["H2O"] / 1e6
-    mdea = next((u for u in ds["units"] if u["unit"].startswith("A-301")), None)
-    Q_mdea_kJ_100 = mdea["reboiler_duty_kJ_per_100mol_NG"] if mdea else 0.0
+    Q_mdea_kJ_100 = sum(u.get("reboiler_duty_kJ_per_100mol_NG", 0.0)
+                        for u in ds["units"])
+    mdea = any(u.get("CO2_captured_t_per_100mol_NG", 0.0) > 0 for u in ds["units"])
     dh_vap = vaporisation_enthalpy_kJ_per_mol(2.0)   # MDEA reboiler ~2 bar(a) saturated steam
     U["MDEA_reboiler_steam_t_h"] = Q_mdea_kJ_100 * scale / max(dh_vap, 1.0) * M["H2O"] / 1e6
     U["steam_net_export_t_h"] = U["steam_generated_t_h"] - U["MDEA_reboiler_steam_t_h"]
-    U["CO2_captured_t_h"] = (mdea["CO2_captured_t_per_100mol_NG"] * scale) if mdea else 0.0
+    U["CO2_captured_t_h"] = sum(u.get("CO2_captured_t_per_100mol_NG", 0.0)
+                                for u in ds["units"]) * scale
+    U["CO2_import_t_h"] = (cfg.knobs.get("CO2C", 0.0) *
+                           rx["carbon_per_100mol_NG"] * scale * M["CO2"] / 1e6)
+    U["CO2_recycled_t_h"] = min(U["CO2_captured_t_h"], U["CO2_import_t_h"])
+    U["CO2_net_t_h"] = (U["CO2_from_fuel_t_h"] +
+                        max(U["CO2_captured_t_h"] - U["CO2_import_t_h"], 0.0))
     U["total_CO2_t_h"] = U["CO2_from_fuel_t_h"] + U["CO2_captured_t_h"]
     # cooling: final cooler + WGS + methanator + MDEA condenser (reboiler excluded)
     Q_cool_kJ_100 = 0.0
@@ -549,7 +621,7 @@ def design(cfg, do_tune=True):
     lhv_mmbtu = LHV_CH4_KJ_PER_MOL / cfg.Vm * 9.47817e-7
     feed_gas_Nm3_h = dry_gas_mol_per_100 * cfg.Vm * scale
     gas_cost = (feed_gas_Nm3_h + U["fuel_Nm3_h"]) * lhv_mmbtu * ec["gas_USD_per_MMBtu"] * hours
-    co2_cost = U["total_CO2_t_h"] * ec["CO2_USD_per_t"] * hours
+    co2_cost = U["CO2_net_t_h"] * ec["CO2_USD_per_t"] * hours
     power_cost = U["total_power_MW"] * 1000.0 * ec["electricity_USD_per_MWh"] / 1000.0 * hours
     steam_credit = max(U["steam_net_export_t_h"], 0.0) * ec["steam_USD_per_t"] * hours
     cw_cost = U["cooling_water_m3_h"] * ec["cooling_water_USD_per_m3"] * hours
@@ -606,20 +678,30 @@ def design(cfg, do_tune=True):
                        max(sum(v for k, v in ds["n"].items() if k != "C_GR"), 1e-12),
             "non_H2_ppm": (1.0 - y.get("H2", 0.0)) * 1e6,
             "limit_checks": {}}
-    for key, lim in (("max_CO2_molpct", "CO2_molpct"), ("max_CH4_molpct", "CH4_molpct"),
-                     ("max_N2_molpct", "N2_molpct"), ("max_H2O_molpct", "H2O_molpct"),
-                     ("max_CO_ppm", "CO_ppm"), ("max_CO2_ppm", "CO2_ppm"),
-                     ("max_CH4_ppm", "CH4_ppm"), ("max_N2_ppm", "N2_ppm"),
-                     ("max_H2O_ppm", "H2O_ppm"),
-                     ("max_total_non_H2_ppm", "non_H2_ppm"),
-                     ("max_CO_CO2_ppm", "CO_CO2_ppm")):
-        if key in cfg.P:
-            if lim == "CO_CO2_ppm":
-                spec["CO_CO2_ppm"] = spec["CO_ppm"] + spec["CO2_ppm"]
-            spec["limit_checks"][key] = {"limit": cfg.P[key],
-                                          "value": spec[lim],
-                                          "pass": spec[lim] <= cfg.P[key]}
-    return {
+    checks = [
+        ("min_CO2_molpct", "CO2_molpct", "min"),
+        ("max_CO2_molpct", "CO2_molpct", "max"),
+        ("max_CH4_molpct", "CH4_molpct", "max"),
+        ("max_N2_molpct", "N2_molpct", "max"),
+        ("max_H2O_molpct", "H2O_molpct", "max"),
+        ("max_CO_ppm", "CO_ppm", "max"),
+        ("max_CO2_ppm", "CO2_ppm", "max"),
+        ("max_CH4_ppm", "CH4_ppm", "max"),
+        ("max_N2_ppm", "N2_ppm", "max"),
+        ("max_H2O_ppm", "H2O_ppm", "max"),
+        ("max_total_non_H2_ppm", "non_H2_ppm", "max"),
+        ("max_CO_CO2_ppm", "CO_CO2_ppm", "max"),
+    ]
+    for key, lim, mode in checks:
+        if key not in cfg.P:
+            continue
+        if lim == "CO_CO2_ppm":
+            spec["CO_CO2_ppm"] = spec["CO_ppm"] + spec["CO2_ppm"]
+        val = spec[lim]
+        ok = val >= cfg.P[key] if mode == "min" else val <= cfg.P[key]
+        spec["limit_checks"][key] = {"limit": cfg.P[key], "value": val,
+                                      "mode": mode, "pass": ok}
+    result = {
         "config": cfg.describe(),
         "product": cfg.product, "normal": cfg.active["normal"],
         "climate": cfg.active["climate"], "feed": cfg.active["feed"],
@@ -629,8 +711,9 @@ def design(cfg, do_tune=True):
                                          "trace_last": tuned["trace"][-1] if tuned["trace"] else None}
                                         if tuned else None),
         "spec": spec,
-        "reformer": {k: v for k, v in rx.items() if k not in ("units", "feed", "feed_secondary")},
+        "reformer": _compact_reformer(rx),
         "reformer_feed_mol_per_100mol_NG": rx["feed"],
+        "reformer_feed_main_mol_per_100mol_NG": rx.get("feed_main"),
         "reformer_units": [{k: v for k, v in u.items() if k != "equilibrium"} for u in rx["units"]],
         "downstream": ds,
         "flows": {"scale_100mol_NG_per_h": scale,
@@ -651,3 +734,8 @@ def design(cfg, do_tune=True):
         "status": {"hysys": "NOT RUN - Python/DWSIM-equivalent (user confirmation #11)",
                    "validation": "no experimental campaign; see docs/13"},
     }
+    from .synthesis import synthesis_report
+    from .safety_v2 import safety_report
+    result["synthesis"] = synthesis_report(result, cfg)
+    result["safety"] = safety_report(result, cfg)
+    return result
