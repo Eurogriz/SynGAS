@@ -1,0 +1,7 @@
+record_id,source_id,Ni_wt_pct,support,T_K,p_bar,p_assumed,S_C,CO2_C,X_measured,X_model_equilibrium,delta,model_carbon_stable,model_Z,record_status,applicability
+P16,S2,15.0,MgAl2O4,873.15,1.0,False,5.0,0.0,0.45,0.9105801646316707,0.4605801646316707,False,0.9999825606375283,[ЧАСТИЧНО],outside model design point (lab kinetic regime)
+P17,S2,15.0,MgAl2O4,873.15,5.0,False,5.0,0.0,0.4,0.623303369513288,0.223303369513288,False,0.9995622931206412,[ЧАСТИЧНО],outside model design point (lab kinetic regime)
+P18,S2,15.0,MgAl2O4,873.15,10.0,False,5.0,0.0,0.4,0.4947598218380444,0.09475982183804438,False,0.9987370546726264,[ЧАСТИЧНО],outside model design point (lab kinetic regime)
+P19,S2,15.0,MgAl2O4,873.15,1.0,True,5.0,0.0,0.48,0.9105801646316707,0.4305801646316707,False,0.9999825606375283,[ЧАСТИЧНО],outside model design point (lab kinetic regime)
+P28,S6,,,873.15,1.0,False,5.0,0.0,0.494,0.9105801646316707,0.4165801646316707,False,0.9999825606375283,[ЧАСТИЧНО],outside model design point (lab kinetic regime)
+P29,S6,,,873.15,10.0,False,5.0,0.0,0.4,0.4947598218380444,0.09475982183804438,False,0.9987370546726264,[ЧАСТИЧНО],outside model design point (lab kinetic regime)

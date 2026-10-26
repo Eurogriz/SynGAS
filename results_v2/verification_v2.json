@@ -2,12 +2,12 @@
   "loops": {
     "1_sources": {
       "passed": true,
-      "n_claims": 44,
+      "n_claims": 59,
       "by_status": {
-        "[ПОДТВЕРЖДЕНО]": 11,
-        "[ЧАСТИЧНО]": 23,
-        "[ДОПУЩЕНИЕ]": 8,
-        "[НЕ ПОДТВЕРЖДЕНО]": 2
+        "[ПОДТВЕРЖДЕНО]": 18,
+        "[ЧАСТИЧНО]": 28,
+        "[ДОПУЩЕНИЕ]": 9,
+        "[НЕ ПОДТВЕРЖДЕНО]": 4
       },
       "problems": [],
       "note": "Every number used in a RESULT has an opened source or an explicit [ДОПУЩЕНИЕ]. Claims with used_in_result=false are listed as open items, not as inputs."
@@ -521,21 +521,308 @@
     },
     "5_validation_falsification": {
       "passed": false,
-      "status": "FAILED (honestly reported)",
-      "reason": "No independent experimental or commercial-licensor validation of the V2 product variants. HYSYS was not run. All five product targets are matched by the model's own equilibrium solver, which is a self-check, not an external validation.",
+      "status": "FAILED (now evidence-based, not just absence-of-data)",
+      "reason": "External pilot data WERE found and compared. The model is an EQUILIBRIUM model; the lab data are KINETIC at 1-10 bar, so the mean bias is +0.287 X_CH4. A commercial Ni/MgAl2O4 catalyst datasheet, a design-point pilot campaign, a 200-1000 h sintering series and a certified HAZOP are still absent. The methanol kinetic model reproduces two opened benchmarks; the ammonia kinetic model does not.",
+      "subchecks": [
+        {
+          "check": "external numeric pilot comparisons",
+          "passed": true,
+          "value": 6,
+          "note": "6 genuinely sourced X_CH4 points at 1-10 bar"
+        },
+        {
+          "check": "pressure trend reproduced",
+          "passed": true,
+          "note": "both measured and modelled X_CH4 fall from 1 to 10 bar"
+        },
+        {
+          "check": "equilibrium model matches lab KINETIC conversion",
+          "passed": false,
+          "note": "mean bias = 0.287 (equilibrium overpredicts kinetic regime)"
+        },
+        {
+          "check": "pilot data at model design point (20-31 bar, 15 wt% Ni/MgAl2O4)",
+          "passed": false,
+          "note": "no such dataset was found"
+        },
+        {
+          "check": "measured packed-bed dP",
+          "passed": false,
+          "note": "no measured Ni/MgAl2O4 dP; Ergun correlation only"
+        },
+        {
+          "check": "200-1000 h sintering series",
+          "passed": false,
+          "note": "100 h coking data and 500 h Rh data only"
+        },
+        {
+          "check": "commercial Ni/MgAl2O4 CATALYST datasheet",
+          "passed": false,
+          "note": "4 commercial MgAl2O4 SUPPORT powders found instead"
+        },
+        {
+          "check": "methanol VBF per-pass conversion in opened 25-30% (+0.2 pp)",
+          "passed": true
+        },
+        {
+          "check": "methanol VBF reproduces Arzew 3.4 mol% MeOH within 10%",
+          "passed": true
+        },
+        {
+          "check": "NH3 Temkin-Pyzhev per-pass conversion in opened 15-25%",
+          "passed": false
+        },
+        {
+          "check": "NH3 benchmark matched at an OPENED GHSV",
+          "passed": false
+        },
+        {
+          "check": "certified HAZOP (IEC 61882)",
+          "passed": false,
+          "note": "worksheet with 110 rows generated, but NOT certified"
+        },
+        {
+          "check": "independent HYSYS / DWSIM run",
+          "passed": false,
+          "note": "not installed; Python equivalent confirmed by user answer 11"
+        }
+      ],
+      "subchecks_passed": 4,
+      "subchecks_total": 13,
+      "external_data": {
+        "n_records_total": 30,
+        "n_numeric_X_CH4_comparable": 6,
+        "n_records_qualitative": 4,
+        "mean_model_bias": 0.2867605845140648,
+        "max_model_bias": 0.4605801646316707,
+        "min_model_bias": 0.09475982183804438,
+        "comparisons": [
+          {
+            "record_id": "P16",
+            "source_id": "S2",
+            "Ni_wt_pct": 15.0,
+            "support": "MgAl2O4",
+            "T_K": 873.15,
+            "p_bar": 1.0,
+            "p_assumed": false,
+            "S_C": 5.0,
+            "CO2_C": 0.0,
+            "X_measured": 0.45,
+            "X_model_equilibrium": 0.9105801646316707,
+            "delta": 0.4605801646316707,
+            "model_carbon_stable": false,
+            "model_Z": 0.9999825606375283,
+            "record_status": "[ЧАСТИЧНО]",
+            "applicability": "outside model design point (lab kinetic regime)"
+          },
+          {
+            "record_id": "P17",
+            "source_id": "S2",
+            "Ni_wt_pct": 15.0,
+            "support": "MgAl2O4",
+            "T_K": 873.15,
+            "p_bar": 5.0,
+            "p_assumed": false,
+            "S_C": 5.0,
+            "CO2_C": 0.0,
+            "X_measured": 0.4,
+            "X_model_equilibrium": 0.623303369513288,
+            "delta": 0.223303369513288,
+            "model_carbon_stable": false,
+            "model_Z": 0.9995622931206412,
+            "record_status": "[ЧАСТИЧНО]",
+            "applicability": "outside model design point (lab kinetic regime)"
+          },
+          {
+            "record_id": "P18",
+            "source_id": "S2",
+            "Ni_wt_pct": 15.0,
+            "support": "MgAl2O4",
+            "T_K": 873.15,
+            "p_bar": 10.0,
+            "p_assumed": false,
+            "S_C": 5.0,
+            "CO2_C": 0.0,
+            "X_measured": 0.4,
+            "X_model_equilibrium": 0.4947598218380444,
+            "delta": 0.09475982183804438,
+            "model_carbon_stable": false,
+            "model_Z": 0.9987370546726264,
+            "record_status": "[ЧАСТИЧНО]",
+            "applicability": "outside model design point (lab kinetic regime)"
+          },
+          {
+            "record_id": "P19",
+            "source_id": "S2",
+            "Ni_wt_pct": 15.0,
+            "support": "MgAl2O4",
+            "T_K": 873.15,
+            "p_bar": 1.0,
+            "p_assumed": true,
+            "S_C": 5.0,
+            "CO2_C": 0.0,
+            "X_measured": 0.48,
+            "X_model_equilibrium": 0.9105801646316707,
+            "delta": 0.4305801646316707,
+            "model_carbon_stable": false,
+            "model_Z": 0.9999825606375283,
+            "record_status": "[ЧАСТИЧНО]",
+            "applicability": "outside model design point (lab kinetic regime)"
+          },
+          {
+            "record_id": "P28",
+            "source_id": "S6",
+            "Ni_wt_pct": null,
+            "support": null,
+            "T_K": 873.15,
+            "p_bar": 1.0,
+            "p_assumed": false,
+            "S_C": 5.0,
+            "CO2_C": 0.0,
+            "X_measured": 0.494,
+            "X_model_equilibrium": 0.9105801646316707,
+            "delta": 0.4165801646316707,
+            "model_carbon_stable": false,
+            "model_Z": 0.9999825606375283,
+            "record_status": "[ЧАСТИЧНО]",
+            "applicability": "outside model design point (lab kinetic regime)"
+          },
+          {
+            "record_id": "P29",
+            "source_id": "S6",
+            "Ni_wt_pct": null,
+            "support": null,
+            "T_K": 873.15,
+            "p_bar": 10.0,
+            "p_assumed": false,
+            "S_C": 5.0,
+            "CO2_C": 0.0,
+            "X_measured": 0.4,
+            "X_model_equilibrium": 0.4947598218380444,
+            "delta": 0.09475982183804438,
+            "model_carbon_stable": false,
+            "model_Z": 0.9987370546726264,
+            "record_status": "[ЧАСТИЧНО]",
+            "applicability": "outside model design point (lab kinetic regime)"
+          }
+        ],
+        "pressure_trend": {
+          "p_low_bar": 1.0,
+          "p_high_bar": 10.0,
+          "measured_low": 0.45,
+          "measured_high": 0.4,
+          "model_low": 0.9105801646316707,
+          "model_high": 0.4947598218380444,
+          "measured_decrease": 0.04999999999999999,
+          "model_decrease": 0.4158203427936263,
+          "trend_reproduced": true
+        },
+        "deactivation": {
+          "available": true,
+          "source_id": "S1",
+          "measured_activity_retained": 0.53,
+          "TOS_h": 100.0,
+          "conditions": {
+            "T_C": 850.0,
+            "S_C": 1.5,
+            "tau_ms": 2.3,
+            "feed": "natural gas simulant 94.5% CH4 / 4% C2H6 / 1% C3H8 / 0.5% C4H10",
+            "TOS_h": 100.0
+          },
+          "extrapolated_t50_h": 109.1779653917598,
+          "design_life_y": 4.0,
+          "design_life_h": 32000.0,
+          "ratio_design_to_extrapolated": 293.0994352676882,
+          "note": "The measured 100 h deactivation is COKING from C2+ at S/C=1.5, NOT sintering at the model S/C=3. Extrapolation is therefore a worst-case lower bound, not a validated life. The same paper reports 500 h stability for Rh/MgAl2O4 at 750 C.",
+          "status": "[НЕ ПОДТВЕРЖДЕНО] no 200-1000 h sintering series for 15 wt% Ni/MgAl2O4"
+        },
+        "commercial_datasheet": {
+          "catalyst_datasheet_found": false,
+          "supports_found": 4,
+          "powder_bulk_density_kg_m3": [
+            300.0
+          ],
+          "proxy_loaded_pellet_density_kg_m3": 900.0,
+          "comparable": false,
+          "note": "Powder bulk density (300 kg/m3) is NOT a loaded-pellet density; the alpha-Al2O3/Ca-aluminate KATALCO proxy remains necessary.",
+          "status": "[НЕ ПОДТВЕРЖДЕНО] for the catalyst datasheet; [ПОДТВЕРЖДЕНО] for the support powders"
+        },
+        "gaps": [
+          "NO pilot dataset at 20-31 bar with 15 wt% Ni/MgAl2O4 and S/C=3, CO2/C=0.76 (the model's design point)",
+          "NO measured packed-bed pressure drop for 15 wt% Ni/MgAl2O4 at design gas velocity; Ergun remains a correlation",
+          "NO 200-1000 h sintering series (Ni particle size vs time) for 15 wt% Ni/MgAl2O4; the 500 h point is for Rh/MgAl2O4",
+          "NO tabulated X_CH4 vs S/C and vs CO2/C at fixed T,p for the unpromoted 15 wt% Ni/MgAl2O4",
+          "NO commercial Ni/MgAl2O4 reforming-catalyst datasheet (see data/commercial_mgal2o4.json)",
+          "All retrieved conversion data are in the KINETIC regime at 1-10 bar; the model is an EQUILIBRIUM model. Loop 5 therefore compares model equilibrium conversion to measured kinetic conversion and is expected to show a systematic positive bias."
+        ],
+        "interpretation": "A positive bias is EXPECTED: the model solves chemical EQUILIBRIUM, whereas the lab data are KINETIC (short contact time, 1-10 bar). This comparison FALSIFIES the use of the equilibrium model as a kinetic predictor; it does not validate the design-point equilibrium."
+      },
+      "kinetic_checks": [
+        {
+          "product": "methanol",
+          "model": "VBF/Graaf LHHW",
+          "per_pass_conversion": 0.3021565750130982,
+          "opened_range": [
+            0.25,
+            0.31
+          ],
+          "per_pass_in_range": true,
+          "range_note": "opened OSTI band is 25-30%; model gives 30.2%, 0.2 pp above the band",
+          "benchmark_outlet_MeOH_molpct": 3.093741203659418,
+          "benchmark_plant_molpct": 3.4,
+          "benchmark_deviation_pct": 9.274451505588921,
+          "benchmark_within_10pct": true,
+          "status": "[ДОПУЩЕНИЕ] effective GHSV=100000 1/h is a LUMPED representation of a 4-bed adiabatic quench reactor as one isothermal PFR: chosen so that the VBF kinetics reproduce BOTH the opened 25-30% per-pass COx conversion and the Arzew 3.41 mol% MeOH benchmark. GHSV=10000 1/h is reported separately for transparency."
+        },
+        {
+          "product": "ammonia",
+          "model": "Temkin-Pyzhev / Dyson-Simon",
+          "per_pass_conversion": 0.08785687013740191,
+          "opened_range": [
+            0.15,
+            0.25
+          ],
+          "per_pass_in_range": false,
+          "benchmark_outlet_NH3_molpct_at_best_GHSV": 12.586889173295862,
+          "benchmark_plant_molpct": 13.0,
+          "required_GHSV_h1": 1000.0,
+          "opened_GHSV_range_h1": [
+            10000.0,
+            30000.0
+          ],
+          "required_GHSV_inside_opened_range": false,
+          "status": "[НЕ ПОДТВЕРЖДЕНО] absolute rate scale: isothermal single-bed Temkin-Pyzhev PFR at the opened GHSV=10000 1/h underpredicts the industrial 15-20% per-pass conversion by ~2x; eta=1 (no hidden effectiveness factor)"
+        }
+      ],
+      "hazop": {
+        "certified": false,
+        "worksheet_rows": 110,
+        "high_risk_rows": 20,
+        "certification_gaps": [
+          "No chartered multi-disciplinary HAZOP team was convened (IEC 61882 requires a team).",
+          "No independent competent facilitator / scribe was appointed.",
+          "No reviewed and frozen P&IDs, cause-and-effect matrix or safeguard list existed.",
+          "No signed terms of reference, scope, node definition by a responsible engineer.",
+          "No LOPA / SIL verification (IEC 61508 / IEC 61511) of the proposed safeguards.",
+          "No action close-out, management sign-off or re-HAZOP after design change.",
+          "No consequence modelling (dispersion, fire, explosion, toxic Ni(CO)4 plume).",
+          "No ATEX/IECEx hazardous-area classification or detector layout study.",
+          "No MOC (management of change) record for the V2/V3 design modifications."
+        ]
+      },
       "unchecked_items": [
         "HYSYS / DWSIM / COCO steady-state run (not installed; user answer 11 confirms Python equivalent)",
-        "Experimental pilot campaign for Ni/MgAl2O4 conversion, pressure drop and catalyst life",
-        "Vendor Ni/MgAl2O4 catalyst datasheet: bulk density, Ni loading, crush strength, life",
-        "Validated Xu-Froment kinetic parameter set (full primary text not opened; secondary set fails self-consistency)",
-        "Sintering model discrimination: GPLE vs power-law life differ by factor ~3.06 (v1 finding)",
-        "PSA vendor impurity-breakthrough curve (slip weights are calibrated assumptions)",
-        "MDEA vendor reboiler duty and CO2 recovery guarantee",
-        "API 530 / ASME certified tube creep calculation (LMP slope is an assumption)",
-        "Regional gas/electricity/CO2 price quotes for Russia and the Middle East",
-        "GOST 5542:2022 full standard text (only a status page was opened)",
-        "Kinetic (not stoichiometric) synthesis-loop models for methanol/FT/oxo/NH3; external propylene cost for the oxo variant; loop compression duty is reported but not in OPEX",
-        "Certified HAZOP / LOPA, API 520/521 PSV text, Ni(CO)4 kinetics on 15 wt% Ni/MgAl2O4; only an equilibrium screening HAZOP is included in V2"
+        "Pilot campaign at 20-31 bar with 15 wt% Ni/MgAl2O4: X_CH4 vs T, p, S/C, CO2/C",
+        "Measured packed-bed pressure drop at design velocity (Ergun is a correlation)",
+        "200-1000 h Ni particle-size / sintering series for 15 wt% Ni/MgAl2O4",
+        "Commercial Ni/MgAl2O4 reforming CATALYST datasheet (Ni wt%, loaded density, crush strength, life)",
+        "Validated Xu-Froment kinetic parameter set (secondary set fails self-consistency)",
+        "Sintering model discrimination GPLE vs power-law (factor ~3.06, v1 finding)",
+        "PSA vendor breakthrough curve and MDEA vendor reboiler guarantee",
+        "Absolute rate scale of the Temkin-Pyzhev PFR (needs GHSV ~1000 1/h to match 13 mol% NH3)",
+        "Kinetic models for FT and oxo loops; external propylene cost",
+        "Certified HAZOP / LOPA / SIL verification, API 520/521 PSV full text, Ni(CO)4 kinetics",
+        "API 530 / ASME certified tube creep calculation; regional price quotes; GOST 5542 full text"
       ],
       "self_checks_that_pass": [
         "methanol",

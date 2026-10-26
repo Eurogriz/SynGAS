@@ -124,8 +124,19 @@
     "4_thermo": true,
     "5_validation_falsification": false
   },
+  "loop5": {
+    "status": "FAILED (now evidence-based, not just absence-of-data)",
+    "subchecks_passed": 4,
+    "subchecks_total": 13,
+    "mean_pilot_bias": 0.2867605845140648,
+    "catalyst_datasheet_found": false
+  },
+  "hazop": {
+    "certified": false,
+    "worksheet_rows": 110
+  },
   "overall_passed": false,
-  "runtime_s": 208.4,
+  "runtime_s": 211.8,
   "optional_packages": {
     "iapws": true
   }

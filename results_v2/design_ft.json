@@ -543,7 +543,16 @@
         "mass_fraction_norm": 0.09945007874576181
       }
     ],
-    "note": "CH4 in the fresh syngas is counted as inert, not FT product"
+    "note": "CH4 in the fresh syngas is counted as inert, not FT product",
+    "kinetic": {
+      "product": "ft",
+      "models_available": [
+        "methanol_vbf",
+        "ammonia_temkin"
+      ],
+      "used": null,
+      "note": "no opened kinetic rate law implemented for this product in this session; stoichiometric balance retained"
+    }
   },
   "safety": {
     "status": "screening only; NOT a certified HAZOP / API 520 study",

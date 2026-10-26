@@ -470,7 +470,16 @@
     "aldehyde_t_h": 65.98595942261186,
     "aldehyde_t_y": 527887.6753808948,
     "heat_released_MW": null,
-    "note": "hydroformylation heat of reaction [NOT MODELLED] - no opened dH for C3H6/C4H8O in this session; external propylene feed cost is NOT in the OPEX"
+    "note": "hydroformylation heat of reaction [NOT MODELLED] - no opened dH for C3H6/C4H8O in this session; external propylene feed cost is NOT in the OPEX",
+    "kinetic": {
+      "product": "oxo",
+      "models_available": [
+        "methanol_vbf",
+        "ammonia_temkin"
+      ],
+      "used": null,
+      "note": "no opened kinetic rate law implemented for this product in this session; stoichiometric balance retained"
+    }
   },
   "safety": {
     "status": "screening only; NOT a certified HAZOP / API 520 study",

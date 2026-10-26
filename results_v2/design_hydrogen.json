@@ -683,7 +683,16 @@
     "delivery_p_bar": 200.0,
     "compression_power_MW": 12.289863479432485,
     "compression_status": "[ASSUMPTION] k, eta; catalogue curves not opened",
-    "note": "compression duty is an ADDITIONAL utility, not in the base utility balance (documented separately)"
+    "note": "compression duty is an ADDITIONAL utility, not in the base utility balance (documented separately)",
+    "kinetic": {
+      "product": "hydrogen",
+      "models_available": [
+        "methanol_vbf",
+        "ammonia_temkin"
+      ],
+      "used": null,
+      "note": "no opened kinetic rate law implemented for this product in this session; stoichiometric balance retained"
+    }
   },
   "safety": {
     "status": "screening only; NOT a certified HAZOP / API 520 study",

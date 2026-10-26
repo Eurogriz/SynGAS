@@ -1,6 +1,6 @@
 {
   "meta": {
-    "version": "2.1",
+    "version": "2.2",
     "created": "2026-10-26",
     "rule": "every numeric used in a RESULT must have a source and a status; [НЕ ПОДТВЕРЖДЕНО] claims may not be used in results",
     "allowed_status": [
@@ -450,6 +450,156 @@
       "url": "local:model/verify_v2.py",
       "status": "[ПОДТВЕРЖДЕНО]",
       "used_in_result": false
+    },
+    {
+      "id": "C45",
+      "name": "15 wt% Ni/MgAl2O4 lab catalyst properties",
+      "value": "BET 86 m2/g, Ni 6.6 nm, reduction 850 C/16 h, TPR peak 725 C",
+      "unit": "-",
+      "source": "Catalysts 2019 9(10) 801 (opened full text): 15 wt% Ni on Sasol Puralox 30/140 MgAl2O4; H2/Ni_surf 0.2 at 600 C, 0.08 at 800 C",
+      "url": "https://www.mdpi.com/2073-4344/9/10/801",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C46",
+      "name": "15 wt% Ni/MgAl2O4 lab kinetics",
+      "value": "n_ethane 0.76, n_H2O 0, Ea 79.1 kJ/mol; 1 atm, 550-900 C, GHSV 22000-356000 1/h",
+      "unit": "-",
+      "source": "Catalysts 2019 9(10) 801 (opened): ethane SMR kinetic parameters and reactor setup (9 mg catalyst, 8 mm ID, 220 sccm, GHSV 119223 1/h, S/C=3)",
+      "url": "https://www.mdpi.com/2073-4344/9/10/801",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C47",
+      "name": "15 wt% Ni/MgAl2O4 100 h stability",
+      "value": "53% activity retained at 850 C, S/C=1.5, 100 h (Ir 91%, Rh 78%)",
+      "unit": "fraction",
+      "source": "Catalysts 2019 9(10) 801 (opened, section 2.6); deactivation attributed to coking from C2+, NOT sintering; Rh stable 500 h at 750 C",
+      "url": "https://www.mdpi.com/2073-4344/9/10/801",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C48",
+      "name": "15 wt% Ni/MgAl2O4 conversion vs pressure",
+      "value": "X_CH4 40-50% at 1 bar, 35-45% at 5/10 bar, 600 C, S/C=5",
+      "unit": "%",
+      "source": "Catalysts 2020 10(3) 352 Table 1 (opened HTML + searchable full text) citing Katheria/Jaiswar; Appl. Catal. A 2018 (0Rh15Ni: 49.4% at 1 bar, 40.0% at 10 bar)",
+      "url": "https://www.mdpi.com/2073-4344/10/3/352",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C49",
+      "name": "10%Ni/Mg2Al2O4 dry-reforming TOS dataset",
+      "value": "X_CH4 50.0/65.8/78.4/83.2% at 650/700/750/800 C (10 min); 47.6/62.6/76.0/81.4% (200 min)",
+      "unit": "%",
+      "source": "PNNL-32738 Figures 9-10 (opened, tabulated); CH4:CO2=1:1, calcined 900 C; catalyst is 10% Ni on Mg-RICH spinel and the reaction is dry, not steam, reforming",
+      "url": "https://www.pnnl.gov/main/publications/external/technical_reports/PNNL-32738.pdf",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C50",
+      "name": "Ni/MgAl2O4 100 h oxidative dry reforming",
+      "value": "3.4 wt% Ni, 9.8 nm, stable 100 h, 500-700 C, CO2/CH4 0.76, O2/CH4 0.12-0.47, H2/CO 1.5-2.1",
+      "unit": "-",
+      "source": "Int. J. Hydrogen Energy 2019 44(10) 4616-4629 (opened abstract/highlights); full text paywalled; Ni loading differs from the 15 wt% target",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0360319919301004",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C51",
+      "name": "Commercial MgAl2O4 SUPPORT powder datasheet",
+      "value": "Novotech 2130RS: BET 152.8 m2/g, bulk 300 g/L, true density 3.64 g/mL, mp 2130 C; Baikowski S30CR BET 26-31 m2/g",
+      "unit": "-",
+      "source": "Novotech product page (opened); Baikowski S30CR via PMC (opened); Sigma-Aldrich 677396 (opened snippet)",
+      "url": "https://novotechllc.com/products/magnesium-aluminate/",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C52",
+      "name": "Commercial Ni/MgAl2O4 CATALYST datasheet",
+      "value": "NOT FOUND",
+      "unit": "-",
+      "source": "Search log in data/commercial_mgal2o4.json; only support powders and the JM KATALCO alpha-Al2O3/Ca-aluminate proxy were found",
+      "url": "local:data/commercial_mgal2o4.json",
+      "status": "[НЕ ПОДТВЕРЖДЕНО]",
+      "used_in_result": false
+    },
+    {
+      "id": "C53",
+      "name": "VBF/Graaf methanol LHHW parameters",
+      "value": "sqrt(KH2)=0.499exp(17197/RT), KH2O=6.62e-11exp(124119/RT), K_ratio=3453.38, k_MeOH=1.07exp(36696/RT), k_RWGS=1.22e10exp(-94765/RT); log10K1=3066/T-10.592, log10(1/K3)=-2073/T+2.029",
+      "unit": "-",
+      "source": "Vanden Bussche & Froment, J. Catal. 1996 primary PDF Table 2 (opened); Graaf et al. 1986 equilibrium constants quoted therein; catalyst density 1775 kg/m3 from Table 3; applicability 180-280 C, 15-51 bar",
+      "url": "https://terpconnect.umd.edu/~nsw/chbe446/VandenBussche-syngas2MeOH.pdf",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C54",
+      "name": "Arzew industrial methanol reactor benchmark",
+      "value": "4 quench beds, 52 bar, 210-270 C, in CO 7.5 / CO2 6.0 / H2 73.7 mol%, out MeOH 3.41 mol% (plant 3.4), CO 5.4, CO2 7.6, H2 69.35",
+      "unit": "mol%",
+      "source": "ASPEN-HYSYS Simulation of an Adiabatic Multi-Packed Bed Reactor with Inter-Stage Quenching for Methanol Synthesis, IOGR 2023 (opened full text), using VBF kinetics",
+      "url": "https://smartscitech.com/index.php/IOGR/article/download/1255/1189",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C55",
+      "name": "Temkin-Pyzhev / Dyson-Simon rate law and K_a",
+      "value": "r=2k[Ka^2 a_N2 (a_H2^3/a_NH3^2)^alpha - (a_NH3^2/a_H2^3)^(1-alpha)]; log10Ka=-2.691122logT-5.051925e-5T+1.848863e-7T^2+2001.6/T+2.689; alpha 0.5-0.75",
+      "unit": "-",
+      "source": "COMSOL 'Ammonia Synthesis, a Complex and Nonlinear Process' (opened); Temkin & Pyzhev 1940 via Bureau of Mines abstract (opened); Dyson & Simon 1968",
+      "url": "https://www.comsol.com/blogs/ammonia-synthesis-complex-nonlinear-process",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C56",
+      "name": "Dyson-Simon fitted kinetic parameters",
+      "value": "alpha=0.654 (R2=0.989), k0=6.5e13 kmol/(m3cat h), Ea=159.4 kJ/mol",
+      "unit": "-",
+      "source": "ChemCatChem 2024 'Ammonia Synthesis Rate Over a Wide Operating Range' (open PDF, pure.mpg.de); fitted at 598-773 K, 90 bar, 1 g industrial magnetite Fe catalyst",
+      "url": "https://pure.mpg.de/rest/items/item_3608464_4/component/file_3627676/content",
+      "status": "[ЧАСТИЧНО]",
+      "used_in_result": true
+    },
+    {
+      "id": "C57",
+      "name": "Effective GHSV for lumped isothermal methanol PFR",
+      "value": 100000.0,
+      "unit": "1/h",
+      "source": "[ASSUMPTION] calibrated so the VBF isothermal PFR reproduces BOTH the opened 25-30% per-pass COx conversion (OSTI 2424604) and the Arzew 3.41 mol% MeOH benchmark; one isothermal PFR lumps a 4-bed adiabatic quench reactor",
+      "url": "local:cases/config.json -> kinetics.methanol",
+      "status": "[ДОПУЩЕНИЕ]",
+      "used_in_result": true
+    },
+    {
+      "id": "C58",
+      "name": "IEC 61882 HAZOP structure",
+      "value": "10 nodes x 11 guidewords = 110 worksheet rows; NOT CERTIFIED",
+      "unit": "-",
+      "source": "IEC 61882:2016 title/structure referenced only; FULL STANDARD TEXT NOT OPENED. Worksheet is an auto-generated template, not a team finding",
+      "url": "local:docs/24_v4_hazop.md",
+      "status": "[НЕ ПОДТВЕРЖДЕНО]",
+      "used_in_result": false
+    },
+    {
+      "id": "C59",
+      "name": "Model-vs-pilot equilibrium bias",
+      "value": "mean +0.287 X_CH4, max +0.461, min +0.095 over 6 numeric points",
+      "unit": "-",
+      "source": "THIS MODEL - computed in model/pilot_data.py from the 6 genuinely sourced X_CH4 records at 1-10 bar; the lab data are kinetic, the model is equilibrium",
+      "url": "local:results_v2/verification_v2.json",
+      "status": "[ПОДТВЕРЖДЕНО]",
+      "used_in_result": true
     }
   ]
 }

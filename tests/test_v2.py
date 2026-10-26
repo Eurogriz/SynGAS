@@ -180,3 +180,91 @@ def test_v21_claims_and_full_matrix():
         import csv
         rows = list(csv.DictReader(open(p, encoding="utf-8")))
         assert len(rows) == 15
+
+
+# ---------------- V4: pilot data, kinetics, HAZOP, loop 5 ----------------
+def test_pilot_registry_has_no_unsourced_numbers():
+    d = json.load(open(os.path.join(ROOT, "data", "pilot_ni_mgal2o4.json"), encoding="utf-8"))
+    src = {s["id"] for s in d["sources"]}
+    for rec in d["records"]:
+        assert rec["source_id"] in src, rec["id"]
+        assert rec["status"] in ("[ПОДТВЕРЖДЕНО]", "[ЧАСТИЧНО]",
+                                 "[ДОПУЩЕНИЕ]", "[НЕ ПОДТВЕРЖДЕНО]"), rec["id"]
+        if rec.get("value") is not None:
+            assert isinstance(rec["value"], (int, float, list, dict)), rec["id"]
+    assert len(d["records"]) >= 30
+    assert any("20-31 bar" in g for g in d["gaps"])
+
+
+def test_external_comparison_shows_expected_equilibrium_bias():
+    from model.pilot_data import run_external_comparison
+    ext = run_external_comparison(load_config(product="methanol"))
+    assert ext["n_numeric_X_CH4_comparable"] == 6
+    assert 0.2 < ext["mean_model_bias"] < 0.4      # equilibrium > kinetic
+    assert ext["pressure_trend"]["trend_reproduced"] is True
+    assert ext["commercial_datasheet"]["catalyst_datasheet_found"] is False
+    assert ext["commercial_datasheet"]["supports_found"] >= 3
+
+
+def test_commercial_datasheet_registry_is_explicit():
+    d = json.load(open(os.path.join(ROOT, "data", "commercial_mgal2o4.json"), encoding="utf-8"))
+    assert "NO" in d["meta"]["answer"]
+    assert d["proxy_in_use"]["value"] == 900.0
+    assert any("NOT" in s["limitation"] or "not" in s["limitation"]
+               for s in d["support_powder_datasheets"])
+
+
+def test_vbf_kinetic_model_reproduces_arzev_benchmark():
+    from model.kinetics_synthesis import kinetic_synthesis_report
+    c = load_config(product="methanol")
+    r = design(c)
+    k = kinetic_synthesis_report(r, c)
+    assert k["used"] == "methanol_vbf"
+    m = k["methanol_vbf"]
+    assert 0.25 <= m["per_pass_COx_conversion"] <= 0.31
+    assert abs(k["benchmark_check"]["deviation_pct"]) <= 10.0
+    assert m["K1_eq_bar_minus2"] > 0
+
+
+def test_temkin_pyzhev_does_not_hide_its_underprediction():
+    from model.kinetics_synthesis import kinetic_synthesis_report
+    c = load_config(product="ammonia")
+    r = design(c)
+    k = kinetic_synthesis_report(r, c)
+    assert k["used"] == "ammonia_temkin"
+    m = k["ammonia_temkin"]
+    assert 0.0 < m["per_pass_N2_conversion"] < 0.15
+    assert m["effectiveness_eta"] == 1.0
+    best = k["benchmark_check"]["best_for_NH3_outlet"]
+    assert best["GHSV_h1"] < 10000.0      # outside the opened GHSV range
+
+
+def test_hazop_is_explicitly_not_certified():
+    from model.hazop import hazop_report
+    h = hazop_report()
+    assert h["certified"] is False
+    assert h["worksheet_rows"] == 110
+    assert len(h["certification_gaps"]) >= 8
+    assert all(r["status"].startswith("[ДОПУЩЕНИЕ]") for r in h["worksheet"])
+
+
+def test_loop5_evidence_based_but_still_failed():
+    from model.config import load_config
+    from model.scenarios import run_base
+    from model.verify_v2 import loop5_validation
+    b = run_base()
+    l5 = loop5_validation(b, load_config())
+    assert l5["passed"] is False
+    assert l5["subchecks_passed"] >= 3
+    assert l5["external_data"]["n_numeric_X_CH4_comparable"] == 6
+    assert l5["hazop"]["certified"] is False
+    assert l5["status"].startswith("FAILED")
+
+
+def test_v22_claims_registry():
+    d = json.load(open(os.path.join(ROOT, "data", "v2_claims.json"), encoding="utf-8"))
+    assert len(d["claims"]) >= 59
+    allowed = set(d["meta"]["allowed_status"])
+    for c in d["claims"]:
+        assert c["status"] in allowed, (c["id"], c["status"])
+        assert c["url"] and c["source"]

@@ -8,17 +8,17 @@ accepted equivalent. No claim of a HYSYS run is made.
 
 | loop | passed | key number |
 |---|---|---|
-| 1_sources | YES | 44 claims |
+| 1_sources | YES | 59 claims |
 | 2_arithmetic | YES | max rel error 1.84e-16 |
 | 3_conservation | YES | max error 1.6e-12% |
 | 4_thermo | YES | Q*Kphi/K dev 2.376e-12% |
-| 5_validation_falsification | NO | FAILED (honestly reported) |
+| 5_validation_falsification | NO | FAILED (now evidence-based, not just absence-of-data) |
 
 Overall: **FAIL (loop 5 open by design)**.
 
 ## 13.2 Loop 1 - sources and claims
 
-44 registered claims: {'[ПОДТВЕРЖДЕНО]': 11, '[ЧАСТИЧНО]': 23, '[ДОПУЩЕНИЕ]': 8, '[НЕ ПОДТВЕРЖДЕНО]': 2}.
+59 registered claims: {'[ПОДТВЕРЖДЕНО]': 18, '[ЧАСТИЧНО]': 28, '[ДОПУЩЕНИЕ]': 9, '[НЕ ПОДТВЕРЖДЕНО]': 4}.
 Problems: []. Full registry: `data/v2_claims.json`,
 `docs/v2_claims_register.md`.
 
@@ -73,22 +73,22 @@ PSA tail gas and dryer water.
 
 ## 13.6 Loop 5 - validation / falsification
 
-**FAILED (honestly reported)**.
-No independent experimental or commercial-licensor validation of the V2 product variants. HYSYS was not run. All five product targets are matched by the model's own equilibrium solver, which is a self-check, not an external validation.
+**FAILED (now evidence-based, not just absence-of-data)**.
+External pilot data WERE found and compared. The model is an EQUILIBRIUM model; the lab data are KINETIC at 1-10 bar, so the mean bias is +0.287 X_CH4. A commercial Ni/MgAl2O4 catalyst datasheet, a design-point pilot campaign, a 200-1000 h sintering series and a certified HAZOP are still absent. The methanol kinetic model reproduces two opened benchmarks; the ammonia kinetic model does not.
 
 Unchecked items:
 1. HYSYS / DWSIM / COCO steady-state run (not installed; user answer 11 confirms Python equivalent)
-2. Experimental pilot campaign for Ni/MgAl2O4 conversion, pressure drop and catalyst life
-3. Vendor Ni/MgAl2O4 catalyst datasheet: bulk density, Ni loading, crush strength, life
-4. Validated Xu-Froment kinetic parameter set (full primary text not opened; secondary set fails self-consistency)
-5. Sintering model discrimination: GPLE vs power-law life differ by factor ~3.06 (v1 finding)
-6. PSA vendor impurity-breakthrough curve (slip weights are calibrated assumptions)
-7. MDEA vendor reboiler duty and CO2 recovery guarantee
-8. API 530 / ASME certified tube creep calculation (LMP slope is an assumption)
-9. Regional gas/electricity/CO2 price quotes for Russia and the Middle East
-10. GOST 5542:2022 full standard text (only a status page was opened)
-11. Kinetic (not stoichiometric) synthesis-loop models for methanol/FT/oxo/NH3; external propylene cost for the oxo variant; loop compression duty is reported but not in OPEX
-12. Certified HAZOP / LOPA, API 520/521 PSV text, Ni(CO)4 kinetics on 15 wt% Ni/MgAl2O4; only an equilibrium screening HAZOP is included in V2
+2. Pilot campaign at 20-31 bar with 15 wt% Ni/MgAl2O4: X_CH4 vs T, p, S/C, CO2/C
+3. Measured packed-bed pressure drop at design velocity (Ergun is a correlation)
+4. 200-1000 h Ni particle-size / sintering series for 15 wt% Ni/MgAl2O4
+5. Commercial Ni/MgAl2O4 reforming CATALYST datasheet (Ni wt%, loaded density, crush strength, life)
+6. Validated Xu-Froment kinetic parameter set (secondary set fails self-consistency)
+7. Sintering model discrimination GPLE vs power-law (factor ~3.06, v1 finding)
+8. PSA vendor breakthrough curve and MDEA vendor reboiler guarantee
+9. Absolute rate scale of the Temkin-Pyzhev PFR (needs GHSV ~1000 1/h to match 13 mol% NH3)
+10. Kinetic models for FT and oxo loops; external propylene cost
+11. Certified HAZOP / LOPA / SIL verification, API 520/521 PSV full text, Ni(CO)4 kinetics
+12. API 530 / ASME certified tube creep calculation; regional price quotes; GOST 5542 full text
 
 ## 13.7 Equipment accuracy upgrades
 

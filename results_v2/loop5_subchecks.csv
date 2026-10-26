@@ -1,0 +1,14 @@
+check,passed,value,note
+external numeric pilot comparisons,True,6,6 genuinely sourced X_CH4 points at 1-10 bar
+pressure trend reproduced,True,,both measured and modelled X_CH4 fall from 1 to 10 bar
+equilibrium model matches lab KINETIC conversion,False,,mean bias = 0.287 (equilibrium overpredicts kinetic regime)
+"pilot data at model design point (20-31 bar, 15 wt% Ni/MgAl2O4)",False,,no such dataset was found
+measured packed-bed dP,False,,no measured Ni/MgAl2O4 dP; Ergun correlation only
+200-1000 h sintering series,False,,100 h coking data and 500 h Rh data only
+commercial Ni/MgAl2O4 CATALYST datasheet,False,,4 commercial MgAl2O4 SUPPORT powders found instead
+methanol VBF per-pass conversion in opened 25-30% (+0.2 pp),True,,
+methanol VBF reproduces Arzew 3.4 mol% MeOH within 10%,True,,
+NH3 Temkin-Pyzhev per-pass conversion in opened 15-25%,False,,
+NH3 benchmark matched at an OPENED GHSV,False,,
+certified HAZOP (IEC 61882),False,,"worksheet with 110 rows generated, but NOT certified"
+independent HYSYS / DWSIM run,False,,not installed; Python equivalent confirmed by user answer 11

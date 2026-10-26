@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "version": "1.0",
+    "created": "2026-10-26",
+    "purpose": "External experimental data for verification loop 5 of the SynGAS model",
+    "rule": "NO INVENTED NUMBERS. Every record must carry an opened source URL and a status. value=null means the source states the trend but does not tabulate the number.",
+    "target_catalyst": {"Ni_wt_pct": 15.0, "support": "MgAl2O4", "BET_m2_g": 86.0, "Ni_particle_nm": 6.6},
+    "target_model_conditions": {"T_K": 1123.15, "p_bar": 25.0, "SC": 3.0, "CO2C": 0.7615},
+    "key_limitation": "All retrieved kinetic data are at 1-10 bar and short contact time (kinetic regime); the model is a 20-31 bar EQUILIBRIUM + 10 K approach model. Direct comparison is a FALSIFICATION test, not a validation."
+  },
+  "sources": [
+    {"id":"S1","citation":"Saavedra Lopez et al., Catalysts 2019, 9(10), 801, doi:10.3390/catal9100801","url":"https://www.mdpi.com/2073-4344/9/10/801","opened":true,"note":"Full text opened in chunks 2/5/6; Tables 1 and 4 are images in HTML"},
+    {"id":"S2","citation":"A Short Review on Ni Based Catalysts and Related Engineering Issues for Methane Steam Reforming, Catalysts 2020, 10(3), 352","url":"https://www.mdpi.com/2073-4344/10/3/352","opened":true,"note":"HTML opened; Table 1/2 numeric content retrieved via the searchable full-text index of the open PDF (tables themselves are images)"},
+    {"id":"S3","citation":"PNNL-32738, Stable Catalysts for Combined Dry and Steam Reforming (FY2021 report)","url":"https://www.pnnl.gov/main/publications/external/technical_reports/PNNL-32738.pdf","opened":true,"note":"Figures 8-10 contain genuinely tabulated numeric time-on-stream data"},
+    {"id":"S4","citation":"Shen, Reule, Semagina, Int. J. Hydrogen Energy 2019, 44(10), 4616-4629, doi:10.1016/j.ijhydene.2019.01.027","url":"https://www.sciencedirect.com/science/article/abs/pii/S0360319919301004","opened":true,"note":"Abstract and highlights opened; full text paywalled"},
+    {"id":"S5","citation":"Kinetics of steam reforming of methane on Rh-Ni/MgAl2O4 catalyst, React. Kinet. Mech. Catal. 2020, doi:10.1007/s11144-020-01767-y","url":"https://link.springer.com/article/10.1007/s11144-020-01767-y","opened":true,"note":"Abstract only; no numeric conversion table retrieved"},
+    {"id":"S6","citation":"Rh-Ni/MgAl2O4 catalyst for steam reforming of methane (Appl. Catal. A 2018), searchable full text","url":"https://www.academia.edu/97254599/Rh_Ni_MgAl2O4_catalyst_for_steam_reforming_of_methane_Effect_of_Rh_doping_calcination_temperature_and_its_application_on_metal_monoliths","opened":true,"note":"Table text retrieved via search index; PDF not directly fetched"},
+    {"id":"S7","citation":"Sehested, J. Catal. 2001 (Ni sintering, first 200 h)","url":"https://www.sciencedirect.com/science/article/abs/pii/S0021951700930859","opened":true,"note":"Abstract only from v1 session"}
+  ],
+  "records": [
+    {"id":"P01","source_id":"S1","quantity":"Ni_loading_wt_pct","value":15.0,"unit":"wt%","conditions":{},"status":"[ПОДТВЕРЖДЕНО]","note":"incipient wetness impregnation of Sasol Puralox 30/140 MgAl2O4"},
+    {"id":"P02","source_id":"S1","quantity":"BET_m2_g","value":86.0,"unit":"m2/g","conditions":{},"status":"[ПОДТВЕРЖДЕНО]"},
+    {"id":"P03","source_id":"S1","quantity":"Ni_particle_nm","value":6.6,"unit":"nm","conditions":{},"status":"[ПОДТВЕРЖДЕНО]","note":"STEM ~7 nm"},
+    {"id":"P04","source_id":"S1","quantity":"reduction_T_C","value":850.0,"unit":"C","conditions":{"duration_h":16.0,"gas":"10% H2/N2"},"status":"[ПОДТВЕРЖДЕНО]"},
+    {"id":"P05","source_id":"S1","quantity":"TPR_peak_C","value":725.0,"unit":"C","conditions":{"ramp_C_min":5.0,"gas":"5% H2/Ar"},"status":"[ПОДТВЕРЖДЕНО]"},
+    {"id":"P06","source_id":"S1","quantity":"H_per_Ni_surface","value":0.2,"unit":"molH/molNi_surf","conditions":{"T_C":600.0},"status":"[ПОДТВЕРЖДЕНО]","note":"0.08 at 800 C"},
+    {"id":"P07","source_id":"S1","quantity":"ethane_SMR_reaction_order","value":0.76,"unit":"-","conditions":{"n_H2O":0.0,"T_range_C":[600,875],"p":"1 atm"},"status":"[ПОДТВЕРЖДЕНО]"},
+    {"id":"P08","source_id":"S1","quantity":"ethane_SMR_Ea","value":79.1,"unit":"kJ/mol","conditions":{"T_range_C":[600,875],"p":"1 atm"},"status":"[ПОДТВЕРЖДЕНО]","note":"Rh 26.8, Ir 95.7 in the same study"},
+    {"id":"P09","source_id":"S1","quantity":"reactor_GHSV","value":119223.0,"unit":"1/h","conditions":{"T_range_C":[550,900],"p":"1 atm","S_C":3.0,"tau_ms":30.2,"catalyst_mg":9.0,"diluent_mg":90.0,"reactor_ID_mm":8.0,"total_flow_sccm":220.0},"status":"[ПОДТВЕРЖДЕНО]","note":"typical experiment: 80 sccm N2, 35 sccm CH4, 105.8 sccm H2O"},
+    {"id":"P10","source_id":"S1","quantity":"GHSV_range","value":[22000.0,356000.0],"unit":"1/h","conditions":{"p":"1 atm","tau_ms_range":[10.0,170.0]},"status":"[ПОДТВЕРЖДЕНО]"},
+    {"id":"P11","source_id":"S1","quantity":"activity_retained_100h","value":0.53,"unit":"fraction","conditions":{"T_C":850.0,"S_C":1.5,"tau_ms":2.3,"feed":"natural gas simulant 94.5% CH4 / 4% C2H6 / 1% C3H8 / 0.5% C4H10","TOS_h":100.0},"status":"[ПОДТВЕРЖДЕНО]","note":"Ir 0.91, Rh 0.78 in the same test"},
+    {"id":"P12","source_id":"S1","quantity":"activity_retained_100h","value":0.78,"unit":"fraction","conditions":{"T_C":850.0,"S_C":1.5,"TOS_h":100.0,"catalyst":"Rh/MgAl2O4"},"status":"[ПОДТВЕРЖДЕНО]","note":"CATALYST MISMATCH: Rh, not Ni. Used only for S/C trend."},
+    {"id":"P13","source_id":"S1","quantity":"activity_retained_100h","value":null,"unit":"fraction","conditions":{"T_C":850.0,"S_C":3.0,"catalyst":"Rh/MgAl2O4"},"status":"[ЧАСТИЧНО]","note":"Text says activity 'largely maintained' at S/C=3 versus 78% at S/C=1.5; no tabulated number"},
+    {"id":"P14","source_id":"S1","quantity":"stable_TOS_h","value":500.0,"unit":"h","conditions":{"T_C":750.0,"catalyst":"Rh/MgAl2O4"},"status":"[ПОДТВЕРЖДЕНО]","note":"Rh retained activity after 500 h; NOT a 15 wt% Ni/MgAl2O4 result"},
+    {"id":"P15","source_id":"S1","quantity":"X_CH4_vs_T","value":null,"unit":"-","conditions":{"T_range_C":[600,875],"S_C":1.5,"tau_ms":4.5,"p":"1 atm"},"status":"[ЧАСТИЧНО]","note":"Paper states conversion follows a linear trend and stays BELOW equilibrium (Figure 3a); no numeric table was retrievable"},
+
+    {"id":"P16","source_id":"S2","quantity":"X_CH4","value":[40.0,50.0],"unit":"%","conditions":{"Ni_wt_pct":15.0,"support":"MgAl2O4","T_C":600.0,"p_bar":1.0,"S_C":5.0,"feed":"CH4/H2O/N2 = 1/5/1","W_F_gcat_h_per_mol":0.34,"particle_mm":[0.25,0.30]},"status":"[ЧАСТИЧНО]","note":"Table 1 range from searchable text of the open review; Katheria reported ~50% at 1 bar"},
+    {"id":"P17","source_id":"S2","quantity":"X_CH4","value":[35.0,45.0],"unit":"%","conditions":{"Ni_wt_pct":15.0,"support":"MgAl2O4","T_C":600.0,"p_bar":5.0,"S_C":5.0,"W_F_gcat_h_per_mol":0.34},"status":"[ЧАСТИЧНО]"},
+    {"id":"P18","source_id":"S2","quantity":"X_CH4","value":[35.0,45.0],"unit":"%","conditions":{"Ni_wt_pct":15.0,"support":"MgAl2O4","T_C":600.0,"p_bar":10.0,"S_C":5.0,"W_F_gcat_h_per_mol":0.34},"status":"[ЧАСТИЧНО]","note":"Katheria reported ~40% at 10 bar; conversion DECREASES with pressure"},
+    {"id":"P19","source_id":"S2","quantity":"X_CH4_Pt0","value":48.0,"unit":"%","conditions":{"Ni_wt_pct":15.0,"support":"MgAl2O4","T_C":600.0,"p":"1 atm","S_C":5.0,"TOS_h":8.0,"deactivation_pct":1.0,"Pt_wt_pct":0.0},"status":"[ЧАСТИЧНО]","note":"xPt/15Ni/MgAl2O4 series, Table 2"},
+    {"id":"P20","source_id":"S2","quantity":"X_CH4_Pt_series","value":{"0.01":50.0,"0.05":59.0,"0.1":62.0,"0.3":63.0,"1.0":19.0},"unit":"%","conditions":{"T_C":600.0,"p":"1 atm","S_C":5.0,"TOS_h":8.0},"status":"[ЧАСТИЧНО]","note":"Pt-promoted, NOT the unpromoted target catalyst; Ni particle 7.6-14.9 nm"},
+
+    {"id":"P21","source_id":"S3","quantity":"X_CH4_TOS_10min","value":{"650":50.0,"700":65.8,"750":78.4,"800":83.2},"unit":"%","conditions":{"catalyst":"10 wt% Ni/Mg2Al2O4","calcination_C":900.0,"feed":"CH4:CO2 = 1:1 (dry reforming)","TOS_min":10.0},"status":"[ЧАСТИЧНО]","note":"CATALYST MISMATCH: 10% Ni on Mg-RICH spinel, dry (not steam) reforming"},
+    {"id":"P22","source_id":"S3","quantity":"X_CH4_TOS_200min","value":{"650":47.6,"700":62.6,"750":76.0,"800":81.4},"unit":"%","conditions":{"catalyst":"10 wt% Ni/Mg2Al2O4","feed":"CH4:CO2 = 1:1","TOS_min":200.0},"status":"[ЧАСТИЧНО]"},
+    {"id":"P23","source_id":"S3","quantity":"performance_750C_dry","value":{"X_CH4_pct":76.0,"X_CO2_pct":86.0,"CO_yield_pct":82.0,"H2_yield_pct":83.0,"carbon_balance_pct":101.0},"unit":"%","conditions":{"T_C":750.0,"feed":"CH4:CO2=1:1"},"status":"[ЧАСТИЧНО]","note":"with H2O co-feed (1:1:0.5): X_CH4 82-84%, X_CO2 87-88%, H2 yield 85-87%"},
+    {"id":"P24","source_id":"S3","quantity":"long_term_stability_h","value":null,"unit":"h","conditions":{},"status":"[НЕ ПОДТВЕРЖДЕНО]","note":"Report states 'very little published on long term stability (200 hours)' and sets a PROJECT TARGET of 400 h with <5% activity loss; this is a goal, NOT a measurement"},
+
+    {"id":"P25","source_id":"S4","quantity":"stable_TOS_h","value":100.0,"unit":"h","conditions":{"catalyst":"3.4 wt% Ni/MgAl2O4","Ni_particle_nm":9.8,"T_range_C":[500,700],"CO2_CH4":0.76,"O2_CH4_range":[0.12,0.47]},"status":"[ЧАСТИЧНО]","note":"CATALYST MISMATCH: only 3.4 wt% Ni. Coke-free, no sintering over 100 h"},
+    {"id":"P26","source_id":"S4","quantity":"H2_CO_range","value":[1.5,2.1],"unit":"-","conditions":{"T_range_C":[500,700],"CO2_CH4":0.76,"O2_CH4_range":[0.12,0.47]},"status":"[ЧАСТИЧНО]","note":"optimum 550 C, O2/CH4=0.47 gives H2/CO=1.5"},
+
+    {"id":"P27","source_id":"S5","quantity":"X_CH4_vs_WF","value":null,"unit":"-","conditions":{"catalyst":"0.5 wt% Rh - 15 wt% Ni/MgAl2O4","T_range_C":[450,600],"p_bar":[1,4,6],"S_C":[2,5,6]},"status":"[ЧАСТИЧНО]","note":"Conversion vs contact-time dataset exists but full text/numbers not opened; Rh-promoted catalyst"},
+    {"id":"P28","source_id":"S6","quantity":"X_CH4","value":49.4,"unit":"%","conditions":{"catalyst":"15 wt% Ni/MgAl2O4 (0Rh15Ni)","T_C":600.0,"S_C":5.0,"p_bar":1.0,"GHSV_1_h":2000000.0,"W_F_gcat_h_per_gmol":0.34,"TOS_h":1.0},"status":"[ЧАСТИЧНО]","note":"Table text via search index; unpromoted 15Ni/MgAl2O4"},
+    {"id":"P29","source_id":"S6","quantity":"X_CH4","value":40.0,"unit":"%","conditions":{"catalyst":"15 wt% Ni/MgAl2O4 (0Rh15Ni)","T_C":600.0,"S_C":5.0,"p_bar":10.0,"TOS_h":1.0},"status":"[ЧАСТИЧНО]","note":"same catalyst at 10 bar; confirms pressure-induced activity loss"},
+    {"id":"P30","source_id":"S7","quantity":"sintering_timescale_h","value":200.0,"unit":"h","conditions":{},"status":"[ЧАСТИЧНО]","note":"Abstract: most Ni particle growth occurs within the first 200 h; no Ni/MgAl2O4 particle-size-vs-time table retrieved"}
+  ],
+  "gaps": [
+    "NO pilot dataset at 20-31 bar with 15 wt% Ni/MgAl2O4 and S/C=3, CO2/C=0.76 (the model's design point)",
+    "NO measured packed-bed pressure drop for 15 wt% Ni/MgAl2O4 at design gas velocity; Ergun remains a correlation",
+    "NO 200-1000 h sintering series (Ni particle size vs time) for 15 wt% Ni/MgAl2O4; the 500 h point is for Rh/MgAl2O4",
+    "NO tabulated X_CH4 vs S/C and vs CO2/C at fixed T,p for the unpromoted 15 wt% Ni/MgAl2O4",
+    "NO commercial Ni/MgAl2O4 reforming-catalyst datasheet (see data/commercial_mgal2o4.json)",
+    "All retrieved conversion data are in the KINETIC regime at 1-10 bar; the model is an EQUILIBRIUM model. Loop 5 therefore compares model equilibrium conversion to measured kinetic conversion and is expected to show a systematic positive bias."
+  ]
+}

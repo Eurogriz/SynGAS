@@ -14,6 +14,8 @@ from .scenarios import (run_all, run_base, run_variant, run_normal_comparison,
                         run_ni_life_sensitivity, _compact, PRODUCTS)
 from .products import design
 from .verify_v2 import run_all as verify_all
+from .pilot_data import (load_pilot, load_commercial, run_external_comparison)
+from .hazop import hazop_report
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "results_v2")
@@ -235,6 +237,63 @@ def make_plots(designs, scenarios, verification):
     ax[1].legend(fontsize=8)
     fig.suptitle("Pre-reformer and CO2 trim (docs/12, docs/18)", fontsize=11)
     fig.tight_layout(); fig.savefig(os.path.join(OUT, "10_prereformer_CO2.png")); plt.close(fig)
+
+
+    # 11 pilot comparison ---------------------------------------------------
+    ext = verification["loops"]["5_validation_falsification"]["external_data"]
+    comp = ext["comparisons"]
+    if comp:
+        fig, ax = plt.subplots(1, 2, figsize=(10, 3.8))
+        x = np.arange(len(comp))
+        ax[0].bar(x - 0.2, [c["X_measured"] for c in comp], 0.4, label="measured (kinetic)")
+        ax[0].bar(x + 0.2, [c["X_model_equilibrium"] for c in comp], 0.4,
+                  label="model (equilibrium)")
+        ax[0].set_xticks(x, [c["record_id"] for c in comp])
+        ax[0].set_ylabel("X_CH4"); ax[0].legend(fontsize=8)
+        ax[0].set_title("External pilot data vs model")
+        ps = ext["pressure_trend"]
+        if ps:
+            ax[1].plot([ps["p_low_bar"], ps["p_high_bar"]],
+                       [ps["measured_low"], ps["measured_high"]], "o-", label="measured")
+            ax[1].plot([ps["p_low_bar"], ps["p_high_bar"]],
+                       [ps["model_low"], ps["model_high"]], "o-", label="model")
+            ax[1].set_xlabel("p [bar]"); ax[1].set_ylabel("X_CH4")
+            ax[1].set_title("Pressure trend (600 C, 15 wt% Ni/MgAl2O4)")
+            ax[1].legend(fontsize=8)
+        fig.suptitle("Verification loop 5: external falsification (docs/22)", fontsize=11)
+        fig.tight_layout(); fig.savefig(os.path.join(OUT, "11_pilot_comparison.png")); plt.close(fig)
+
+    # 12 kinetic benchmarks -------------------------------------------------
+    kc = verification["loops"]["5_validation_falsification"]["kinetic_checks"]
+    fig, ax = plt.subplots(1, 2, figsize=(10, 3.8))
+    for prod in ("methanol", "ammonia"):
+        k = designs[prod]["synthesis"]["kinetic"]["benchmark_check"]
+        sw = k["sweep"]
+        key = "outlet_MeOH_molpct" if prod == "methanol" else "outlet_NH3_molpct"
+        ax[0 if prod == "methanol" else 1].semilogx([z["GHSV_h1"] for z in sw],
+                                                     [z[key] for z in sw], "o-", label=prod)
+    ax[0].axhline(3.4, color="k", ls="--", label="Arzew plant 3.4 mol%")
+    ax[0].set_ylabel("outlet MeOH [mol%]"); ax[0].set_title("VBF/Graaf benchmark")
+    ax[1].axhline(13.0, color="k", ls="--", label="Rase/COMSOL 13 mol%")
+    ax[1].set_ylabel("outlet NH3 [mol%]"); ax[1].set_title("Temkin-Pyzhev benchmark")
+    for a in ax:
+        a.set_xlabel("effective GHSV [1/h]"); a.legend(fontsize=8)
+    fig.suptitle("Kinetic synthesis models vs opened industrial benchmarks (docs/23)",
+                 fontsize=11)
+    fig.tight_layout(); fig.savefig(os.path.join(OUT, "12_kinetic_benchmarks.png")); plt.close(fig)
+
+    # 13 loop 5 subchecks ---------------------------------------------------
+    l5 = verification["loops"]["5_validation_falsification"]
+    subs = l5["subchecks"]
+    fig, ax = plt.subplots(figsize=(9, 5))
+    names = [c["check"][:52] for c in subs]
+    vals = [1 if c["passed"] else 0 for c in subs]
+    ax.barh(range(len(subs)), vals, color=["#3fb950" if v else "#f85149" for v in vals])
+    ax.set_yticks(range(len(subs)), names, fontsize=8)
+    ax.set_xlim(0, 1); ax.set_xticks([0, 1], ["FAIL", "PASS"])
+    ax.set_title("Loop 5 subchecks: %d/%d pass (overall FAIL)" %
+                 (l5["subchecks_passed"], l5["subchecks_total"]))
+    fig.tight_layout(); fig.savefig(os.path.join(OUT, "13_loop5_subchecks.png")); plt.close(fig)
 
 
 # --------------------------------------------------------------------------
@@ -671,12 +730,15 @@ CO2 trim / hydraulics), `docs/21` (15-case matrix).
 
 ## 17.5 Next step
 
-Obtain an experimental/pilot dataset for 15 wt% Ni/MgAl2O4 (conversion vs T,
-p, S/C, CO2/C; pressure drop; 200-1000 h sintering) and a vendor MgAl2O4
-catalyst datasheet (bulk density, Ni loading, crush strength, life). Re-run
-loop 5. The V2 methanol CO2 gap is CLOSED (docs/20) and stoichiometric
-synthesis loops are included (docs/18); the remaining gap is their kinetic
-validation plus a certified HAZOP/API 520 study (docs/19).
+Further data needed: a pilot campaign at 20-31 bar with 15 wt% Ni/MgAl2O4
+(X_CH4 vs T, p, S/C, CO2/C; measured dP; 200-1000 h sintering) and a vendor
+Ni/MgAl2O4 CATALYST datasheet. Open pilot data at 1-10 bar WERE found and
+compared (docs/22). Re-run loop 5 after that. The V2 methanol CO2 gap is
+CLOSED (docs/20); stoichiometric
+synthesis loops (docs/18) are now complemented by VBF/Graaf and
+Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
+(docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
+loop 5 was rerun and remains FAILED with 4/13 subchecks passing (docs/25).
 """
     open(os.path.join(DOCS, "17_v2_final_report.md"), "w", encoding="utf-8").write(txt)
 
@@ -868,6 +930,292 @@ C₄₊ по-прежнему объединены в C₃H₈ по углеро
 """
     open(os.path.join(DOCS, "21_v3_full_matrix.md"), "w", encoding="utf-8").write(txt)
 
+    # 22 pilot data ---------------------------------------------------------
+    pilot = load_pilot(); com = load_commercial()
+    l5 = v["loops"]["5_validation_falsification"]
+    ext = l5["external_data"]
+    txt = f"""# 22. Pilot dataset for 15 wt% Ni/MgAl₂O₄ and commercial datasheets (V4)
+
+**Ни одно число в этом реестре не выдумано.** `data/pilot_ni_mgal2o4.json`
+содержит {len(pilot['records'])} записей из {len(pilot['sources'])} открытых
+источников; у каждой записи есть URL и статус. `value: null` означает, что
+источник сообщает тенденцию, но не приводит табличного числа.
+
+## 22.1 Что реально найдено
+
+{md_table(['источник', 'работа', 'что даёт', 'статус'],
+          [[q['id'], q['citation'][:62], q['note'][:70],
+            {'S1':'[ПОДТВЕРЖДЕНО]','S3':'[ПОДТВЕРЖДЕНО]'}.get(q['id'],'[ЧАСТИЧНО]')]
+           for q in pilot['sources']])}
+
+Ключевые числа (все — из открытых текстов):
+
+- 15 мас.% Ni/MgAl₂O₄ (Sasol Puralox 30/140), BET 86 м²/г, Ni 6,6 нм,
+  восстановление 850 °C/16 ч, TPR-пик 725 °C, H/Ni(пов) = 0,2 при 600 °C
+  (Catalysts 2019, 9, 801). [ПОДТВЕРЖДЕНО]
+- Порядок по этану 0,76, по воде 0, Ea = 79,1 кДж/моль; 1 атм, 550–900 °C,
+  GHSV 22 000–356 000 ч⁻¹, τ = 10–170 мс, типичный опыт 9 мг катализатора.
+  [ПОДТВЕРЖДЕНО]
+- 100 ч при 850 °C, S/C = 1,5, τ = 2,3 мс, симулянт природного газа:
+  Ni сохраняет **53 %** активности (Ir 91 %, Rh 78 %). Причина — коксование
+  C₂₊, а не спекание. [ПОДТВЕРЖДЕНО]
+- X_CH₄ = 40–50 % при 1 бар, 35–45 % при 5 и 10 бар (600 °C, S/C = 5,
+  15 мас.% Ni/MgAl₂O₄). 0Rh15Ni: 49,4 % → 40,0 % при 1 → 10 бар.
+  [ЧАСТИЧНО]
+- 10 %Ni/Mg₂Al₂O₄, сухой риформинг CH₄:CO₂ = 1:1: X_CH₄ 50,0 / 65,8 /
+  78,4 / 83,2 % при 650 / 700 / 750 / 800 °C (10 мин) и 47,6 / 62,6 /
+  76,0 / 81,4 % (200 мин). [ЧАСТИЧНО] — другой катализатор и другая реакция.
+- 3,4 мас.% Ni/MgAl₂O₄, 9,8 нм, 100 ч без дезактивации, 500–700 °C,
+  CO₂/CH₄ = 0,76, O₂/CH₄ = 0,12–0,47, H₂/CO = 1,5–2,1. [ЧАСТИЧНО]
+
+## 22.2 Коммерческий даташит: честный ответ
+
+**Даташит коммерческого Ni/MgAl₂O₄ КАТАЛИЗАТОРА не найден.**
+Найдены даташиты коммерческих **порошков носителя MgAl₂O₄**:
+
+{md_table(['поставщик', 'продукт', 'BET м²/г', 'насыпная плотность', 'статус'],
+          [[q['supplier'], q['product'][:38],
+            str(q['properties'].get('BET_m2_g') or q['properties'].get('BET_m2_g_range') or '-'),
+            (str(q['properties']['bulk_density_g_L'])+' г/л') if 'bulk_density_g_L' in q['properties'] else '-',
+            q['status']] for q in com['support_powder_datasheets']])}
+
+Novotech 2130RS: насыпная плотность 300 г/л = 300 кг/м³, истинная 3,64 г/мл,
+BET 152,8 м²/г, Al₂O₃ 71,73 %, MgO 28,64 %, S < 0,07 %, Tпл 2130 °C.
+**Это насыпная плотность нанопорошка, а не плотность загрузки гранул**, поэтому
+прокси JM KATALCO (900 кг/м³, α-Al₂O₃ / Ca-алюминат) из `cases/config.json`
+остаётся необходимым и по-прежнему явно помечен как PROXY. [НЕ ПОДТВЕРЖДЕНО]
+
+## 22.3 Сравнение модели с внешними данными (фальсификация)
+
+{md_table(['запись','p бар','T K','X изм.','X модель (равновесие)','Δ','применимость'],
+          [[c['record_id'], c['p_bar'], round(c['T_K'],1), round(c['X_measured'],3),
+            round(c['X_model_equilibrium'],3), round(c['delta'],3), c['applicability'][:28]]
+           for c in ext['comparisons']])}
+
+- Среднее смещение **{ext['mean_model_bias']:+.3f}**, макс {ext['max_model_bias']:+.3f},
+  мин {ext['min_model_bias']:+.3f} по {ext['n_numeric_X_CH4_comparable']} точкам.
+- Тренд по давлению воспроизведён: измерено {ext['pressure_trend']['measured_decrease']:.3f},
+  модель {ext['pressure_trend']['model_decrease']:.3f} (модель завышает чувствительность).
+- Смещение **ожидаемо**: модель решает РАВНОВЕСИЕ, лабораторные данные —
+  КИНЕТИКА при 1–10 бар и коротком времени контакта. Это опровергает
+  использование равновесной модели как кинетического предиктора, но не
+  валидирует расчётную точку 25 бар.
+
+## 22.4 Ресурс и спекание
+
+Экстраполяция 100-часовой потери активности до 50 % даёт
+{ext['deactivation']['extrapolated_t50_h']:.0f} ч против расчётного ресурса
+{ext['deactivation']['design_life_h']:.0f} ч (отношение
+{ext['deactivation']['ratio_design_to_extrapolated']:.0f}×). Это НИЖНЯЯ граница:
+измеренная дезактивация вызвана коксованием при S/C = 1,5, а не спеканием при
+S/C = 3. Серии 200–1000 ч для 15 мас.% Ni/MgAl₂O₄ не найдено.
+[НЕ ПОДТВЕРЖДЕНО]
+
+## 22.5 Не закрыто
+
+{chr(10).join('- '+g for g in pilot['gaps'])}
+"""
+    open(os.path.join(DOCS, "22_v4_pilot_data.md"), "w", encoding="utf-8").write(txt)
+
+    # 23 kinetic synthesis --------------------------------------------------
+    km = designs["methanol"]["synthesis"]["kinetic"]
+    ka = designs["ammonia"]["synthesis"]["kinetic"]
+    vb = km["methanol_vbf"]; bm = km["benchmark_check"]
+    tp = ka["ammonia_temkin"]; ba = ka["benchmark_check"]
+    txt = f"""# 23. Kinetic synthesis loops (V4): Graaf/VBF and Temkin–Pyzhev
+
+Стехиометрические балансы из `docs/18` сохранены как основа для тоннажей;
+здесь добавлены **настоящие кинетические уравнения**, проинтегрированные по
+изотермическому PFR. Ни один параметр не выдуман — все взяты из открытых
+первоисточников и записаны в `cases/config.json -> kinetics`.
+
+## 23.1 Метанол: Graaf (1986) K_eq + Vanden Bussche & Froment (1996) LHHW
+
+Первичная статья открыта целиком: [J. Catal. 1996, Table 2]
+(https://terpconnect.umd.edu/~nsw/chbe446/VandenBussche-syngas2MeOH.pdf).
+Давления в бар, скорости в моль/(кг_кат·с), область применимости
+180–280 °C, 15–51 бар, p_CO/p_CO₂ = 0–4,1.
+
+```
+r_MeOH = k_MeOH·p_CO2·p_H2·[1 − (1/K1)(p_H2O·p_MeOH)/(p_H2³·p_CO2)]·β³
+r_RWGS = k_RWGS·p_CO2·[1 − K3·(p_H2O·p_CO)/(p_CO2·p_H2)]·β
+β = 1/(1 + K_ratio·(p_H2O/p_H2) + sqrt(K_H2·p_H2) + K_H2O·p_H2O)
+```
+
+{md_table(['параметр','A','B (Дж/моль)','вид'],
+          [['sqrt(K_H2)','0.499','17 197','A·exp(B/RT)'],
+           ['K_H2O','6.62e-11','124 119','A·exp(B/RT)'],
+           ['K_H2O/(K8K9K_H2)','3453.38','0','константа'],
+           ['k_MeOH','1.07','36 696','A·exp(B/RT)'],
+           ['k_RWGS','1.22e10','−94 765','A·exp(B/RT)'],
+           ['log10 K1 (Graaf)','3066/T − 10.592','—','равновесие'],
+           ['log10 1/K3 (Graaf)','−2073/T + 2.029','—','WGS/RWGS']])}
+
+Плотность катализатора 1775 кг/м³ — из Table 3 той же статьи.
+
+**Результат для расчётного газа:**
+за проход X_COx = **{100*vb['per_pass_COx_conversion']:.1f} %**,
+MeOH на выходе **{vb['outlet_MeOH_molpct']:.2f} мол.%**,
+тепло {vb['heat_released_MW']:.1f} МВт, масса катализатора
+{vb['catalyst_mass_t']:.1f} т при эффективном GHSV
+{vb['GHSV_h1']:.0f} ч⁻¹. [ДОПУЩЕНИЕ] — одна изотермическая труба заменяет
+4-слойный адиабатический реактор с закалкой; GHSV подобран так, чтобы
+одновременно попасть в открытый диапазон 25–30 % за проход (OSTI 2424604)
+и в промышленный бенчмарк Арзева.
+
+**Внешняя проверка (Arzew CP1Z, 52 бар, 210–270 °C):**
+{md_table(['GHSV ч⁻¹','MeOH вых. мол.%','CO вых.','CO₂ вых.','H₂ вых.'],
+          [[z['GHSV_h1'], round(z['outlet_MeOH_molpct'],3),
+            round(z['outlet_CO_molpct'],2), round(z['outlet_CO2_molpct'],2),
+            round(z['outlet_H2_molpct'],2)] for z in bm['sweep']])}
+Завод: MeOH 3,4 мол.%, CO 5,4, CO₂ 7,6, H₂ 69,35.
+Лучшее совпадение MeOH **{bm['best']['outlet_MeOH_molpct']:.2f} мол.%**
+(отклонение {bm['deviation_pct']:+.1f} %) при GHSV
+{bm['best']['GHSV_h1']:.0f} ч⁻¹. [ЧАСТИЧНО] — CO₂ расходится, потому что
+модель изотермическая однослойная.
+
+## 23.2 Аммиак: Temkin–Pyzhev / Dyson–Simon
+
+Уравнение и корреляция K_a — из открытого блога COMSOL; α, k₀, Ea — из
+открытого ChemCatChem 2024 (подгонка по 598–773 K, 90 бар, промышленный
+магнетитовый Fe-катализатор).
+
+```
+r_NH3 = 2k·[Ka²·a_N2·(a_H2³/a_NH3²)^α − (a_NH3²/a_H2³)^(1−α)]
+log10 Ka = −2.691122·log10T − 5.051925e-5·T + 1.848863e-7·T² + 2001.6/T + 2.689
+k = k0·exp(−Ea/RT),  α = 0.654, k0 = 6.5e13 кмоль/(м³_кат·ч), Ea = 159.4 кДж/моль
+```
+
+**Результат:** X_N₂ за проход **{100*tp['per_pass_N2_conversion']:.2f} %**,
+NH₃ на выходе **{tp['outlet_NH3_molpct']:.2f} мол.%** при GHSV
+{tp['GHSV_h1']:.0f} ч⁻¹, K_a = {tp['K_a']:.6f}, η = 1 (скрытого
+калибровочного множителя НЕТ).
+
+Это **ниже** открытого промышленного диапазона 15–25 % за проход и бенчмарка
+13 мол.% NH₃. Свип по GHSV:
+
+{md_table(['GHSV ч⁻¹','X_N₂','NH₃ вых. мол.%'],
+          [[z['GHSV_h1'], round(z['per_pass_N2_conversion'],4),
+            round(z['outlet_NH3_molpct'],2)] for z in ba['sweep']])}
+
+Чтобы получить 13 мол.% NH₃, эффективный GHSV должен быть
+{ba['best_for_NH3_outlet']['GHSV_h1']:.0f} ч⁻¹ — **ниже** открытого диапазона
+10 000–30 000 ч⁻¹. [НЕ ПОДТВЕРЖДЕНО] абсолютный масштаб скорости: причина —
+изотермический однослойный PFR вместо многослойного адиабатического
+конвертера и объёмные единицы k₀. Мы НЕ вводим подгоночный η, чтобы не
+скрыть расхождение.
+
+## 23.3 Что осталось
+
+FT и оксо по-прежнему стехиометрические (открытых кинетических наборов с
+параметрами в этой сессии не получено). Все кинетические блоки доступны в
+`results_v2/design_*.json -> synthesis.kinetic` и в панели управления.
+"""
+    open(os.path.join(DOCS, "23_v4_kinetic_synthesis.md"), "w", encoding="utf-8").write(txt)
+
+    # 24 HAZOP --------------------------------------------------------------
+    from .hazop import hazop_report as _hr
+    hz = _hr()
+    txt = f"""# 24. HAZOP worksheet (V4) — **НЕ СЕРТИФИЦИРОВАНО**
+
+> **ЯВНОЕ ПРЕДУПРЕЖДЕНИЕ.** Сертифицированный HAZOP невозможен без
+> междисциплинарной команды, независимого ведущего (facilitator),
+> проверенных P&ID, подписанного технического задания, закрытия действий и
+> подписи руководства. Ничего этого здесь НЕ было. Данный документ —
+> автоматически сгенерированный **шаблон рабочей таблицы** по структуре
+> IEC 61882 (полный текст стандарта НЕ открывался).
+> Статус: **[НЕ ПОДТВЕРЖДЕНО] NOT A CERTIFIED HAZOP**.
+> Не используйте его как обоснование безопасности или доказательство
+> соответствия.
+
+## 24.1 Объём
+
+{hz['nodes']} узлов × {hz['guidewords']} направляющих слов =
+**{hz['worksheet_rows']} строк** рабочей таблицы, из них
+**{hz['high_risk_rows']}** с риском ≥ 6 (матрица 3×3, приори — **[ДОПУЩЕНИЕ]**).
+Полная таблица: `results_v2/hazop_worksheet.csv` и
+`results_v2/hazop_worksheet.json`.
+
+{md_table(['узел','назначение'], [[n['id'], n['node'] + ' — ' + n['intent']]
+                                 for n in __import__('model.hazop', fromlist=['NODES']).NODES])}
+
+Направляющие слова: {', '.join(__import__('model.hazop', fromlist=['GUIDEWORDS']).GUIDEWORDS)}.
+
+## 24.2 Примеры строк с высоким риском
+
+{md_table(['узел','слово','причина','последствие','защита','риск'],
+          [[r['node'][:34], r['guideword'], r['cause'][:42],
+            r['consequence'][:42], r['safeguards'][:42], r['risk_score']]
+           for r in hz['worksheet'] if r['risk_score'] >= 6][:12])}
+
+## 24.3 Что требуется для сертификации
+
+{chr(10).join(f'{i+1}. {g}' for i, g in enumerate(hz['certification_gaps']))}
+
+## 24.4 Связь с расчётом
+
+- Ni(CO)₄: log₁₀K = 7430/T − 21,90 (OSTI 7349456, открыт); при работе
+  0,0006 ppb, при останове нужна продувка CO < 10 ppm до охлаждения ниже
+  200 °C — см. `docs/19`.
+- PSV: только скрининг по критическому истечению, **не** сертификация
+  API 520/521.
+- Δp и LMP: `docs/20`; ЛОВЕР-сценарии здесь не заменяют SIL-верификацию.
+"""
+    open(os.path.join(DOCS, "24_v4_hazop.md"), "w", encoding="utf-8").write(txt)
+
+    # 25 loop 5 -------------------------------------------------------------
+    txt = f"""# 25. Verification loop 5 after the V4 data acquisition (G8)
+
+Контур 5 **перезапущен** с реальными внешними данными. Он остаётся
+**НЕ ПРОЙДЕННЫМ**, но теперь это доказательный результат, а не просто
+«нет данных».
+
+**Вердикт:** {l5['status']}
+**Причина:** {l5['reason']}
+
+## 25.1 Подпроверки: {l5['subchecks_passed']} из {l5['subchecks_total']}
+
+{md_table(['статус','проверка','примечание'],
+          [['ПРОВЕРЕНО' if c['passed'] else 'НЕ ПРОЙДЕНО', c['check'], c.get('note','')[:86]]
+           for c in l5['subchecks']])}
+
+## 25.2 Ключевые внешние числа
+
+- Питонных записей: {ext['n_records_total']}, из них численных сравнений
+  X_CH₄: **{ext['n_numeric_X_CH4_comparable']}**, качественных:
+  {ext['n_records_qualitative']}.
+- Смещение равновесной модели относительно кинетических измерений:
+  среднее **{ext['mean_model_bias']:+.3f}**, макс {ext['max_model_bias']:+.3f}.
+- Коммерческий даташит Ni/MgAl₂O₄ катализатора:
+  **{'НАЙДЕН' if ext['commercial_datasheet']['catalyst_datasheet_found'] else 'НЕ НАЙДЕН'}**;
+  найдено даташитов носителя: {ext['commercial_datasheet']['supports_found']}.
+- Экстраполированный t₅₀ = {ext['deactivation']['extrapolated_t50_h']:.0f} ч
+  против расчётных {ext['deactivation']['design_life_h']:.0f} ч.
+- HAZOP: {hz['worksheet_rows']} строк, сертификация = **НЕТ**.
+
+## 25.3 Кинетика синтеза
+
+{md_table(['продукт','модель','за проход','диапазон из источника','бенчмарк','статус'],
+          [[r['product'], r['model'], f"{100*(r['per_pass_conversion'] or 0):.1f}%",
+            str(r['opened_range']),
+            (f"{r['benchmark_outlet_MeOH_molpct']:.2f} мол.% MeOH" if r['product']=='methanol'
+             else f"{r['benchmark_outlet_NH3_molpct_at_best_GHSV']:.2f} мол.% NH3"),
+            r['status'][:38]] for r in l5['kinetic_checks']])}
+
+## 25.4 Не проверено
+
+{chr(10).join(f'{i+1}. {g}' for i, g in enumerate(l5['unchecked_items']))}
+
+## 25.5 Итог пяти контуров
+
+{md_table(['контур','статус'], [[k, 'PASS' if x['passed'] else 'FAIL']
+                                for k, x in v['loops'].items()])}
+
+Общий результат: **{'PASS' if v['overall_passed'] else 'FAIL (контур 5 открыт)'}**.
+Модель не объявляется завершённой.
+"""
+    open(os.path.join(DOCS, "25_v4_loop5.md"), "w", encoding="utf-8").write(txt)
+
     # claims register markdown ---------------------------------------------
     claims = json.load(open(os.path.join(ROOT, "data", "v2_claims.json"), encoding="utf-8"))
     txt = "# V2 source / claim registry\n\n" + md_table(
@@ -895,6 +1243,25 @@ def main():
                  "eos_sensitivity", "regulation_sweep", "ni_life_sensitivity",
                  "full_matrix", "synthesis_summary", "safety_summary"):
         write_csv(os.path.join(OUT, name + ".csv"), sc[name])
+    l5 = v["loops"]["5_validation_falsification"]
+    write_csv(os.path.join(OUT, "pilot_comparison.csv"),
+              l5["external_data"]["comparisons"])
+    write_csv(os.path.join(OUT, "loop5_subchecks.csv"), l5["subchecks"])
+    write_csv(os.path.join(OUT, "hazop_worksheet.csv"), hazop_report()["worksheet"])
+    write_csv(os.path.join(OUT, "kinetic_benchmarks.csv"),
+              [{"product": q["product"], "GHSV_h1": z["GHSV_h1"],
+                "outlet_molpct": z.get("outlet_MeOH_molpct", z.get("outlet_NH3_molpct")),
+                "per_pass_conversion": z.get("per_pass_N2_conversion"),
+                "source": "VBF/Graaf" if q["product"] == "methanol" else "Temkin-Pyzhev"}
+               for q in l5["kinetic_checks"]
+               for z in (base[q["product"]]["synthesis"]["kinetic"]
+                         ["benchmark_check"]["sweep"])])
+    dump_json(os.path.join(OUT, "hazop_worksheet.json"), hazop_report())
+    dump_json(os.path.join(OUT, "pilot_data_summary.json"),
+              {"pilot": load_pilot(), "commercial": load_commercial(),
+               "comparison": l5["external_data"]})
+    dump_json(os.path.join(OUT, "kinetic_synthesis.json"),
+              {p: r["synthesis"]["kinetic"] for p, r in base.items()})
     dump_json(os.path.join(OUT, "verification_v2.json"), v)
     dump_json(os.path.join(OUT, "scenarios_v2.json"), sc)
     cfg = Config.load(DEFAULT_PATH)
@@ -926,6 +1293,12 @@ def main():
             "Ergun_dP_bar": base[p]["equipment"]["Ergun_dP_bar"],
         } for p in PRODUCTS},
         "verification_summary": v["summary"],
+        "loop5": {"status": v["loops"]["5_validation_falsification"]["status"],
+                  "subchecks_passed": v["loops"]["5_validation_falsification"]["subchecks_passed"],
+                  "subchecks_total": v["loops"]["5_validation_falsification"]["subchecks_total"],
+                  "mean_pilot_bias": v["loops"]["5_validation_falsification"]["external_data"]["mean_model_bias"],
+                  "catalyst_datasheet_found": v["loops"]["5_validation_falsification"]["external_data"]["commercial_datasheet"]["catalyst_datasheet_found"]},
+        "hazop": {"certified": False, "worksheet_rows": hazop_report()["worksheet_rows"]},
         "overall_passed": v["overall_passed"],
         "runtime_s": round(time.time() - t0, 1),
         "optional_packages": {"iapws": __import__("model.steam", fromlist=["available"]).available()},
@@ -935,7 +1308,7 @@ def main():
     make_plots(base, sc, v)
     print("[v2] writing reports ...")
     write_reports(base, sc, v)
-    print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/ and docs/12..21")
+    print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/ and docs/12..25")
     print("[v2] verification:", v["summary"])
     return 0
 

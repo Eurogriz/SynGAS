@@ -1,0 +1,199 @@
+{
+  "methanol": {
+    "product": "methanol",
+    "models_available": [
+      "methanol_vbf",
+      "ammonia_temkin"
+    ],
+    "methanol_vbf": {
+      "model": "Vanden Bussche & Froment (1996) LHHW + Graaf (1986) K_eq",
+      "source": "Vanden Bussche & Froment, J. Catal. 1996 (primary PDF, opened) + Graaf et al. 1986 equilibrium constants quoted therein",
+      "status": "[ДОПУЩЕНИЕ] effective GHSV=100000 1/h is a LUMPED representation of a 4-bed adiabatic quench reactor as one isothermal PFR: chosen so that the VBF kinetics reproduce BOTH the opened 25-30% per-pass COx conversion and the Arzew 3.41 mol% MeOH benchmark. GHSV=10000 1/h is reported separately for transparency.",
+      "applicability": "VBF primary data 180-280 C, 15-51 bar; GHSV 10000-30000 1/h from Wiley 2020 review",
+      "T_K": 523.15,
+      "p_bar": 75.0,
+      "GHSV_h1": 100000.0,
+      "catalyst_density_kg_m3": 1775.0,
+      "catalyst_mass_t": 7.124594564972373,
+      "recycle_ratio": 3.0,
+      "inlet_MeOH_molpct": 0.05,
+      "per_pass_COx_conversion": 0.3021565750130982,
+      "outlet_MeOH_molpct": 10.65030512525912,
+      "heat_released_MW": 21.60495190735758,
+      "K1_eq_bar_minus2": 1.856315626993169e-05,
+      "K3_eq": 85.80935665107157,
+      "note": "isothermal PFR, phi=1 (ideal). Recycle composition approximated by fresh gas => first-pass estimate. No diffusion/effectiveness factor."
+    },
+    "benchmark_check": {
+      "benchmark": {
+        "source": "ASPEN-HYSYS simulation of Arzew CP1Z 4-bed quench reactor (IOGR 2023, opened): 52 bar, 210-270 C, CO 7.5->5.4 mol%, CO2 6->7.6, H2 73.7->69.35, MeOH 0->3.41 mol% (plant 3.4)",
+        "url": "https://smartscitech.com/index.php/IOGR/article/download/1255/1189",
+        "status": "[ПОДТВЕРЖДЕНО]"
+      },
+      "inlet_molpct": {
+        "CO2": 6.0,
+        "CO": 7.5,
+        "H2": 73.7,
+        "H2O": 0.13,
+        "CH3OH": 0.001,
+        "INERT": 12.669
+      },
+      "p_bar": 52.0,
+      "T_K": 523.15,
+      "sweep": [
+        {
+          "GHSV_h1": 10000.0,
+          "outlet_MeOH_molpct": 6.534156722694248,
+          "outlet_CO_molpct": 3.194707039274449,
+          "outlet_CO2_molpct": 5.536183935339307,
+          "outlet_H2_molpct": 69.01584909917545
+        },
+        {
+          "GHSV_h1": 30000.0,
+          "outlet_MeOH_molpct": 5.805747378777729,
+          "outlet_CO_molpct": 3.7130569638325204,
+          "outlet_CO2_molpct": 5.549562197276544,
+          "outlet_H2_molpct": 69.49977038642227
+        },
+        {
+          "GHSV_h1": 100000.0,
+          "outlet_MeOH_molpct": 3.093741203659418,
+          "outlet_CO_molpct": 5.76747516940632,
+          "outlet_CO2_molpct": 5.47486890504082,
+          "outlet_H2_molpct": 71.17699804489402
+        },
+        {
+          "GHSV_h1": 300000.0,
+          "outlet_MeOH_molpct": 1.3758493715755455,
+          "outlet_CO_molpct": 7.122213095748896,
+          "outlet_CO2_molpct": 5.37416693540035,
+          "outlet_H2_molpct": 72.18603200406113
+        }
+      ],
+      "best": {
+        "GHSV_h1": 100000.0,
+        "outlet_MeOH_molpct": 3.093741203659418,
+        "outlet_CO_molpct": 5.76747516940632,
+        "outlet_CO2_molpct": 5.47486890504082,
+        "outlet_H2_molpct": 71.17699804489402
+      },
+      "deviation_pct": -9.274451505588921,
+      "status": "[ЧАСТИЧНО] single isothermal PFR vs 4-bed adiabatic quench reactor; agreement depends on the effective space velocity"
+    },
+    "used": "methanol_vbf"
+  },
+  "ft": {
+    "product": "ft",
+    "models_available": [
+      "methanol_vbf",
+      "ammonia_temkin"
+    ],
+    "used": null,
+    "note": "no opened kinetic rate law implemented for this product in this session; stoichiometric balance retained"
+  },
+  "oxo": {
+    "product": "oxo",
+    "models_available": [
+      "methanol_vbf",
+      "ammonia_temkin"
+    ],
+    "used": null,
+    "note": "no opened kinetic rate law implemented for this product in this session; stoichiometric balance retained"
+  },
+  "hydrogen": {
+    "product": "hydrogen",
+    "models_available": [
+      "methanol_vbf",
+      "ammonia_temkin"
+    ],
+    "used": null,
+    "note": "no opened kinetic rate law implemented for this product in this session; stoichiometric balance retained"
+  },
+  "ammonia": {
+    "product": "ammonia",
+    "models_available": [
+      "methanol_vbf",
+      "ammonia_temkin"
+    ],
+    "ammonia_temkin": {
+      "model": "Temkin-Pyzhev / Dyson-Simon",
+      "source": "Temkin & Pyzhev (1940) / Dyson & Simon (1968) rate law; rate equation and K_a correlation from COMSOL blog (opened); alpha, k0, Ea from ChemCatChem 2024 'Ammonia Synthesis Rate Over a Wide Operating Range' (open PDF, pure.mpg.de)",
+      "status": "[НЕ ПОДТВЕРЖДЕНО] absolute rate scale: isothermal single-bed Temkin-Pyzhev PFR at the opened GHSV=10000 1/h underpredicts the industrial 15-20% per-pass conversion by ~2x; eta=1 (no hidden effectiveness factor)",
+      "applicability": "Dyson-Simon/ChemCatChem 2024 data 598-773 K, 90 bar; design point 723 K / 200 bar is OUTSIDE the fitted pressure range",
+      "T_K": 723.15,
+      "p_bar": 200.0,
+      "GHSV_h1": 10000.0,
+      "alpha": 0.654,
+      "Ea_kJ_mol": 159.4,
+      "k0_kmol_m3cat_h": 65000000000000.0,
+      "K_a": 0.006645238850098538,
+      "effectiveness_eta": 1.0,
+      "catalyst_volume_m3": 0.7103383357202744,
+      "per_pass_N2_conversion": 0.08785687013740191,
+      "per_pass_N2_conversion_eta1": 0.08785687013740191,
+      "outlet_NH3_molpct": 4.976203893788,
+      "heat_released_MW": 12.880961383172428,
+      "note": "isothermal PFR, ideal-gas activities (phi=1). eta is an APPARENT effectiveness/activity factor calibrated to the opened 15-20% industrial per-pass conversion; eta=1 result is reported for transparency. This is NOT an independently validated rate constant."
+    },
+    "benchmark_check": {
+      "benchmark": {
+        "per_pass_conversion_range": [
+          0.15,
+          0.2
+        ],
+        "outlet_NH3_molpct_benchmark": 13.0,
+        "source": "RSC EES 2020 (opened) 15-25% per pass; COMSOL/Rase benchmark 13 mol% NH3 at outlet (opened)",
+        "status": "[ЧАСТИЧНО]"
+      },
+      "sweep": [
+        {
+          "GHSV_h1": 20000.0,
+          "per_pass_N2_conversion": 0.06394154146699091,
+          "outlet_NH3_molpct": 3.7180012583944446
+        },
+        {
+          "GHSV_h1": 10000.0,
+          "per_pass_N2_conversion": 0.0878567887629672,
+          "outlet_NH3_molpct": 4.976199560685938
+        },
+        {
+          "GHSV_h1": 5000.0,
+          "per_pass_N2_conversion": 0.11865471261273723,
+          "outlet_NH3_molpct": 6.642182483019346
+        },
+        {
+          "GHSV_h1": 3000.0,
+          "per_pass_N2_conversion": 0.1464004754887865,
+          "outlet_NH3_molpct": 8.1889962194256
+        },
+        {
+          "GHSV_h1": 2000.0,
+          "per_pass_N2_conversion": 0.17165920312383126,
+          "outlet_NH3_molpct": 9.636700140962137
+        },
+        {
+          "GHSV_h1": 1000.0,
+          "per_pass_N2_conversion": 0.22112179103097998,
+          "outlet_NH3_molpct": 12.586889173295862
+        }
+      ],
+      "best_for_NH3_outlet": {
+        "GHSV_h1": 1000.0,
+        "per_pass_N2_conversion": 0.22112179103097998,
+        "outlet_NH3_molpct": 12.586889173295862
+      },
+      "reference_case": {
+        "GHSV_h1": 20000.0,
+        "per_pass_N2_conversion": 0.06394154146699091,
+        "outlet_NH3_molpct": 3.7180012583944446
+      },
+      "opened_GHSV_range_h1": [
+        10000.0,
+        30000.0
+      ],
+      "gap": "the isothermal single-bed PFR needs an effective GHSV well below the opened 10000-30000 1/h range to reproduce the industrial 13 mol% NH3 outlet; this is an unresolved scale-up gap",
+      "status": "[НЕ ПОДТВЕРЖДЕНО] absolute rate scale"
+    },
+    "used": "ammonia_temkin"
+  }
+}

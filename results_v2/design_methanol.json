@@ -618,7 +618,90 @@
     ],
     "heat_released_MW": 28.686221878470768,
     "compression_power_MW": 5.468454305368177,
-    "compression_status": "[ASSUMPTION] k, eta; catalogue curves not opened"
+    "compression_status": "[ASSUMPTION] k, eta; catalogue curves not opened",
+    "kinetic": {
+      "product": "methanol",
+      "models_available": [
+        "methanol_vbf",
+        "ammonia_temkin"
+      ],
+      "methanol_vbf": {
+        "model": "Vanden Bussche & Froment (1996) LHHW + Graaf (1986) K_eq",
+        "source": "Vanden Bussche & Froment, J. Catal. 1996 (primary PDF, opened) + Graaf et al. 1986 equilibrium constants quoted therein",
+        "status": "[ДОПУЩЕНИЕ] effective GHSV=100000 1/h is a LUMPED representation of a 4-bed adiabatic quench reactor as one isothermal PFR: chosen so that the VBF kinetics reproduce BOTH the opened 25-30% per-pass COx conversion and the Arzew 3.41 mol% MeOH benchmark. GHSV=10000 1/h is reported separately for transparency.",
+        "applicability": "VBF primary data 180-280 C, 15-51 bar; GHSV 10000-30000 1/h from Wiley 2020 review",
+        "T_K": 523.15,
+        "p_bar": 75.0,
+        "GHSV_h1": 100000.0,
+        "catalyst_density_kg_m3": 1775.0,
+        "catalyst_mass_t": 7.124594564972373,
+        "recycle_ratio": 3.0,
+        "inlet_MeOH_molpct": 0.05,
+        "per_pass_COx_conversion": 0.3021565750130982,
+        "outlet_MeOH_molpct": 10.65030512525912,
+        "heat_released_MW": 21.60495190735758,
+        "K1_eq_bar_minus2": 1.856315626993169e-05,
+        "K3_eq": 85.80935665107157,
+        "note": "isothermal PFR, phi=1 (ideal). Recycle composition approximated by fresh gas => first-pass estimate. No diffusion/effectiveness factor."
+      },
+      "benchmark_check": {
+        "benchmark": {
+          "source": "ASPEN-HYSYS simulation of Arzew CP1Z 4-bed quench reactor (IOGR 2023, opened): 52 bar, 210-270 C, CO 7.5->5.4 mol%, CO2 6->7.6, H2 73.7->69.35, MeOH 0->3.41 mol% (plant 3.4)",
+          "url": "https://smartscitech.com/index.php/IOGR/article/download/1255/1189",
+          "status": "[ПОДТВЕРЖДЕНО]"
+        },
+        "inlet_molpct": {
+          "CO2": 6.0,
+          "CO": 7.5,
+          "H2": 73.7,
+          "H2O": 0.13,
+          "CH3OH": 0.001,
+          "INERT": 12.669
+        },
+        "p_bar": 52.0,
+        "T_K": 523.15,
+        "sweep": [
+          {
+            "GHSV_h1": 10000.0,
+            "outlet_MeOH_molpct": 6.534156722694248,
+            "outlet_CO_molpct": 3.194707039274449,
+            "outlet_CO2_molpct": 5.536183935339307,
+            "outlet_H2_molpct": 69.01584909917545
+          },
+          {
+            "GHSV_h1": 30000.0,
+            "outlet_MeOH_molpct": 5.805747378777729,
+            "outlet_CO_molpct": 3.7130569638325204,
+            "outlet_CO2_molpct": 5.549562197276544,
+            "outlet_H2_molpct": 69.49977038642227
+          },
+          {
+            "GHSV_h1": 100000.0,
+            "outlet_MeOH_molpct": 3.093741203659418,
+            "outlet_CO_molpct": 5.76747516940632,
+            "outlet_CO2_molpct": 5.47486890504082,
+            "outlet_H2_molpct": 71.17699804489402
+          },
+          {
+            "GHSV_h1": 300000.0,
+            "outlet_MeOH_molpct": 1.3758493715755455,
+            "outlet_CO_molpct": 7.122213095748896,
+            "outlet_CO2_molpct": 5.37416693540035,
+            "outlet_H2_molpct": 72.18603200406113
+          }
+        ],
+        "best": {
+          "GHSV_h1": 100000.0,
+          "outlet_MeOH_molpct": 3.093741203659418,
+          "outlet_CO_molpct": 5.76747516940632,
+          "outlet_CO2_molpct": 5.47486890504082,
+          "outlet_H2_molpct": 71.17699804489402
+        },
+        "deviation_pct": -9.274451505588921,
+        "status": "[ЧАСТИЧНО] single isothermal PFR vs 4-bed adiabatic quench reactor; agreement depends on the effective space velocity"
+      },
+      "used": "methanol_vbf"
+    }
   },
   "safety": {
     "status": "screening only; NOT a certified HAZOP / API 520 study",

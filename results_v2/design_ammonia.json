@@ -650,7 +650,94 @@
     "heat_released_MW": 35.55365824589712,
     "compression_power_MW": 14.035361887736624,
     "compression_status": "[ASSUMPTION] k, eta; catalogue curves not opened",
-    "note": "compression to the NH3 loop pressure is an ADDITIONAL utility shown here, not in the base utility balance"
+    "note": "compression to the NH3 loop pressure is an ADDITIONAL utility shown here, not in the base utility balance",
+    "kinetic": {
+      "product": "ammonia",
+      "models_available": [
+        "methanol_vbf",
+        "ammonia_temkin"
+      ],
+      "ammonia_temkin": {
+        "model": "Temkin-Pyzhev / Dyson-Simon",
+        "source": "Temkin & Pyzhev (1940) / Dyson & Simon (1968) rate law; rate equation and K_a correlation from COMSOL blog (opened); alpha, k0, Ea from ChemCatChem 2024 'Ammonia Synthesis Rate Over a Wide Operating Range' (open PDF, pure.mpg.de)",
+        "status": "[НЕ ПОДТВЕРЖДЕНО] absolute rate scale: isothermal single-bed Temkin-Pyzhev PFR at the opened GHSV=10000 1/h underpredicts the industrial 15-20% per-pass conversion by ~2x; eta=1 (no hidden effectiveness factor)",
+        "applicability": "Dyson-Simon/ChemCatChem 2024 data 598-773 K, 90 bar; design point 723 K / 200 bar is OUTSIDE the fitted pressure range",
+        "T_K": 723.15,
+        "p_bar": 200.0,
+        "GHSV_h1": 10000.0,
+        "alpha": 0.654,
+        "Ea_kJ_mol": 159.4,
+        "k0_kmol_m3cat_h": 65000000000000.0,
+        "K_a": 0.006645238850098538,
+        "effectiveness_eta": 1.0,
+        "catalyst_volume_m3": 0.7103383357202744,
+        "per_pass_N2_conversion": 0.08785687013740191,
+        "per_pass_N2_conversion_eta1": 0.08785687013740191,
+        "outlet_NH3_molpct": 4.976203893788,
+        "heat_released_MW": 12.880961383172428,
+        "note": "isothermal PFR, ideal-gas activities (phi=1). eta is an APPARENT effectiveness/activity factor calibrated to the opened 15-20% industrial per-pass conversion; eta=1 result is reported for transparency. This is NOT an independently validated rate constant."
+      },
+      "benchmark_check": {
+        "benchmark": {
+          "per_pass_conversion_range": [
+            0.15,
+            0.2
+          ],
+          "outlet_NH3_molpct_benchmark": 13.0,
+          "source": "RSC EES 2020 (opened) 15-25% per pass; COMSOL/Rase benchmark 13 mol% NH3 at outlet (opened)",
+          "status": "[ЧАСТИЧНО]"
+        },
+        "sweep": [
+          {
+            "GHSV_h1": 20000.0,
+            "per_pass_N2_conversion": 0.06394154146699091,
+            "outlet_NH3_molpct": 3.7180012583944446
+          },
+          {
+            "GHSV_h1": 10000.0,
+            "per_pass_N2_conversion": 0.0878567887629672,
+            "outlet_NH3_molpct": 4.976199560685938
+          },
+          {
+            "GHSV_h1": 5000.0,
+            "per_pass_N2_conversion": 0.11865471261273723,
+            "outlet_NH3_molpct": 6.642182483019346
+          },
+          {
+            "GHSV_h1": 3000.0,
+            "per_pass_N2_conversion": 0.1464004754887865,
+            "outlet_NH3_molpct": 8.1889962194256
+          },
+          {
+            "GHSV_h1": 2000.0,
+            "per_pass_N2_conversion": 0.17165920312383126,
+            "outlet_NH3_molpct": 9.636700140962137
+          },
+          {
+            "GHSV_h1": 1000.0,
+            "per_pass_N2_conversion": 0.22112179103097998,
+            "outlet_NH3_molpct": 12.586889173295862
+          }
+        ],
+        "best_for_NH3_outlet": {
+          "GHSV_h1": 1000.0,
+          "per_pass_N2_conversion": 0.22112179103097998,
+          "outlet_NH3_molpct": 12.586889173295862
+        },
+        "reference_case": {
+          "GHSV_h1": 20000.0,
+          "per_pass_N2_conversion": 0.06394154146699091,
+          "outlet_NH3_molpct": 3.7180012583944446
+        },
+        "opened_GHSV_range_h1": [
+          10000.0,
+          30000.0
+        ],
+        "gap": "the isothermal single-bed PFR needs an effective GHSV well below the opened 10000-30000 1/h range to reproduce the industrial 13 mol% NH3 outlet; this is an unresolved scale-up gap",
+        "status": "[НЕ ПОДТВЕРЖДЕНО] absolute rate scale"
+      },
+      "used": "ammonia_temkin"
+    }
   },
   "safety": {
     "status": "screening only; NOT a certified HAZOP / API 520 study",

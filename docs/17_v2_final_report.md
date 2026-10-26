@@ -64,17 +64,20 @@ CO2 trim / hydraulics), `docs/21` (15-case matrix).
 ## 17.4 Not checked (see 13.6 for the full list)
 
 - HYSYS / DWSIM / COCO steady-state run (not installed; user answer 11 confirms Python equivalent)
-- Experimental pilot campaign for Ni/MgAl2O4 conversion, pressure drop and catalyst life
-- Vendor Ni/MgAl2O4 catalyst datasheet: bulk density, Ni loading, crush strength, life
-- Validated Xu-Froment kinetic parameter set (full primary text not opened; secondary set fails self-consistency)
-- Sintering model discrimination: GPLE vs power-law life differ by factor ~3.06 (v1 finding)
-- PSA vendor impurity-breakthrough curve (slip weights are calibrated assumptions)
+- Pilot campaign at 20-31 bar with 15 wt% Ni/MgAl2O4: X_CH4 vs T, p, S/C, CO2/C
+- Measured packed-bed pressure drop at design velocity (Ergun is a correlation)
+- 200-1000 h Ni particle-size / sintering series for 15 wt% Ni/MgAl2O4
+- Commercial Ni/MgAl2O4 reforming CATALYST datasheet (Ni wt%, loaded density, crush strength, life)
+- Validated Xu-Froment kinetic parameter set (secondary set fails self-consistency)
 
 ## 17.5 Next step
 
-Obtain an experimental/pilot dataset for 15 wt% Ni/MgAl2O4 (conversion vs T,
-p, S/C, CO2/C; pressure drop; 200-1000 h sintering) and a vendor MgAl2O4
-catalyst datasheet (bulk density, Ni loading, crush strength, life). Re-run
-loop 5. The V2 methanol CO2 gap is CLOSED (docs/20) and stoichiometric
-synthesis loops are included (docs/18); the remaining gap is their kinetic
-validation plus a certified HAZOP/API 520 study (docs/19).
+Further data needed: a pilot campaign at 20-31 bar with 15 wt% Ni/MgAl2O4
+(X_CH4 vs T, p, S/C, CO2/C; measured dP; 200-1000 h sintering) and a vendor
+Ni/MgAl2O4 CATALYST datasheet. Open pilot data at 1-10 bar WERE found and
+compared (docs/22). Re-run loop 5 after that. The V2 methanol CO2 gap is
+CLOSED (docs/20); stoichiometric
+synthesis loops (docs/18) are now complemented by VBF/Graaf and
+Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
+(docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
+loop 5 was rerun and remains FAILED with 4/13 subchecks passing (docs/25).

@@ -72,6 +72,7 @@ def _brief(r):
         "economics": e,
         "eos": r["eos"], "steam": r["steam"], "status": r["status"],
         "synthesis": r.get("synthesis"), "safety": r.get("safety"),
+        "kinetic": r["synthesis"].get("kinetic") if r.get("synthesis") else None,
         "prereformer": r["reformer"].get("prereformer"),
     }
 
@@ -159,6 +160,16 @@ def api_sweep():
                                 "plot": "/plot/05_regulation_sweep.png"}))
 
 
+@app.get("/api/pilot")
+def api_pilot():
+    """External pilot-data comparison (fast, no full verification)."""
+    from model.pilot_data import run_external_comparison
+    try:
+        return jsonify(to_jsonable(run_external_comparison(load_config())))
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+
+
 @app.post("/api/verify")
 def api_verify():
     t0 = time.time()
@@ -168,10 +179,16 @@ def api_verify():
         v = verify_all(base, sc)
     except Exception as exc:
         return jsonify({"error": str(exc)}), 500
+    l5 = v["loops"]["5_validation_falsification"]
     return jsonify(to_jsonable({"summary": v["summary"],
                                 "overall_passed": v["overall_passed"],
                                 "hysys": v["hysys"],
-                                "unchecked": v["loops"]["5_validation_falsification"]["unchecked_items"],
+                                "loop5_status": l5["status"],
+                                "loop5_subchecks": l5["subchecks"],
+                                "loop5_subchecks_passed": l5["subchecks_passed"],
+                                "loop5_subchecks_total": l5["subchecks_total"],
+                                "mean_pilot_bias": l5["external_data"]["mean_model_bias"],
+                                "unchecked": l5["unchecked_items"],
                                 "runtime_s": round(time.time() - t0, 1)}))
 
 
@@ -285,6 +302,7 @@ a{color:var(--acc)}
 <button onclick="compare()">Сравнить 5 продуктов</button>
 <button onclick="sweep()">Регулировочная кривая</button>
 <button onclick="verify()">5 циклов проверки</button>
+<button onclick="pilot()">Пилотные данные</button>
 <button onclick="reset()">Сброс</button>
 <button onclick="download()">Скачать config</button>
 </div>
@@ -299,11 +317,13 @@ a{color:var(--acc)}
 <button onclick="tab('t6',this)">Сравнение / графики</button>
 <button onclick="tab('t7',this)">JSON</button>
 <button onclick="tab('t8',this)">Синтез</button>
-<button onclick="tab('t9',this)">Безопасность</button></div>
+<button onclick="tab('t9',this)">Безопасность</button>
+<button onclick="tab('t10',this)">Кинетика / контур 5</button></div>
 <div id="t1"></div><div id="t2" class="hidden"></div><div id="t3" class="hidden"></div>
 <div id="t4" class="hidden"></div><div id="t5" class="hidden"></div>
 <div id="t6" class="hidden"></div><div id="t7" class="hidden"><pre id="raw"></pre></div>
 <div id="t8" class="hidden"></div><div id="t9" class="hidden"></div>
+<div id="t10" class="hidden"></div>
 </main></div>
 <script>
 let CFG=null, LAST=null;
@@ -312,7 +332,7 @@ const fmt=(x,n=3)=>x===null||x===undefined||Number.isNaN(+x)?'—':(+x).toFixed(
 const tbl=(head,rows)=>'<table><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+
  rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
 const say=(m,bad=false)=>{$('status').textContent=m;$('status').style.borderLeftColor=bad?'#f85149':'#d29922'};
-function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
 async function init(){CFG=(await (await fetch('/api/config')).json());
  const P=CFG.raw.products, A=CFG.raw.active, C=CFG.raw.catalyst, E=CFG.raw.economics, PR=CFG.raw.process;
  const fill=(id,arr,val)=>{$(id).innerHTML=arr.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('')};
@@ -419,6 +439,19 @@ function render(b){cards(b);
   +'<div class="note">'+((saf.Ni_CO_4||{}).conclusion||'')+'</div>'
   +'<h2>HAZOP (скрининг)</h2>'+tbl(['узел','отклонение','защита'],
    (saf.HAZOP_nodes||[]).map(h=>[h.node,h.deviation,h.safeguard]));
+ const kn=b.kinetic||{}; const used=kn.used; const km=used?kn[used]:null;
+ const bc=kn.benchmark_check||{};
+ $('t10').innerHTML='<h2>Кинетика синтеза (не стехиометрия)</h2>'+
+  (km?tbl(['параметр','значение'],
+   [['модель',km.model||used],['T K',fmt(km.T_K,1)],['p бар',fmt(km.p_bar,1)],
+    ['GHSV ч⁻¹',fmt(km.GHSV_h1,0)],['за проход',fmt((km.per_pass_COx_conversion||km.per_pass_N2_conversion),4)],
+    ['вых. мол.%',fmt(km.outlet_MeOH_molpct||km.outlet_NH3_molpct,2)],
+    ['статус',km.status||'']]) : '<div class="note">Для этого продукта кинетическая модель не реализована.</div>')+
+  '<div class="note">'+(km?km.note:'')+'</div>'+
+  '<h2>Внешние бенчмарки</h2>'+tbl(['GHSV','вых. мол.%','X за проход'],
+    (bc.sweep||[]).map(z=>[z.GHSV_h1,fmt(z.outlet_MeOH_molpct||z.outlet_NH3_molpct,2),
+      z.per_pass_N2_conversion?fmt(z.per_pass_N2_conversion,3):'—']))+
+  '<h2>Контур 5</h2><div id="loop5box" class="note">Нажмите «5 циклов проверки» или «Пилотные данные».</div>';
  $('raw').textContent=JSON.stringify(b,null,2);}
 async function call(url,body){say('Расчёт…');const t=Date.now();
  const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});
@@ -438,6 +471,13 @@ async function sweep(){const j=await call('/api/sweep',{product:$('product').val
  if(j.rows){$('t6').innerHTML='<h2>Регулировка: '+j.product+'</h2>'+tbl(['параметр','значение','метрика','цель','X_CH4','T K'],
   j.rows.map(r=>[r.knob,fmt(r.value,4),fmt(r.achieved,4),fmt(r.target,3),fmt(r.X_CH4,4),fmt(r.T_reformer_K,1)]))
  +'<img src="/plot/05_regulation_sweep.png">';tab('t6');}}
+async function pilot(){const j=await (await fetch('/api/pilot')).json();
+ const box=$('loop5box');
+ if(box) box.innerHTML='<b>Внешние пилотные данные:</b> '+j.n_records_total+' записей, '+
+  j.n_numeric_X_CH4_comparable+' численных сравнений X_CH4, среднее смещение равновесной модели '+
+  fmt(j.mean_model_bias,3)+' (модель равновесная, данные кинетические). Даташит Ni/MgAl2O4 катализатора: '+
+  (j.commercial_datasheet.catalyst_datasheet_found?'НАЙДЕН':'НЕ НАЙДЕН')+'.';
+ tab('t10');}
 async function verify(){const j=await call('/api/verify',{});
  if(j.summary){$('t6').innerHTML='<h2>Пять циклов проверки</h2>'+tbl(['цикл','статус'],
   Object.entries(j.summary).map(([k,v])=>[k,'<span class="'+(v?'pass':'fail')+'">'+(v?'PASS':'FAIL')+'</span>']))

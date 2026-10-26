@@ -1,0 +1,36 @@
+{
+  "meta": {
+    "version": "1.0",
+    "created": "2026-10-26",
+    "question": "Is there a COMMERCIAL DATASHEET for a Ni/MgAl2O4 steam-reforming CATALYST?",
+    "answer": "NO. Commercial datasheets were found for MgAl2O4 SPINEL SUPPORT POWDERS only. No supplier sheet giving Ni wt%, loaded pellet bulk density, crush strength and service life for a Ni/MgAl2O4 reforming catalyst was found in open sources.",
+    "status": "[НЕ ПОДТВЕРЖДЕНО] for the catalyst datasheet; [ПОДТВЕРЖДЕНО] for the support powders",
+    "consequence": "The JM KATALCO alpha-Al2O3 / Ca-aluminate PROXY (900 kg/m3, 16-18 wt% NiO, >8-10 y) REMAINS in cases/config.json. Powder bulk density 300 g/L is NOT a loaded-pellet density and must NOT be substituted for it."
+  },
+  "support_powder_datasheets": [
+    {"id":"C01","supplier":"Novotech LLC","product":"Magnesium Aluminate spinel nanopowder #2130RS","url":"https://novotechllc.com/products/magnesium-aluminate/","opened":true,
+     "properties":{"BET_m2_g":152.8,"bulk_density_g_L":300.0,"true_density_g_mL":3.64,"particle_nm":[50,120],"melting_C":2130.0,"thermal_conductivity_W_mK":5.9,"Al2O3_wt_pct":71.73,"MgO_wt_pct":28.64,"S_lt_wt_pct":0.07,"CAS":"12068-51-8"},
+     "status":"[ПОДТВЕРЖДЕНО]","limitation":"nanopowder, NOT a shaped/loaded catalyst pellet"},
+    {"id":"C02","supplier":"Sigma-Aldrich (Merck)","product":"Magnesium aluminate, spinel nanopowder #677396","url":"https://www.sigmaaldrich.com/US/en/product/aldrich/677396","opened":true,
+     "properties":{"particle_nm_lt":50.0,"density_g_mL_at_25C":3.64,"melting_C":2130.0,"MW_g_mol":142.27},
+     "status":"[ЧАСТИЧНО]","limitation":"catalogue snippet only; no BET/bulk density/crush strength; research chemical, not a reforming catalyst"},
+    {"id":"C03","supplier":"Baikowski (France)","product":"S30CR / S25CR MgAl2O4 spinel powder","url":"https://pmc.ncbi.nlm.nih.gov/articles/PMC6982000/","opened":true,
+     "properties":{"BET_m2_g_range":[26.0,31.0],"d50_um":0.2,"purity_pct_ge":99.0,"S_ppm_up_to":600.0},
+     "status":"[ЧАСТИЧНО]","limitation":"values quoted from supplier data sheet inside an open peer-reviewed paper; ceramic-grade powder"},
+    {"id":"C04","supplier":"Sasol","product":"Puralox 30/140 MgAl2O4 support","url":"https://www.mdpi.com/2073-4344/9/10/801","opened":true,
+     "properties":{"use":"support used to prepare 15 wt% Ni/MgAl2O4 in Catalysts 2019 9,801"},
+     "status":"[ЧАСТИЧНО]","limitation":"only the product name is given in the paper; no property table retrieved"}
+  ],
+  "catalyst_datasheet_search_log": [
+    {"query":"Ni/MgAl2O4 commercial steam reforming catalyst datasheet NiO wt% loaded density crush strength life","result":"no supplier catalyst sheet found; only spinel support powders and academic catalysts"},
+    {"query":"magnesium aluminate spinel MgAl2O4 commercial catalyst support datasheet BET bulk density","result":"Novotech, Sigma-Aldrich, Baikowski support powders found (above)"},
+    {"query":"Johnson Matthey / Haldor Topsoe / Clariant Ni/MgAl2O4 reforming catalyst product brochure","result":"JM KATALCO brochure found in v1 but supports are alpha-Al2O3 / calcium aluminate, NOT MgAl2O4"}
+  ],
+  "proxy_in_use": {
+    "file":"cases/config.json -> catalyst.commercial_proxy_loaded_density_kg_m3",
+    "value":900.0,
+    "source":"https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214",
+    "status":"[ЧАСТИЧНО]",
+    "note":"supports are alpha-Al2O3 / Ca-aluminate; explicitly marked as a PROXY throughout the model"
+  }
+}

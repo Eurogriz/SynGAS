@@ -736,6 +736,8 @@ def design(cfg, do_tune=True):
     }
     from .synthesis import synthesis_report
     from .safety_v2 import safety_report
+    from .kinetics_synthesis import kinetic_synthesis_report
     result["synthesis"] = synthesis_report(result, cfg)
+    result["synthesis"]["kinetic"] = kinetic_synthesis_report(result, cfg)
     result["safety"] = safety_report(result, cfg)
     return result
