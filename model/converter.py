@@ -670,6 +670,140 @@ def recommend_bed_inlet_T(cfg, r, cal=None, n_beds=None, T_lo=640.0,
                       "datasheet (docs/28)"}
 
 
+def scan_converter_layouts(cfg, r, cal=None, n_beds_list=(2, 3, 4, 5),
+                           cold_shots=(0.0, 0.15, 0.30), T_lo=600.0,
+                           T_hi=780.0, tol=0.5, bisect_steps=10,
+                           bisect_nsteps=200):
+    """Layout scan for the peak-bed-temperature problem (docs/26 sec. 7).
+
+    The V5 design run breaks the (assumed) 803.15 K bed ceiling because the
+    adiabatic rise of a bed is proportional to the conversion it carries.  A
+    real converter has two levers for that: split the SAME catalyst volume over
+    more beds, and inject part of the fresh feed between beds as a cold shot
+    (which dilutes NH3 and lowers the next inlet).  For every layout the common
+    bed-inlet temperature is bisected to the highest value that still keeps
+    T_peak at or below the ceiling, and the resulting performance is compared
+    with the opened benchmark band.
+
+    Nothing is fitted: k_scale, pressure, GHSV and total catalyst volume are
+    held at the design values for every layout, so the layouts are comparable.
+    Bisection uses a coarser march (bisect_nsteps) and the reported point is
+    re-evaluated at the design n_steps with a small downward correction, so the
+    ceiling statement refers to the reported numbers.
+    """
+    K = tp_params(cfg)
+    S = r["synthesis"]
+    inert = max(S["dry_syngas_mol_h"] - S["N2_in_mol_h"] - S["H2_in_mol_h"], 0.0)
+    F0, _ = reactor_inlet_flows(S["N2_in_mol_h"], S["H2_in_mol_h"], inert,
+                                float(K["recycle_ratio"]),
+                                K.get("inlet_NH3_molpct", 0.5))
+    T_lim = float(K.get("bed_T_max_K", 803.15))
+    G = float(K["GHSV_h1"])
+    p = float(K["p_bar"])
+    ks = (cal or {}).get("k_scale", 1.0)
+    n_final = int(K.get("n_steps", 400))
+    band = cfg.raw["kinetics"].get("ammonia_benchmark", {}) or {}
+    lo_b, hi_b = [100.0 * float(x) for x in
+                  band.get("per_pass_conversion_range", (0.15, 0.20))]
+
+    def run(nb, cs, Tin, ns):
+        return run_ammonia_converter(
+            F0, p, G, n_beds=nb, T_in_first=Tin, T_in_bed=[Tin] * nb,
+            cold_shot_fraction=cs, k_scale=ks, alpha=K["alpha"],
+            k0=K["k0_kmol_m3cat_h"], Ea=K["Ea_J_mol"], n_steps=ns)
+
+    rows = []
+    for nb in n_beds_list:
+        for cs in cold_shots:
+            a, b = T_lo, T_hi
+            if run(nb, cs, b, bisect_nsteps)["T_peak_K"] <= T_lim:
+                Tin = b                                # ceiling not binding
+                binding = False
+            else:
+                binding = True
+                for _ in range(bisect_steps):
+                    m = 0.5 * (a + b)
+                    if run(nb, cs, m, bisect_nsteps)["T_peak_K"] > T_lim:
+                        b = m
+                    else:
+                        a = m
+                Tin = a
+            out = run(nb, cs, Tin, n_final)
+            for _ in range(6):                         # honour the ceiling at n_final
+                if out["T_peak_K"] <= T_lim + tol:
+                    break
+                Tin -= 2.0
+                out = run(nb, cs, Tin, n_final)
+            Xp = 100.0 * out["per_pass_N2_conversion"]
+            rows.append({
+                "n_beds": nb, "cold_shot_fraction": cs,
+                "common_bed_inlet_K": round(Tin, 1),
+                "T_peak_K": round(out["T_peak_K"], 1),
+                "ceiling_binding": binding,
+                "peak_within_ceiling": out["T_peak_K"] <= T_lim + tol,
+                "per_pass_N2_pct": round(Xp, 2),
+                "outlet_NH3_molpct": round(out["outlet_NH3_molpct"], 2),
+                "inside_opened_per_pass_band": bool(lo_b <= Xp <= hi_b),
+                "interbed_cooling_duty_MW": round(out["interbed_cooling_duty_MW"], 2),
+                "catalyst_volume_m3": round(out["catalyst_volume_m3"], 3),
+                "adiabatic_rise_K": out["adiabatic_rise_K"],
+            })
+    ok = [x for x in rows if x["peak_within_ceiling"]]
+    both = [x for x in ok if x["inside_opened_per_pass_band"]]
+    best = max(ok, key=lambda x: x["outlet_NH3_molpct"]) if ok else None
+    best_band = (max(both, key=lambda x: x["outlet_NH3_molpct"]) if both else None)
+    return {
+        "question": "which multi-bed / cold-shot layout keeps T_peak at or below "
+                    "the assumed catalyst ceiling while preserving conversion",
+        "held_constant": {"p_bar": p, "GHSV_normal_h1": G,
+                          "catalyst_volume_m3": rows[0]["catalyst_volume_m3"],
+                          "k_scale": ks, "recycle_ratio": float(K["recycle_ratio"]),
+                          "bed_T_max_K_assumed": T_lim},
+        "rows": rows,
+        "layouts_meeting_ceiling": len(ok),
+        "layouts_total": len(rows),
+        "layouts_meeting_ceiling_AND_opened_band": len(both),
+        "best_by_outlet_NH3": best,
+        "best_by_outlet_NH3_inside_opened_band": best_band,
+        "finding": (
+            "the ceiling is never the limiting factor on its own: every layout can "
+            "be kept at or below %.0f K by lowering the common bed inlet "
+            "(%.0f-%.0f K found here), and the per-pass conversion stays "
+            "%.1f-%.1f%% at unchanged catalyst volume. Splitting the same volume "
+            "over more beds RAISES the allowable inlet temperature (%.0f K at 2 "
+            "beds -> %.0f K at %d beds) because the first bed then carries a "
+            "smaller share of the total volume. The real trade-off is with the "
+            "outlet ammonia concentration: cold shot pulls per-pass conversion into "
+            "the opened 15-20%% band but dilutes the product gas, so outlet NH3 "
+            "falls from %.2f mol%% (%d beds, no quench) to %.2f mol%% (%d beds, "
+            "%.0f%% quench) - which the opened benchmark does not measure, because "
+            "it quotes per-pass conversion at a plant recycle ratio we do not know."
+            % (T_lim, min(x["common_bed_inlet_K"] for x in rows),
+               max(x["common_bed_inlet_K"] for x in rows),
+               min(x["per_pass_N2_pct"] for x in ok),
+               max(x["per_pass_N2_pct"] for x in ok),
+               min(x["common_bed_inlet_K"] for x in rows if x["n_beds"] == 2),
+               max(x["common_bed_inlet_K"] for x in rows if x["n_beds"] == max(
+                   y["n_beds"] for y in rows)), max(y["n_beds"] for y in rows),
+               best["outlet_NH3_molpct"], best["n_beds"],
+               (best_band or best)["outlet_NH3_molpct"],
+               (best_band or best)["n_beds"],
+               100.0 * (best_band or best)["cold_shot_fraction"])),
+        "note": "cold shot is modelled as fresh feed injected between beds and "
+                "the mixture then tempered to the common bed-inlet temperature, "
+                "i.e. the quench is assumed sufficient and the interbed "
+                "exchanger duty is what remains after it. The reported duty is "
+                "the sensible-enthalpy drop of the bed effluent to the next "
+                "inlet at the SAME composition: the enthalpy credit of mixing in "
+                "unpreheated fresh feed is not netted against it, so layouts with "
+                "a large quench are counted conservatively (duty overstated by up "
+                "to the cold-feed preheat share). Converter internals "
+                "(distributor, quench control, bed hydraulics) are NOT modelled",
+        "status": "[ЧАСТИЧНО] layout comparison uses the calibrated activity and "
+                  "the assumed bed ceiling; no vendor layout data (docs/28)",
+    }
+
+
 def ammonia_converter_block(cfg, r):
     """Full V5 ammonia synthesis-reactor block: benchmark grid, k0 calibration,
     design-point converter. Called once per run (each converter march costs a
@@ -685,6 +819,7 @@ def ammonia_converter_block(cfg, r):
         "equilibrium_check": equilibrium_cross_check(),
         "design": ammonia_converter_design(r, cfg, cal),
         "peak_temperature_remedy": recommend_bed_inlet_T(cfg, r, cal),
+        "layout_scan": scan_converter_layouts(cfg, r, cal),
         "report_both_scales": True,
         "note": "uncalibrated (published k0) and calibrated results are both "
                 "reported; the calibration is one documented scalar, not a "

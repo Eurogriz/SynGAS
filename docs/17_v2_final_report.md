@@ -101,3 +101,34 @@ Still true after V5: **no pilot campaign has been run, no vendor datasheet was
 obtained, no certified HAZOP took place, and no HYSYS run exists** - those are
 physical and organisational acts that a code agent cannot perform; they are
 prepared for, not faked. Loop 5 stays FAILED until the data arrive.
+
+## 17.7 V5.1 state (same data, three closable gaps removed)
+
+Three gaps that did **not** need new data were closed on the model side:
+
+1. **The model's own uncertainty band on X_CH4 is now quantified**
+   (`model/uncertainty.py`, docs/30): OFAT envelope +/-0.014 average over the 6
+   open pilot points and 3 design points, quadrature +/-0.007. The pilot/model
+   bias of +0.287 exceeds the band by 5.8-35.8x at every point, so the
+   discrepancy CANNOT be blamed on feed analysis, T sensors, S/C, CO2/C or kij
+   - it is the kinetic regime, exactly as claimed. Largest single design-side
+   tolerance: the 10 K approach-to-equilibrium assumption (+/-0.023 on X_CH4),
+   5x bigger than all thermodynamic factors combined.
+2. **The ammonia peak-temperature problem is now a design trade-off, not an
+   open defect** (`scan_converter_layouts`, docs/26 sec. 6): 12 layouts
+   (2-5 beds x 0/15/30% cold shot) were scanned at constant catalyst volume;
+   all 12 can be held at or below the assumed 803 K ceiling (inlet 628-666 K),
+   6 of them also inside the opened 15-20% per-pass band, and 5 beds with no
+   quench reproduces the opened 13 mol% outlet benchmark (13.21 mol%) at
+   802.6 K peak.
+3. **The methanol kinetics are now validated against a non-isothermal case**
+   (`model/methanol_converter.py`, docs/31): the adiabatic march reproduces the
+   published VBF bench-scale base case to 0.54 K on T_out and <=0.12 mol% on
+   every species (tolerances fixed beforehand), with carbon closure 1e-9,
+   enthalpy residual 1e-8, and the case inside the 180-280 C / 15-51 bar
+   validity window. This is model-to-model verification of the implementation -
+   NOT pilot or plant validation, and loop 5 is still open because of that.
+
+Loop 5 after V5.1: {l5["subchecks_passed"]} of {l5["subchecks_total"]} subchecks
+pass; the status is FAILED by design until the campaign, the vendor datasheet
+and a certified HAZOP exist.

@@ -1,0 +1,330 @@
+{
+  "case": "VBF 1996 Table 3 adiabatic bench reactor (base case, Fig. 5)",
+  "what_it_is": "model-to-model benchmark: the published numbers are the authors' own simulation of a bench-scale adiabatic reactor, computed with the same rate law this module uses; it is NOT plant or pilot data",
+  "validity_window_check": {
+    "applicability": "180-280 C, 15-51 bar (VBF)",
+    "case_T_range_K": [
+      493.2,
+      552.5
+    ],
+    "inside_window": true
+  },
+  "inputs": {
+    "F_mol_h": {
+      "CO2": 0.42145272412602214,
+      "CO": 0.5619369655013629,
+      "H2": 11.51970779277794,
+      "H2O": 0.0,
+      "CH3OH": 0.0,
+      "INERT": 1.545326655128748
+    },
+    "mean_molar_mass_g_per_mol": 7.1751819999999995,
+    "W_cat_kg": 0.0348,
+    "GHSV_normal_per_m3_pellet_volume_h1": 16.1,
+    "space_time_kg_cat_s_per_mol_feed": 8.918,
+    "inert_enthalpy_model": "N2",
+    "dHf_CH3OH_used_kJ_per_mol": -201.49
+  },
+  "this_model": {
+    "T_out_K": 552.5428213372511,
+    "dT_ad_K": 59.34282133725111,
+    "T_out_K_ignoring_inert_cp_difference_note": null,
+    "dT_ad_isothermal_control_K": 0.0,
+    "y_out_molpct": {
+      "CO2": 2.0753548310228678,
+      "CO": 2.9666441940344184,
+      "H2": 80.11912179674852,
+      "H2O": 1.0612498881591828,
+      "CH3OH": 2.276745319700827,
+      "INERT": 11.500883970334177
+    },
+    "MeOH_formed_mol_h": 0.3059169398238073,
+    "CO2_consumed_mol_h": 0.14259579908422743,
+    "CO_consumed_mol_h": 0.16332114073957987,
+    "dH_CO2_route_kJ_per_mol_at_T_out": -60.27607775349645,
+    "dH_CO2_route_kJ_per_mol_at_298_K": -49.79100060265904,
+    "dH_CO_route_kJ_per_mol_at_298_K": -90.96642557374886,
+    "carbon_closure_rel": 0.0,
+    "enthalpy_residual_rel": 1.338328653843219e-08
+  },
+  "comparison": {
+    "CO_molpct": {
+      "model": 2.9666441940344184,
+      "published": 2.9,
+      "dev_pp": 0.06664419403441846
+    },
+    "CO2_molpct": {
+      "model": 2.0753548310228678,
+      "published": 2.1,
+      "dev_pp": -0.024645168977132315
+    },
+    "MeOH_molpct": {
+      "model": 2.276745319700827,
+      "published": 2.4,
+      "dev_pp": -0.12325468029917275
+    },
+    "H2O_molpct": {
+      "model": 1.0612498881591828,
+      "published": 1.1,
+      "dev_pp": -0.038750111840817336
+    },
+    "T_out_K": {
+      "model": 552.5428213372511,
+      "published": 552.0,
+      "dev_K": 0.5428213372510982
+    }
+  },
+  "max_abs_composition_deviation_pp": 0.12325468029917275,
+  "abs_T_deviation_K": 0.5428213372510982,
+  "published_end_point_self_consistency": {
+    "basis_mol_feed": 100.0,
+    "extent_MeOH_per_100mol_feed": 2.29,
+    "extent_RWGS_per_100mol_feed": -1.233,
+    "total_out_mol": 95.42,
+    "predicted_from_extents": {
+      "CO2_molpct": 2.036,
+      "H2O_molpct": 1.108,
+      "H2_molpct": 80.028
+    },
+    "published": {
+      "CO2_molpct": 2.1,
+      "H2O_molpct": 1.1,
+      "H2_molpct": null
+    },
+    "max_self_inconsistency_pp": 0.06399999999999961,
+    "note": "the published CO2 value is the only tabulated end point that does not follow from (a, b) within rounding; the difference is smaller than one printed digit, so the figure numbers are usable"
+  },
+  "criteria": {
+    "composition_within_pp": 0.5,
+    "T_within_K": 15.0,
+    "note": "thresholds fixed before looking at the result: 0.5 mol% because the published values are printed to one decimal at a digitised profile end point, 15 K because the same rise is sensitive to the (unstated) inert species and to dHf(CH3OH) by a few K"
+  },
+  "reproduced": true,
+  "profile": [
+    {
+      "W_over_Wtot": 0.0008333333333333334,
+      "T_K": 493.89,
+      "y_MeOH_molpct": 0.039,
+      "y_CO2_molpct": 2.957,
+      "y_CO_molpct": 4.009,
+      "y_H2O_molpct": 0.045
+    },
+    {
+      "W_over_Wtot": 0.050833333333333335,
+      "T_K": 503.88,
+      "y_MeOH_molpct": 0.558,
+      "y_CO2_molpct": 2.463,
+      "y_CO_molpct": 4.057,
+      "y_H2O_molpct": 0.571
+    },
+    {
+      "W_over_Wtot": 0.10083333333333333,
+      "T_K": 512.87,
+      "y_MeOH_molpct": 0.897,
+      "y_CO2_molpct": 2.328,
+      "y_CO_molpct": 3.9,
+      "y_H2O_molpct": 0.726
+    },
+    {
+      "W_over_Wtot": 0.15083333333333335,
+      "T_K": 524.73,
+      "y_MeOH_molpct": 1.308,
+      "y_CO2_molpct": 2.246,
+      "y_CO_molpct": 3.629,
+      "y_H2O_molpct": 0.832
+    },
+    {
+      "W_over_Wtot": 0.20083333333333334,
+      "T_K": 537.67,
+      "y_MeOH_molpct": 1.752,
+      "y_CO2_molpct": 2.176,
+      "y_CO_molpct": 3.317,
+      "y_H2O_molpct": 0.929
+    },
+    {
+      "W_over_Wtot": 0.25083333333333335,
+      "T_K": 546.65,
+      "y_MeOH_molpct": 2.066,
+      "y_CO2_molpct": 2.12,
+      "y_CO_molpct": 3.103,
+      "y_H2O_molpct": 1.004
+    },
+    {
+      "W_over_Wtot": 0.30083333333333334,
+      "T_K": 550.6,
+      "y_MeOH_molpct": 2.207,
+      "y_CO2_molpct": 2.091,
+      "y_CO_molpct": 3.011,
+      "y_H2O_molpct": 1.041
+    },
+    {
+      "W_over_Wtot": 0.35083333333333333,
+      "T_K": 551.95,
+      "y_MeOH_molpct": 2.255,
+      "y_CO2_molpct": 2.08,
+      "y_CO_molpct": 2.98,
+      "y_H2O_molpct": 1.055
+    },
+    {
+      "W_over_Wtot": 0.4008333333333333,
+      "T_K": 552.36,
+      "y_MeOH_molpct": 2.27,
+      "y_CO2_molpct": 2.077,
+      "y_CO_molpct": 2.971,
+      "y_H2O_molpct": 1.059
+    },
+    {
+      "W_over_Wtot": 0.4508333333333333,
+      "T_K": 552.49,
+      "y_MeOH_molpct": 2.275,
+      "y_CO2_molpct": 2.076,
+      "y_CO_molpct": 2.968,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.5008333333333334,
+      "T_K": 552.53,
+      "y_MeOH_molpct": 2.276,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.5508333333333333,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.6008333333333333,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.6508333333333334,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.7008333333333333,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.7508333333333334,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.8008333333333333,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.8508333333333333,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.9008333333333334,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 0.9508333333333333,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    },
+    {
+      "W_over_Wtot": 1.0,
+      "T_K": 552.54,
+      "y_MeOH_molpct": 2.277,
+      "y_CO2_molpct": 2.075,
+      "y_CO_molpct": 2.967,
+      "y_H2O_molpct": 1.061
+    }
+  ],
+  "status": "[ПОДТВЕРЖДЕНО] сравнение смоделировано по открытому кейсу; [ЧАСТИЧНО] инерт в Table 3 не назван, dHf(CH3OH) на странице NIST дан как −205±10 (использовано −201,49 из той же страницы)",
+  "conclusion": "the adiabatic march on the published VBF rate law gives T_out = 552.5 K (rise 59.3 K vs 58.8 K published) and outlet CO2/CO/MeOH/H2O = 2.08/2.97/2.28/1.06 mol% vs published 2.1/2.9/2.4/1.1 mol% -> reproduced within the pre-declared tolerances (0.5 mol%, 15 K). Carbon closes to 0.0e+00 and the enthalpy residual is 1.3e-08, so the energy balance and the rate wiring are internally consistent.",
+  "sensitivity": [
+    {
+      "variant": "base: inert = N2, dHf(CH3OH) = -201.49 kJ/mol",
+      "T_out_K": 552.5428213372511,
+      "dT_ad_K": 59.34282133725111,
+      "MeOH_molpct": 2.276745319700827,
+      "CO2_molpct": 2.0753548310228678,
+      "CO_molpct": 2.9666441940344184,
+      "H2O_molpct": 1.0612498881591828,
+      "reproduced": true
+    },
+    {
+      "variant": "inert = Ar (Table 3 does not name the inert)",
+      "T_out_K": 553.3174871496036,
+      "dT_ad_K": 60.11748714960362,
+      "MeOH_molpct": 2.2370568115666756,
+      "CO2_molpct": 2.0735994275625127,
+      "CO_molpct": 3.0025317144901544,
+      "H2O_molpct": 1.0606239811314964,
+      "reproduced": true
+    },
+    {
+      "variant": "dHf(CH3OH) = -205 kJ/mol (NIST 'AVG of 9 values')",
+      "T_out_K": 553.52680388621,
+      "dT_ad_K": 60.32680388621003,
+      "MeOH_molpct": 2.2263987645902534,
+      "CO2_molpct": 2.073106172851501,
+      "CO_molpct": 3.0121908896008853,
+      "H2O_molpct": 1.0604777530239153,
+      "reproduced": true
+    },
+    {
+      "variant": "isothermal 493.2 K (what kinetics_synthesis.py does today)",
+      "T_out_K": 493.2,
+      "MeOH_molpct": 2.3566785268025794,
+      "CO2_molpct": 2.357796998265067,
+      "CO_molpct": 2.615459468684715,
+      "H2O_molpct": 0.7836037133430891
+    }
+  ],
+  "cp_integration_error": {
+    "T_range_K": [
+      298.15,
+      600.0
+    ],
+    "coarse_J_per_mol": 16782.612750000004,
+    "refined_J_per_mol": 16782.612255816704,
+    "abs_error_J_per_mol": 0.0004941832994518336,
+    "rel_error": 2.9446148902150442e-08
+  },
+  "adiabatic_rise": {
+    "published_K": 58.80000000000001,
+    "this_model_K": 59.34282133725111,
+    "ratio": 1.0092316553954268
+  }
+}

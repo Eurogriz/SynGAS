@@ -20,5 +20,7 @@ converter recycle closure X*(1+RR) >= 1 at the configured RR,True,1.0,
 converter NH3 formation consistent with loop stoichiometry within 5%,True,1.045491264343143,
 ammonia converter geometry / ceiling confirmed by vendor datasheet,False,,no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.md asks for it)
 pilot campaign file ingested and validated against the contract,False,,"contract data/pilot_schema.json + harness model/data_ingest.py are in place and self-tested; no campaign file exists yet, so the check is ready-to-pass rather than passed"
+"model input-uncertainty envelope computed; it is shown NOT to explain the pilot/model bias (band <= |gap| at every point, and each design band reproduces the reported conversion)",True,"mean quadrature half-width 0.0074, worst envelope/gap ratio 0.172; design bands reproduce reported X to <=0.0004 -> bias NOT explained by input uncertainty",
+methanol ADIABATIC march reproduces the opened non-isothermal worked case of the rate law's own paper (VBF Table 3 / Fig. 5),True,"T_out 552.5 K vs published 552 K (dev 0.54 K), max species dev 0.123 mol% (tolerance 0.5 / 15 K fixed in advance); carbon closure 0.0e+00, enthalpy residual 1.3e-08; case inside the 180-280 C / 15-51 bar validity window; MODEL-TO-MODEL, not plant data",
 certified HAZOP (IEC 61882),False,,"worksheet with 110 rows generated, but NOT certified"
 independent HYSYS / DWSIM run,False,,not installed; Python equivalent confirmed by user answer 11

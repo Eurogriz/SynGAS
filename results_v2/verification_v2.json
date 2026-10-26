@@ -2,11 +2,11 @@
   "loops": {
     "1_sources": {
       "passed": true,
-      "n_claims": 71,
+      "n_claims": 81,
       "by_status": {
-        "[ПОДТВЕРЖДЕНО]": 24,
-        "[ЧАСТИЧНО]": 32,
-        "[ДОПУЩЕНИЕ]": 11,
+        "[ПОДТВЕРЖДЕНО]": 29,
+        "[ЧАСТИЧНО]": 36,
+        "[ДОПУЩЕНИЕ]": 12,
         "[НЕ ПОДТВЕРЖДЕНО]": 4
       },
       "problems": [],
@@ -367,6 +367,7 @@
     },
     "4_thermo": {
       "passed": true,
+      "layout_scan_note": "12/12 layouts meet the 803 K ceiling, 6 also the opened 15-20% per-pass band; best outlet NH3 13.21 mol% at 802.6 K peak; best row is the true maximum among ceiling-meeting layouts",
       "reaction_enthalpies": {
         "SMR": {
           "shomate": 226.7847886174016,
@@ -575,7 +576,8 @@
         "synthesis": true,
         "safety": true,
         "dP": true,
-        "NH3_Ka_vs_NIST": true
+        "NH3_Ka_vs_NIST": true,
+        "NH3_layout_scan": true
       },
       "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."
     },
@@ -692,6 +694,16 @@
           "note": "contract data/pilot_schema.json + harness model/data_ingest.py are in place and self-tested; no campaign file exists yet, so the check is ready-to-pass rather than passed"
         },
         {
+          "check": "model input-uncertainty envelope computed; it is shown NOT to explain the pilot/model bias (band <= |gap| at every point, and each design band reproduces the reported conversion)",
+          "passed": true,
+          "value": "mean quadrature half-width 0.0074, worst envelope/gap ratio 0.172; design bands reproduce reported X to <=0.0004 -> bias NOT explained by input uncertainty"
+        },
+        {
+          "check": "methanol ADIABATIC march reproduces the opened non-isothermal worked case of the rate law's own paper (VBF Table 3 / Fig. 5)",
+          "passed": true,
+          "value": "T_out 552.5 K vs published 552 K (dev 0.54 K), max species dev 0.123 mol% (tolerance 0.5 / 15 K fixed in advance); carbon closure 0.0e+00, enthalpy residual 1.3e-08; case inside the 180-280 C / 15-51 bar validity window; MODEL-TO-MODEL, not plant data"
+        },
+        {
           "check": "certified HAZOP (IEC 61882)",
           "passed": false,
           "note": "worksheet with 110 rows generated, but NOT certified"
@@ -702,8 +714,8 @@
           "note": "not installed; Python equivalent confirmed by user answer 11"
         }
       ],
-      "subchecks_passed": 8,
-      "subchecks_total": 23,
+      "subchecks_passed": 10,
+      "subchecks_total": 25,
       "external_data": {
         "n_records_total": 30,
         "n_numeric_X_CH4_comparable": 6,

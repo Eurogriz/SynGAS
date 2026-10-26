@@ -218,6 +218,51 @@ def api_converter():
         return jsonify({"error": str(exc)}), 500
 
 
+@app.get("/api/quality")
+def api_quality():
+    """V5.1 model-quality pack: the model's own input-uncertainty band on X_CH4
+    and the methanol adiabatic benchmark against the opened VBF worked case.
+
+    Both are read from the saved run when present; otherwise they are computed
+    once (tens of seconds) and cached. Neither is a validation: the first shows
+    that input uncertainty cannot explain the pilot gap, the second is a
+    model-to-model reproduction of a published simulation."""
+    out = {"from_saved_run": True}
+    files = {"uncertainty": ("model_uncertainty.json", None),
+             "methanol_adiabatic": ("methanol_adiabatic_check.json", None)}
+    missing = []
+    for key, (fn, _f) in files.items():
+        path = os.path.join(ROOT, "results_v2", fn)
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as fh:
+                    out[key] = json.load(fh)
+                continue
+            except Exception as exc:
+                return jsonify({"error": "%s: %s" % (fn, exc)}), 500
+        missing.append(key)
+    if missing:
+        if "quality" in _CACHE:
+            for k in missing:
+                out[k] = _CACHE["quality"].get(k)
+                out["from_saved_run"] = False
+        else:
+            obj = {}
+            if "uncertainty" in missing:
+                from model.uncertainty import run as unc_run
+                obj["uncertainty"] = unc_run(include_design=False)
+            if "methanol_adiabatic" in missing:
+                from model.methanol_converter import build_report
+                obj["methanol_adiabatic"] = build_report(n_steps=800)
+            _CACHE["quality"] = obj
+            for k in missing:
+                out[k] = obj.get(k)
+            out["from_saved_run"] = False
+        out["note"] = ("посчитано по запросу (в кэше панели); полный прогон "
+                       "пишет те же файлы в results_v2/")
+    return jsonify(to_jsonable(out))
+
+
 @app.post("/api/ingest")
 def api_ingest():
     """Validate a pilot campaign file against data/pilot_schema.json and rerun
@@ -365,13 +410,15 @@ a{color:var(--acc)}
 <button onclick="tab('t8',this)">Синтез</button>
 <button onclick="tab('t9',this)">Безопасность</button>
 <button onclick="tab('t10',this)">Кинетика / контур 5</button>
-<button onclick="tab('t11',this);conv()">Конвертор NH₃ (V5)</button></div>
+<button onclick="tab('t11',this);conv()">Конвертор NH₃ (V5)</button>
+<button onclick="tab('t12',this);qual()">Качество модели (V5.1)</button></div>
 <div id="t1"></div><div id="t2" class="hidden"></div><div id="t3" class="hidden"></div>
 <div id="t4" class="hidden"></div><div id="t5" class="hidden"></div>
 <div id="t6" class="hidden"></div><div id="t7" class="hidden"><pre id="raw"></pre></div>
 <div id="t8" class="hidden"></div><div id="t9" class="hidden"></div>
 <div id="t10" class="hidden"></div>
 <div id="t11" class="hidden"></div>
+<div id="t12" class="hidden"></div>
 </main></div>
 <script>
 let CFG=null, LAST=null;
@@ -380,7 +427,7 @@ const fmt=(x,n=3)=>x===null||x===undefined||Number.isNaN(+x)?'—':(+x).toFixed(
 const tbl=(head,rows)=>'<table><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+
  rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
 const say=(m,bad=false)=>{$('status').textContent=m;$('status').style.borderLeftColor=bad?'#f85149':'#d29922'};
-function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
 async function init(){CFG=(await (await fetch('/api/config')).json());
  const P=CFG.raw.products, A=CFG.raw.active, C=CFG.raw.catalyst, E=CFG.raw.economics, PR=CFG.raw.process;
  const fill=(id,arr,val)=>{$(id).innerHTML=arr.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('')};
@@ -571,12 +618,51 @@ async function conv(){
   '<p>общий вход в секции '+fmt(rm.recommended_common_bed_inlet_K,1)+' K → пик '+fmt(rm.achieved_peak_T_K,1)+' K, '+
    'X за проход '+fmt(100*(rm.per_pass_N2_conversion_at_that_inlet||0),2)+' %, выход NH3 '+fmt(rm.outlet_NH3_molpct_at_that_inlet,2)+' мол.%</p>'+
   '<div class="note">'+(rm.caveat||'')+'</div>'+
+  '<h2>Поиск компоновки: число секций × холодный вброс</h2>'+
+  tbl(['секций','вброс, %','T вход, K','T пик, K','X за проход, %','выход NH3, мол.%','в коридоре 15-20 %','Q охл., МВт'],
+   ((c.layout_scan||{}).rows||[]).map(r=>[r.n_beds,fmt(100*r.cold_shot_fraction,0),fmt(r.common_bed_inlet_K,1),fmt(r.T_peak_K,1),fmt(r.per_pass_N2_pct,2),fmt(r.outlet_NH3_molpct,2),r.inside_opened_per_pass_band?'да':'нет',fmt(r.interbed_cooling_duty_MW,1)]))+
+  '<p>укладываются в потолок '+fmt((c.layout_scan||{}).layouts_meeting_ceiling||0,0)+' из '+fmt((c.layout_scan||{}).layouts_total||0,0)+
+   '; вместе с открытым коридором захода N2 — '+fmt((c.layout_scan||{}).layouts_meeting_ceiling_AND_opened_band||0,0)+'</p>'+
+  '<div class="note">'+((c.layout_scan||{}).finding||'')+'</div>'+
+  '<div class="note">'+((c.layout_scan||{}).status||'')+'</div>'+
   '<img src="/plot/13_converter_profile.png">'+
-  '<h2>Приём данных питотной кампании</h2>'+
+  '<h2>Приём данных пилотной кампании</h2>'+
   '<p>Контракт данных: <code>data/pilot_schema.json</code> (см. <code>docs/27</code>). Положите файл кампании в репозиторий и укажите путь — валидация + сравнение + авто-перезапуск подпроверок контура 5.</p>'+
   '<div class="row"><input id="ingfile" size="34" placeholder="data/my_campaign.csv"><button onclick="ing()">Проверить и перезапустить контур 5</button></div><pre id="ingout"></pre>'+
-  '<div class="note">Контур 5 остаётся НЕ ПРОЙДЕННЫМ: ни питотной кампании в расчётной точке, ни даташита катализатора, ни сертифицированной HAZOP нет. Калибровка по чужому промышленному бенчмарку валидацией не считается.</div>';
+  '<div class="note">Контур 5 остаётся НЕ ПРОЙДЕННЫМ: ни пилотной кампании в расчётной точке, ни даташита катализатора, ни сертифицированной HAZOP нет. Калибровка по чужому промышленному бенчмарку валидацией не считается.</div>';
  say('конвертор NH3: готово');}
+async function qual(){
+ say('качество модели: полоса неопределённости + адиабатический бенчмарк метанола ...');
+ const q=await (await fetch('/api/quality')).json();
+ if(q.error){$('t12').innerHTML='<h2>Качество модели</h2><div class="note">ошибка: '+q.error+'</div>';say(q.error,true);return;}
+ const u=q.uncertainty||{}, ma=q.methanol_adiabatic||{}, tm=ma.this_model||{}, cm=ma.comparison||{};
+ $('t12').innerHTML='<h2>Качество модели V5.1: собственная полоса неопределённости и адиабатический бенчмарк</h2>'+
+  '<div class="note">'+(q.from_saved_run?'Числа из сохранённого прогона `results_v2/`.':'Рассчитано по запросу (в кэше панели).')+' '+
+   'Ни один из этих расчётов не является валидацией: они показывают, чего НЕ может быть объяснено исходными данными, и сверяют реализацию с опубликованной моделью.</div>'+
+  '<h2>Полоса неопределённости X_CH4 (OFAT)</h2>'+
+  '<p>средняя полуширина огибающей '+fmt(u.mean_envelope_half_width,4)+'; квадратура '+fmt(u.mean_quadrature_half_width,4)+
+   '; точек внутри полосы модели: <span class="fail">'+fmt(u.pilot_points_inside_model_band,0)+' из '+fmt(u.pilot_points_total,0)+'</span></p>'+
+  tbl(['точка','T K','p бар','X базы','огибающая','±полуширина','X измерения','зазор/полуширина','крупнейший фактор'],
+   (u.points||[]).map(r=>[r.record_id,fmt(r.T_K,1),fmt(r.p_bar,1),fmt(r.X_base,4),fmt(r.envelope_min,3)+'–'+fmt(r.envelope_max,3),
+     fmt(r.envelope_half_width,4),r.X_measured==null?'—':fmt(r.X_measured,3),
+     r.gap_over_envelope_half_width==null?'—':fmt(r.gap_over_envelope_half_width,1)+'×',
+     (r.largest_single_effect||{}).perturbation+' ('+fmt((r.largest_single_effect||{}).delta,4)+')']))+
+  '<div class="note">'+(u.verdict||'')+'</div>'+
+  '<h2>Адиабатический метанольный реактор против открытого кейса VBF</h2>'+
+  tbl(['показатель','эта модель','опубликовано','отклонение'],
+   [['T на выходе, K',fmt(tm.T_out_K,2),fmt((cm.T_out_K||{}).published,1),fmt((cm.T_out_K||{}).dev_K,2)],
+    ['CO2, мол.%',fmt((tm.y_out_molpct||{}).CO2,3),'2,1',fmt((cm.CO2_molpct||{}).dev_pp,3)],
+    ['CO, мол.%',fmt((tm.y_out_molpct||{}).CO,3),'2,9',fmt((cm.CO_molpct||{}).dev_pp,3)],
+    ['CH3OH, мол.%',fmt((tm.y_out_molpct||{}).CH3OH,3),'2,4',fmt((cm.MeOH_molpct||{}).dev_pp,3)],
+    ['H2O, мол.%',fmt((tm.y_out_molpct||{}).H2O,3),'1,1',fmt((cm.H2O_molpct||{}).dev_pp,3)]])+
+  '<p>пороги зафиксированы до сравнения: '+fmt((ma.criteria||{}).composition_within_pp,2)+' мол.% и '+fmt((ma.criteria||{}).T_within_K,0)+' K → '+
+   '<span class="'+(ma.reproduced?'pass':'fail')+'">'+(ma.reproduced?'ВОСПРОИЗВЕДЕНО':'НЕ ВОСПРОИЗВЕДЕНО')+'</span>; '+
+   'углерод '+((tm.carbon_closure_rel||0).toExponential(1))+', невязка энтальпии '+((tm.enthalpy_residual_rel||0).toExponential(1))+'</p>'+
+  tbl(['вариант входных допущений','T на выходе, K','MeOH, мол.%','CO2, мол.%'],
+   ((ma.sensitivity)||[]).map(v=>[v.variant,fmt(v.T_out_K,2),fmt(v.MeOH_molpct,3),fmt(v.CO2_molpct,3)]))+
+  '<div class="note">'+(ma.status||'')+'</div>'+
+  '<div class="note">Подробнее: docs/30 (полоса неопределённости) и docs/31 (адиабатический кейс VBF).</div>';
+ say('качество модели: готово');}
 async function ing(){const f=$('ingfile').value;say('ингестирование '+f+' ...');
  const r=await fetch('/api/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({file:f})});
  const j=await r.json();

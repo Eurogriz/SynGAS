@@ -734,6 +734,285 @@
         "caveat": "the adiabatic rise scales with per-pass conversion, so the peak can also be limited by splitting the same catalyst volume over more beds with cold-shot quench (4-5 beds) instead of cooling every inlet; a lower common inlet also moves more duty onto the feed/effluent exchangers, which this model does not size",
         "status": "[ЧАСТИЧНО] remedy computed with the calibrated activity; the ceiling itself is an assumption pending the vendor datasheet (docs/28)"
       },
+      "layout_scan": {
+        "question": "which multi-bed / cold-shot layout keeps T_peak at or below the assumed catalyst ceiling while preserving conversion",
+        "held_constant": {
+          "p_bar": 200.0,
+          "GHSV_normal_h1": 10000.0,
+          "catalyst_volume_m3": 52.909,
+          "k_scale": 0.21339984916320956,
+          "recycle_ratio": 3.0,
+          "bed_T_max_K_assumed": 803.15
+        },
+        "rows": [
+          {
+            "n_beds": 2,
+            "cold_shot_fraction": 0.0,
+            "common_bed_inlet_K": 627.9,
+            "T_peak_K": 802.8,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 22.64,
+            "outlet_NH3_molpct": 12.93,
+            "inside_opened_per_pass_band": false,
+            "interbed_cooling_duty_MW": 33.81,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              174.89,
+              18.65
+            ]
+          },
+          {
+            "n_beds": 2,
+            "cold_shot_fraction": 0.15,
+            "common_bed_inlet_K": 627.9,
+            "T_peak_K": 802.8,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 20.31,
+            "outlet_NH3_molpct": 11.51,
+            "inside_opened_per_pass_band": false,
+            "interbed_cooling_duty_MW": 33.81,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              174.89,
+              25.01
+            ]
+          },
+          {
+            "n_beds": 2,
+            "cold_shot_fraction": 0.3,
+            "common_bed_inlet_K": 627.9,
+            "T_peak_K": 802.8,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 18.34,
+            "outlet_NH3_molpct": 10.34,
+            "inside_opened_per_pass_band": true,
+            "interbed_cooling_duty_MW": 33.81,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              174.89,
+              34.46
+            ]
+          },
+          {
+            "n_beds": 3,
+            "cold_shot_fraction": 0.0,
+            "common_bed_inlet_K": 644.5,
+            "T_peak_K": 802.8,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 22.58,
+            "outlet_NH3_molpct": 12.89,
+            "inside_opened_per_pass_band": false,
+            "interbed_cooling_duty_MW": 34.43,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              158.32,
+              19.22,
+              15.64
+            ]
+          },
+          {
+            "n_beds": 3,
+            "cold_shot_fraction": 0.15,
+            "common_bed_inlet_K": 644.5,
+            "T_peak_K": 802.8,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 18.81,
+            "outlet_NH3_molpct": 10.61,
+            "inside_opened_per_pass_band": true,
+            "interbed_cooling_duty_MW": 35.62,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              158.32,
+              25.37,
+              25.04
+            ]
+          },
+          {
+            "n_beds": 3,
+            "cold_shot_fraction": 0.3,
+            "common_bed_inlet_K": 644.5,
+            "T_peak_K": 802.8,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 16.42,
+            "outlet_NH3_molpct": 9.22,
+            "inside_opened_per_pass_band": true,
+            "interbed_cooling_duty_MW": 37.36,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              158.32,
+              34.29,
+              38.96
+            ]
+          },
+          {
+            "n_beds": 4,
+            "cold_shot_fraction": 0.0,
+            "common_bed_inlet_K": 656.6,
+            "T_peak_K": 802.9,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 22.8,
+            "outlet_NH3_molpct": 13.03,
+            "inside_opened_per_pass_band": false,
+            "interbed_cooling_duty_MW": 35.33,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              146.25,
+              19.74,
+              15.84,
+              13.39
+            ]
+          },
+          {
+            "n_beds": 4,
+            "cold_shot_fraction": 0.15,
+            "common_bed_inlet_K": 656.6,
+            "T_peak_K": 802.9,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 17.96,
+            "outlet_NH3_molpct": 10.11,
+            "inside_opened_per_pass_band": true,
+            "interbed_cooling_duty_MW": 38.26,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              146.25,
+              25.76,
+              24.82,
+              24.3
+            ]
+          },
+          {
+            "n_beds": 4,
+            "cold_shot_fraction": 0.3,
+            "common_bed_inlet_K": 656.6,
+            "T_peak_K": 802.9,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 15.47,
+            "outlet_NH3_molpct": 8.67,
+            "inside_opened_per_pass_band": true,
+            "interbed_cooling_duty_MW": 42.46,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              146.25,
+              34.32,
+              37.75,
+              39.06
+            ]
+          },
+          {
+            "n_beds": 5,
+            "cold_shot_fraction": 0.0,
+            "common_bed_inlet_K": 665.7,
+            "T_peak_K": 802.6,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 23.1,
+            "outlet_NH3_molpct": 13.21,
+            "inside_opened_per_pass_band": false,
+            "interbed_cooling_duty_MW": 36.24,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              136.9,
+              20.05,
+              15.92,
+              13.38,
+              11.62
+            ]
+          },
+          {
+            "n_beds": 5,
+            "cold_shot_fraction": 0.15,
+            "common_bed_inlet_K": 665.7,
+            "T_peak_K": 802.6,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 17.34,
+            "outlet_NH3_molpct": 9.75,
+            "inside_opened_per_pass_band": true,
+            "interbed_cooling_duty_MW": 41.1,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              136.9,
+              25.92,
+              24.52,
+              23.77,
+              23.33
+            ]
+          },
+          {
+            "n_beds": 5,
+            "cold_shot_fraction": 0.3,
+            "common_bed_inlet_K": 665.7,
+            "T_peak_K": 802.6,
+            "ceiling_binding": true,
+            "peak_within_ceiling": true,
+            "per_pass_N2_pct": 14.81,
+            "outlet_NH3_molpct": 8.3,
+            "inside_opened_per_pass_band": false,
+            "interbed_cooling_duty_MW": 47.81,
+            "catalyst_volume_m3": 52.909,
+            "adiabatic_rise_K": [
+              136.9,
+              34.16,
+              36.68,
+              37.61,
+              37.92
+            ]
+          }
+        ],
+        "layouts_meeting_ceiling": 12,
+        "layouts_total": 12,
+        "layouts_meeting_ceiling_AND_opened_band": 6,
+        "best_by_outlet_NH3": {
+          "n_beds": 5,
+          "cold_shot_fraction": 0.0,
+          "common_bed_inlet_K": 665.7,
+          "T_peak_K": 802.6,
+          "ceiling_binding": true,
+          "peak_within_ceiling": true,
+          "per_pass_N2_pct": 23.1,
+          "outlet_NH3_molpct": 13.21,
+          "inside_opened_per_pass_band": false,
+          "interbed_cooling_duty_MW": 36.24,
+          "catalyst_volume_m3": 52.909,
+          "adiabatic_rise_K": [
+            136.9,
+            20.05,
+            15.92,
+            13.38,
+            11.62
+          ]
+        },
+        "best_by_outlet_NH3_inside_opened_band": {
+          "n_beds": 3,
+          "cold_shot_fraction": 0.15,
+          "common_bed_inlet_K": 644.5,
+          "T_peak_K": 802.8,
+          "ceiling_binding": true,
+          "peak_within_ceiling": true,
+          "per_pass_N2_pct": 18.81,
+          "outlet_NH3_molpct": 10.61,
+          "inside_opened_per_pass_band": true,
+          "interbed_cooling_duty_MW": 35.62,
+          "catalyst_volume_m3": 52.909,
+          "adiabatic_rise_K": [
+            158.32,
+            25.37,
+            25.04
+          ]
+        },
+        "finding": "the ceiling is never the limiting factor on its own: every layout can be kept at or below 803 K by lowering the common bed inlet (628-666 K found here), and the per-pass conversion stays 14.8-23.1% at unchanged catalyst volume. Splitting the same volume over more beds RAISES the allowable inlet temperature (628 K at 2 beds -> 666 K at 5 beds) because the first bed then carries a smaller share of the total volume. The real trade-off is with the outlet ammonia concentration: cold shot pulls per-pass conversion into the opened 15-20% band but dilutes the product gas, so outlet NH3 falls from 13.21 mol% (5 beds, no quench) to 10.61 mol% (3 beds, 15% quench) - which the opened benchmark does not measure, because it quotes per-pass conversion at a plant recycle ratio we do not know.",
+        "note": "cold shot is modelled as fresh feed injected between beds and the mixture then tempered to the common bed-inlet temperature, i.e. the quench is assumed sufficient and the interbed exchanger duty is what remains after it. The reported duty is the sensible-enthalpy drop of the bed effluent to the next inlet at the SAME composition: the enthalpy credit of mixing in unpreheated fresh feed is not netted against it, so layouts with a large quench are counted conservatively (duty overstated by up to the cold-feed preheat share). Converter internals (distributor, quench control, bed hydraulics) are NOT modelled",
+        "status": "[ЧАСТИЧНО] layout comparison uses the calibrated activity and the assumed bed ceiling; no vendor layout data (docs/28)"
+      },
       "report_both_scales": true,
       "note": "uncalibrated (published k0) and calibrated results are both reported; the calibration is one documented scalar, not a silent refit"
     }

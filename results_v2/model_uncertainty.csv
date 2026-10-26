@@ -1,0 +1,10 @@
+point,kind,T_K,p_bar,S_C,CO2_C,X_base,envelope_min,envelope_max,env_half,quad_half,X_measured,gap,gap/env_half,inside_band,largest_effect,largest_effect_delta
+P16,"open pilot point (lab, kinetic regime)",873.15,1.0,5.0,0.0,0.91058,0.88894,0.91467,0.01287,0.00732,0.45,-0.46058,35.79,False,approach_10K,-0.02165
+P17,"open pilot point (lab, kinetic regime)",873.15,5.0,5.0,0.0,0.6233,0.59247,0.63002,0.01877,0.010576,0.4,-0.2233,11.9,False,approach_10K,-0.03083
+P18,"open pilot point (lab, kinetic regime)",873.15,10.0,5.0,0.0,0.49476,0.46817,0.50074,0.01629,0.009152,0.4,-0.09476,5.82,False,approach_10K,-0.02659
+P19,"open pilot point (lab, kinetic regime)",873.15,1.0,5.0,0.0,0.91058,0.88894,0.91467,0.01287,0.00732,0.48,-0.43058,33.46,False,approach_10K,-0.02165
+P28,"open pilot point (lab, kinetic regime)",873.15,1.0,5.0,0.0,0.91058,0.88894,0.91467,0.01287,0.00732,0.494,-0.41658,32.37,False,approach_10K,-0.02165
+P29,"open pilot point (lab, kinetic regime)",873.15,10.0,5.0,0.0,0.49476,0.46817,0.50074,0.01629,0.009152,0.4,-0.09476,5.82,False,approach_10K,-0.02659
+design_methanol,design point (no external data; band only),1123.15,25.0,3.0,0.7615013122558594,0.80534,0.78153,0.82765,0.02306,0.009442,,,,,approach_K_+10K,-0.02381
+design_ammonia,design point (no external data; band only),1206.9685745472652,30.7,3.0,0.0,0.89113,0.87641,0.90449,0.01404,0.005887,,,,,approach_K_+10K,-0.01472
+design_ft,design point (no external data; band only),1508.9283219605954,25.0,0.6,0.0,0.99862,0.99844,0.99878,0.00017,7.4e-05,,,,,approach_K_+10K,-0.00018

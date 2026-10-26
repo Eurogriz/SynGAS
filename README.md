@@ -17,7 +17,7 @@
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt       # ядро — чистый stdlib; пакеты нужны для IF97/графиков/панели/SciPy
-PYTHONPATH=. .venv/bin/python -m model.run_v2  # ~4 мин -> results_v2/ + docs/12..26
+PYTHONPATH=. .venv/bin/python -m model.run_v2  # ~5 мин -> results_v2/ + docs/12..31
 PYTHONPATH=. .venv/bin/python -m pytest -q     # 57 тестов
 PYTHONPATH=. .venv/bin/python -m model.run     # V1 (метанол, ~10 с) -> results/
 PYTHONPATH=. .venv/bin/python -m model.data_ingest --file data/my_campaign.csv
@@ -76,7 +76,7 @@ PYTHONPATH=. .venv/bin/python -m model.control set active.climate middle_east
 | `model/pilot_data.py` | сравнение равновесной модели с кинетическими пилотными данными (фальсификация) |
 | `model/kinetics_synthesis.py` | VBF/Graaf (метанол) и Temkin–Pyzhev/Dyson–Simon (NH₃), PFR |
 | `model/hazop.py` | рабочая таблица IEC 61882 (110 строк), ЯВНО НЕ сертифицирована |
-| `data/v2_claims.json`, `docs/v2_claims_register.md` | реестр 71 утверждения |
+| `data/v2_claims.json`, `docs/v2_claims_register.md` | реестр: 81 утверждение |
 | `docs/12`–`docs/17` | V2: продукты, точность, Ni/MgAl₂O₄, площадки, управление, итог |
 | `docs/18_v3_synthesis_loops.md` | стехиометрические контуры синтеза, тоннажи |
 | `docs/19_v3_safety.md` | Ni(CO)₄, HAZOP, скрининг PSV |
@@ -90,10 +90,14 @@ PYTHONPATH=. .venv/bin/python -m model.control set active.climate middle_east
 | `docs/27_v5_pilot_test_program.md` | V5: программа кампании 20–31 бар + Δp + спекание 200–1000 ч |
 | `docs/28_v5_vendor_rfi.md` | V5: 18 пунктов запроса поставщику катализатора |
 | `docs/29_v5_hazop_tor.md` | V5: техзадание на сертифицированную HAZOP (команда, роли, вход, приёмка) |
-| `results_v2/` | `summary_v2.json`, `verification_v2.json`, `design_*.json`, `converter_ammonia.json`, 17 CSV, 14 PNG |
+| `docs/30_v5_uncertainty.md` | V5.1: полоса неопределённости модели и почему она НЕ объясняет расхождение с пилотом |
+| `docs/31_v5_methanol_adiabatic.md` | V5.1: воспроизведение открытого адиабатического кейса VBF (T_out, состав, ΔH) |
+| `results_v2/` | `summary_v2.json`, `verification_v2.json`, `design_*.json`, `converter_ammonia.json`, `model_uncertainty.json`, `methanol_adiabatic_check.json`, 18 CSV, 14 PNG, 15 JSON |
 | `model/converter.py` | **V5**: многосекционный адиабатический конвертор NH₃ (тепловой баланс по NIST Shomate, норм‑базис GHSV, калибровка одного скалярного множителя k₀) |
-| `data/pilot_schema.json`, `data/pilot_campaign_TEMPLATE.*` | **V5**: контракт данных питотной кампании (49 полей + 6 полей режима) и пустая форма (заголовки, **без** чисел) |
+| `data/pilot_schema.json`, `data/pilot_campaign_TEMPLATE.*` | **V5**: контракт данных пилотной кампании (49 полей + 6 полей режима) и пустая форма (заголовки, **без** чисел) |
 | `model/data_ingest.py` | **V5**: валидация кампании (CSV/JSON) + авто‑перезапуск подпроверок контура 5 |
+| `model/uncertainty.py` | **V5.1**: собственная полоса неопределённости модели по X_CH4 (OFAT: T, S/C, CO₂/C, состав, kij, подход к равновесию) |
+| `model/methanol_converter.py`, `data/nist_cp_ch3oh.json` | **V5.1**: адиабатический метанольный реактор (VBF + энтальпии) и верbatim‑таблица Cp CH₃OH из NIST |
 
 V1 (метанольный базовый кейс) сохранён без изменений: `docs/00`–`docs/11`,
 `results/`, `model/run.py`, `model/flowsheet.py`, `model/validation.py`.
@@ -126,11 +130,11 @@ Q·Kφ/K = 1 с погрешностью ≤ 10⁻¹¹ %. Переход 0 °C �
 
 | Контур | Статус |
 |---|---|
-| 1. Источники / реестр (71 утверждение) | **PASS** |
+| 1. Источники / реестр (81 утверждение) | **PASS** |
 | 2. Арифметика | **PASS** |
 | 3. Сохранение массы/энергии | **PASS** |
 | 4. Термодинамика + SciPy SLSQP + предреформер + синтез + безопасность + Δp + K_a конвертора (NIST) | **PASS** |
-| 5. Валидация / фальсификация | **FAIL** (8 из 23 подпроверок) — честно, без объявления «готово» |
+| 5. Валидация / фальсификация | **FAIL** (10 из 25 подпроверок) — честно, без объявления «готово» |
 
 ## V4: пилотные данные, кинетика, HAZOP, перезапуск контура 5
 
@@ -193,7 +197,7 @@ Shomate (коэффициенты NH₃ добавлены в `data/nist_shomate
 артефакт шаблона: Ni(CO)₄ и «ползучесть трубок» больше не приписываются аминной
 колонне и факелу (87 из 110 строк честно помечены как generic, ждут команды).
 
-**Чего по‑прежнему нет:** питотной кампании, ответа поставщика, сертифицированной
+**Чего по‑прежнему нет:** пилотной кампании, ответа поставщика, сертифицированной
 HAZOP, запуска HYSYS/DWSIM. Модель не завершена: контур 5 = FAIL.
 
 ## Важно

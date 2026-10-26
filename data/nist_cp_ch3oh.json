@@ -1,0 +1,100 @@
+{
+ "species": "CH3OH (methanol, methyl alcohol)",
+ "cas": "67-56-1",
+ "formula": "CH4O",
+ "molecular_weight_g_per_mol": 32.0419,
+ "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Units=SI&Mask=1",
+ "retrieved": "2026-10-26",
+ "note": "The NIST WebBook publishes NO Shomate polynomial for gas-phase methanol, only the tabulated ideal-gas heat capacity compiled by Thermodynamics Research Center (1997) at p = 1 bar, plus the enthalpy-of-formation entries below. This file stores those values verbatim; nothing is fitted to them by this project.",
+ "cp_ideal_gas_J_per_mol_K": [
+  [
+   50.0,
+   34.0
+  ],
+  [
+   100.0,
+   36.95
+  ],
+  [
+   150.0,
+   38.64
+  ],
+  [
+   200.0,
+   39.71
+  ],
+  [
+   273.15,
+   42.59
+  ],
+  [
+   298.15,
+   44.06
+  ],
+  [
+   300.0,
+   44.17
+  ],
+  [
+   400.0,
+   51.63
+  ],
+  [
+   500.0,
+   59.7
+  ],
+  [
+   600.0,
+   67.19
+  ],
+  [
+   700.0,
+   73.86
+  ],
+  [
+   800.0,
+   79.76
+  ],
+  [
+   900.0,
+   84.95
+  ],
+  [
+   1000.0,
+   89.54
+  ],
+  [
+   1100.0,
+   93.57
+  ],
+  [
+   1200.0,
+   97.12
+  ],
+  [
+   1300.0,
+   100.24
+  ],
+  [
+   1400.0,
+   102.98
+  ],
+  [
+   1500.0,
+   105.4
+  ]
+ ],
+ "cp_comment": "Thermodynamics Research Center, 1997 (GT compilation): 'Recommended entropies and heat capacities are in good agreement with other statistically calculated values' [Ivash 1955, Zhuravlev 1959, Chen 1977, Chao 1986, Gurvich/Veyts 1989]. 44.06 +/- 0.03 J/mol/K at 298.15 K.",
+ "dHf_gas_298_kJ_per_mol": {
+  "used": -201.49,
+  "used_from": "printed on the same NIST page as the Rossini (1932) combustion result: 'dHf(gas) = -201.49 kJ/mol (simple calculation by NIST; no Washburn corrections); ALS'",
+  "alternative": -205.0,
+  "alternative_uncertainty": 10.0,
+  "alternative_from": "'AVG, average of 9 values' in the page header",
+  "why_this_one": "-201.49 kJ/mol reproduces BOTH reaction enthalpies already cited in this project (Appl. Sci. 2017 7,1213): CO2 + 3H2 -> CH3OH + H2O gives -49.8 vs -49.7 kJ/mol and CO + 2H2 -> CH3OH gives -91.0 vs -90.7 kJ/mol. The -205 value is carried as a sensitivity (it shifts the adiabatic rise by about 4 K on the VBF base case)."
+ },
+ "integration": {
+  "method": "trapezoid on the tabulated grid, piecewise-linear Cp between points; enthalpy reference 298.15 K",
+  "discretisation_check": "trapezoid on the published grid vs the same piecewise-linear Cp integrated on a 400-point midpoint grid: 0.0005 J/mol over 298.15-600 K (relative 2.9e-8) - exact for linear segments, measured by model/methanol_converter.py cp_integration_error()"
+ }
+}

@@ -7,7 +7,7 @@
 **Вердикт:** FAILED (now evidence-based, not just absence-of-data)
 **Причина:** External pilot data WERE found and compared. The model is an EQUILIBRIUM model; the lab data are KINETIC at 1-10 bar, so the mean bias is +0.287 X_CH4. A commercial Ni/MgAl2O4 catalyst datasheet, a design-point pilot campaign, a 200-1000 h sintering series and a certified HAZOP are still absent. The methanol kinetic model reproduces two opened benchmarks. The ammonia model was rebuilt as a multi-bed adiabatic converter and now needs ONE documented activity scalar (k_scale=0.213) to sit on the opened per-pass benchmark; the two opened ammonia benchmarks themselves disagree by a factor of 2.36 on that scalar, so this is calibration, not validation.
 
-## 25.1 Подпроверки: 8 из 23
+## 25.1 Подпроверки: 10 из 25
 
 | статус | проверка | примечание |
 |---|---|---|
@@ -32,6 +32,8 @@
 | ПРОВЕРЕНО | converter NH3 formation consistent with loop stoichiometry within 5% |  |
 | НЕ ПРОЙДЕНО | ammonia converter geometry / ceiling confirmed by vendor datasheet | no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.m |
 | НЕ ПРОЙДЕНО | pilot campaign file ingested and validated against the contract | contract data/pilot_schema.json + harness model/data_ingest.py are in place and self-t |
+| ПРОВЕРЕНО | model input-uncertainty envelope computed; it is shown NOT to explain the pilot/model bias (band <= |gap| at every point, and each design band reproduces the reported conversion) |  |
+| ПРОВЕРЕНО | methanol ADIABATIC march reproduces the opened non-isothermal worked case of the rate law's own paper (VBF Table 3 / Fig. 5) |  |
 | НЕ ПРОЙДЕНО | certified HAZOP (IEC 61882) | worksheet with 110 rows generated, but NOT certified |
 | НЕ ПРОЙДЕНО | independent HYSYS / DWSIM run | not installed; Python equivalent confirmed by user answer 11 |
 

@@ -1,0 +1,1077 @@
+{
+ "purpose": "model-side input-uncertainty band for X_CH4, needed to state the loop-5 bias quantitatively instead of as a bare number",
+ "factors": {
+  "T_+2K": {
+   "dT_K": 2.0
+  },
+  "T_-2K": {
+   "dT_K": 2.0
+  },
+  "S/C_+2%": {
+   "rel": 0.02
+  },
+  "S/C_-2%": {
+   "rel": 0.02
+  },
+  "CO2/C_+2%": {
+   "rel": 0.02
+  },
+  "CO2/C_-2%": {
+   "rel": 0.02
+  },
+  "y_CH4_-1%": {
+   "rel": 0.01
+  },
+  "approach_10K": {
+   "approach_K": 10.0
+  },
+  "kij_zero": {
+   "kij_set": "zero"
+  },
+  "kij_high": {
+   "kij_set": "high"
+  }
+ },
+ "factor_status": "perturbation SIZES are requirements/assumptions (docs/27 sec. 6); their EFFECTS on X_CH4 are computed",
+ "points": [
+  {
+   "record_id": "P16",
+   "source_id": "S2",
+   "T_K": 873.15,
+   "p_bar": 1.0,
+   "S_C": 5.0,
+   "CO2_C": 0.0,
+   "X_measured": 0.45,
+   "record_status": "[ЧАСТИЧНО]",
+   "label": "lab feed",
+   "inputs": {
+    "T_K": 873.15,
+    "p_bar": 1.0,
+    "S_C": 5.0,
+    "CO2_C": 0.0,
+    "CH4_fraction": 1.0
+   },
+   "X_base": 0.9105801646316707,
+   "carbon_stable_base": false,
+   "envelope_min": 0.8889351417450179,
+   "envelope_max": 0.9146719012621648,
+   "envelope_half_width": 0.012868379758573467,
+   "quadrature_half_width": 0.007319954626376937,
+   "largest_single_effect": {
+    "perturbation": "approach_10K",
+    "X_CH4": 0.8889351417450179,
+    "delta": -0.02164502288665282,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+   },
+   "rows": [
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.9145209365426963,
+     "delta": 0.003940771911025598,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.9065098003978007,
+     "delta": -0.004070364233869972,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "S/C_+2%",
+     "X_CH4": 0.9146719012621648,
+     "delta": 0.004091736630494114,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "S/C_-2%",
+     "X_CH4": 0.9062824448002849,
+     "delta": -0.004297719831385827,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2/C_+2%",
+     "X_CH4": 0.9105801646316707,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2/C_-2%",
+     "X_CH4": 0.9105801646316707,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "y_CH4_-1%",
+     "X_CH4": 0.9105801646316712,
+     "delta": 5.551115123125783e-16,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_10K",
+     "X_CH4": 0.8889351417450179,
+     "delta": -0.02164502288665282,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.9105707913830288,
+     "delta": -9.373248641919574e-06,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.9105811879333223,
+     "delta": 1.0233016516369986e-06,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    }
+   ],
+   "measured_minus_model": -0.4605801646316707,
+   "gap_over_envelope_half_width": 35.79162048934812,
+   "gap_over_quadrature": 62.92117754009058,
+   "measurement_inside_model_band": false,
+   "kind": "open pilot point (lab, kinetic regime)"
+  },
+  {
+   "record_id": "P17",
+   "source_id": "S2",
+   "T_K": 873.15,
+   "p_bar": 5.0,
+   "S_C": 5.0,
+   "CO2_C": 0.0,
+   "X_measured": 0.4,
+   "record_status": "[ЧАСТИЧНО]",
+   "label": "lab feed",
+   "inputs": {
+    "T_K": 873.15,
+    "p_bar": 5.0,
+    "S_C": 5.0,
+    "CO2_C": 0.0,
+    "CH4_fraction": 1.0
+   },
+   "X_base": 0.623303369513288,
+   "carbon_stable_base": false,
+   "envelope_min": 0.5924731023046577,
+   "envelope_max": 0.6300186553111267,
+   "envelope_half_width": 0.0187727765032345,
+   "quadrature_half_width": 0.010576423976384761,
+   "largest_single_effect": {
+    "perturbation": "approach_10K",
+    "X_CH4": 0.5924731023046577,
+    "delta": -0.030830267208630358,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+   },
+   "rows": [
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.6294908554583009,
+     "delta": 0.006187485945012838,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.6171209277426424,
+     "delta": -0.006182441770645641,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "S/C_+2%",
+     "X_CH4": 0.6300186553111267,
+     "delta": 0.006715285797838644,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "S/C_-2%",
+     "X_CH4": 0.6164850220542032,
+     "delta": -0.006818347459084828,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2/C_+2%",
+     "X_CH4": 0.623303369513288,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2/C_-2%",
+     "X_CH4": 0.623303369513288,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "y_CH4_-1%",
+     "X_CH4": 0.623303369513289,
+     "delta": 9.992007221626409e-16,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_10K",
+     "X_CH4": 0.5924731023046577,
+     "delta": -0.030830267208630358,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.6232060145920965,
+     "delta": -9.735492119156142e-05,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.6233130214363297,
+     "delta": 9.65192304169804e-06,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    }
+   ],
+   "measured_minus_model": -0.223303369513288,
+   "gap_over_envelope_half_width": 11.895063549859735,
+   "gap_over_quadrature": 21.113314860664055,
+   "measurement_inside_model_band": false,
+   "kind": "open pilot point (lab, kinetic regime)"
+  },
+  {
+   "record_id": "P18",
+   "source_id": "S2",
+   "T_K": 873.15,
+   "p_bar": 10.0,
+   "S_C": 5.0,
+   "CO2_C": 0.0,
+   "X_measured": 0.4,
+   "record_status": "[ЧАСТИЧНО]",
+   "label": "lab feed",
+   "inputs": {
+    "T_K": 873.15,
+    "p_bar": 10.0,
+    "S_C": 5.0,
+    "CO2_C": 0.0,
+    "CH4_fraction": 1.0
+   },
+   "X_base": 0.4947598218380444,
+   "carbon_stable_base": false,
+   "envelope_min": 0.46816548255098256,
+   "envelope_max": 0.5007387943153585,
+   "envelope_half_width": 0.016286655882187973,
+   "quadrature_half_width": 0.009151800522192801,
+   "largest_single_effect": {
+    "perturbation": "approach_10K",
+    "X_CH4": 0.46816548255098256,
+    "delta": -0.02659433928706184,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+   },
+   "rows": [
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.5001577171771054,
+     "delta": 0.005397895339061043,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.4893875605323305,
+     "delta": -0.005372261305713888,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "S/C_+2%",
+     "X_CH4": 0.5007387943153585,
+     "delta": 0.005978972477314104,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "S/C_-2%",
+     "X_CH4": 0.48871735393188154,
+     "delta": -0.006042467906162863,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2/C_+2%",
+     "X_CH4": 0.4947598218380444,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2/C_-2%",
+     "X_CH4": 0.4947598218380444,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "y_CH4_-1%",
+     "X_CH4": 0.4947598218380437,
+     "delta": -7.216449660063518e-16,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_10K",
+     "X_CH4": 0.46816548255098256,
+     "delta": -0.02659433928706184,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.49456664608302153,
+     "delta": -0.00019317575502286743,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.4947780723881553,
+     "delta": 1.825055011089871e-05,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    }
+   ],
+   "measured_minus_model": -0.09475982183804438,
+   "gap_over_envelope_half_width": 5.818249155842925,
+   "gap_over_quadrature": 10.354227193682279,
+   "measurement_inside_model_band": false,
+   "kind": "open pilot point (lab, kinetic regime)"
+  },
+  {
+   "record_id": "P19",
+   "source_id": "S2",
+   "T_K": 873.15,
+   "p_bar": 1.0,
+   "S_C": 5.0,
+   "CO2_C": 0.0,
+   "X_measured": 0.48,
+   "record_status": "[ЧАСТИЧНО]",
+   "label": "lab feed",
+   "inputs": {
+    "T_K": 873.15,
+    "p_bar": 1.0,
+    "S_C": 5.0,
+    "CO2_C": 0.0,
+    "CH4_fraction": 1.0
+   },
+   "X_base": 0.9105801646316707,
+   "carbon_stable_base": false,
+   "envelope_min": 0.8889351417450179,
+   "envelope_max": 0.9146719012621648,
+   "envelope_half_width": 0.012868379758573467,
+   "quadrature_half_width": 0.007319954626376937,
+   "largest_single_effect": {
+    "perturbation": "approach_10K",
+    "X_CH4": 0.8889351417450179,
+    "delta": -0.02164502288665282,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+   },
+   "rows": [
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.9145209365426963,
+     "delta": 0.003940771911025598,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.9065098003978007,
+     "delta": -0.004070364233869972,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "S/C_+2%",
+     "X_CH4": 0.9146719012621648,
+     "delta": 0.004091736630494114,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "S/C_-2%",
+     "X_CH4": 0.9062824448002849,
+     "delta": -0.004297719831385827,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2/C_+2%",
+     "X_CH4": 0.9105801646316707,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2/C_-2%",
+     "X_CH4": 0.9105801646316707,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "y_CH4_-1%",
+     "X_CH4": 0.9105801646316712,
+     "delta": 5.551115123125783e-16,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_10K",
+     "X_CH4": 0.8889351417450179,
+     "delta": -0.02164502288665282,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.9105707913830288,
+     "delta": -9.373248641919574e-06,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.9105811879333223,
+     "delta": 1.0233016516369986e-06,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    }
+   ],
+   "measured_minus_model": -0.4305801646316707,
+   "gap_over_envelope_half_width": 33.46032466478926,
+   "gap_over_quadrature": 58.822791480169236,
+   "measurement_inside_model_band": false,
+   "kind": "open pilot point (lab, kinetic regime)"
+  },
+  {
+   "record_id": "P28",
+   "source_id": "S6",
+   "T_K": 873.15,
+   "p_bar": 1.0,
+   "S_C": 5.0,
+   "CO2_C": 0.0,
+   "X_measured": 0.494,
+   "record_status": "[ЧАСТИЧНО]",
+   "label": "lab feed",
+   "inputs": {
+    "T_K": 873.15,
+    "p_bar": 1.0,
+    "S_C": 5.0,
+    "CO2_C": 0.0,
+    "CH4_fraction": 1.0
+   },
+   "X_base": 0.9105801646316707,
+   "carbon_stable_base": false,
+   "envelope_min": 0.8889351417450179,
+   "envelope_max": 0.9146719012621648,
+   "envelope_half_width": 0.012868379758573467,
+   "quadrature_half_width": 0.007319954626376937,
+   "largest_single_effect": {
+    "perturbation": "approach_10K",
+    "X_CH4": 0.8889351417450179,
+    "delta": -0.02164502288665282,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+   },
+   "rows": [
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.9145209365426963,
+     "delta": 0.003940771911025598,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.9065098003978007,
+     "delta": -0.004070364233869972,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "S/C_+2%",
+     "X_CH4": 0.9146719012621648,
+     "delta": 0.004091736630494114,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "S/C_-2%",
+     "X_CH4": 0.9062824448002849,
+     "delta": -0.004297719831385827,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2/C_+2%",
+     "X_CH4": 0.9105801646316707,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2/C_-2%",
+     "X_CH4": 0.9105801646316707,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "y_CH4_-1%",
+     "X_CH4": 0.9105801646316712,
+     "delta": 5.551115123125783e-16,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_10K",
+     "X_CH4": 0.8889351417450179,
+     "delta": -0.02164502288665282,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.9105707913830288,
+     "delta": -9.373248641919574e-06,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.9105811879333223,
+     "delta": 1.0233016516369986e-06,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    }
+   ],
+   "measured_minus_model": -0.4165801646316707,
+   "gap_over_envelope_half_width": 32.372386613328466,
+   "gap_over_quadrature": 56.910211318872605,
+   "measurement_inside_model_band": false,
+   "kind": "open pilot point (lab, kinetic regime)"
+  },
+  {
+   "record_id": "P29",
+   "source_id": "S6",
+   "T_K": 873.15,
+   "p_bar": 10.0,
+   "S_C": 5.0,
+   "CO2_C": 0.0,
+   "X_measured": 0.4,
+   "record_status": "[ЧАСТИЧНО]",
+   "label": "lab feed",
+   "inputs": {
+    "T_K": 873.15,
+    "p_bar": 10.0,
+    "S_C": 5.0,
+    "CO2_C": 0.0,
+    "CH4_fraction": 1.0
+   },
+   "X_base": 0.4947598218380444,
+   "carbon_stable_base": false,
+   "envelope_min": 0.46816548255098256,
+   "envelope_max": 0.5007387943153585,
+   "envelope_half_width": 0.016286655882187973,
+   "quadrature_half_width": 0.009151800522192801,
+   "largest_single_effect": {
+    "perturbation": "approach_10K",
+    "X_CH4": 0.46816548255098256,
+    "delta": -0.02659433928706184,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+   },
+   "rows": [
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.5001577171771054,
+     "delta": 0.005397895339061043,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.4893875605323305,
+     "delta": -0.005372261305713888,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement from docs/27 sec. 6"
+    },
+    {
+     "perturbation": "S/C_+2%",
+     "X_CH4": 0.5007387943153585,
+     "delta": 0.005978972477314104,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "S/C_-2%",
+     "X_CH4": 0.48871735393188154,
+     "delta": -0.006042467906162863,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2/C_+2%",
+     "X_CH4": 0.4947598218380444,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2/C_-2%",
+     "X_CH4": 0.4947598218380444,
+     "delta": 0.0,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "y_CH4_-1%",
+     "X_CH4": 0.4947598218380437,
+     "delta": -7.216449660063518e-16,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_10K",
+     "X_CH4": 0.46816548255098256,
+     "delta": -0.02659433928706184,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate correction allowed by the model"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.49456664608302153,
+     "delta": -0.00019317575502286743,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.4947780723881553,
+     "delta": 1.825055011089871e-05,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] three opened kij sets"
+    }
+   ],
+   "measured_minus_model": -0.09475982183804438,
+   "gap_over_envelope_half_width": 5.818249155842925,
+   "gap_over_quadrature": 10.354227193682279,
+   "measurement_inside_model_band": false,
+   "kind": "open pilot point (lab, kinetic regime)"
+  },
+  {
+   "record_id": "design_methanol",
+   "source_id": "THIS MODEL",
+   "T_K": 1123.15,
+   "p_bar": 25.0,
+   "S_C": 3.0,
+   "CO2_C": 0.7615013122558594,
+   "X_measured": null,
+   "label": "methanol design point (model's own feed)",
+   "inputs": {
+    "T_K": 1123.15,
+    "p_bar": 25.0,
+    "approach_K": 10.0
+   },
+   "X_base": 0.805336981388227,
+   "carbon_stable_base": false,
+   "envelope_min": 0.7815290269202705,
+   "envelope_max": 0.8276481291005847,
+   "envelope_half_width": 0.023059551090157115,
+   "quadrature_half_width": 0.009441581290297842,
+   "largest_single_effect": {
+    "perturbation": "approach_K_+10K",
+    "X_CH4": 0.7815290269202705,
+    "delta": -0.02380795446795647,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate assumption, one half-step"
+   },
+   "rows": [
+    {
+     "perturbation": "true equilibrium (approach_K=0)",
+     "X_CH4": 0.8276481291005847,
+     "delta": 0.02231114771235776,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] the design basis applies a finite-rate approach"
+    },
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.8099232905506214,
+     "delta": 0.004586309162394442,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement (docs/27 sec. 6)"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.8006906923278002,
+     "delta": -0.004646289060426745,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement (docs/27 sec. 6)"
+    },
+    {
+     "perturbation": "H2O_+2%",
+     "X_CH4": 0.8095105449795101,
+     "delta": 0.00417356359128318,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "H2O_-2%",
+     "X_CH4": 0.8010715459416066,
+     "delta": -0.004265435446620391,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2_+2%",
+     "X_CH4": 0.8061691017451728,
+     "delta": 0.000832120356945798,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2_-2%",
+     "X_CH4": 0.8045078517284711,
+     "delta": -0.0008291296597559006,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CH4_-1%",
+     "X_CH4": 0.8078177118680923,
+     "delta": 0.0024807304798653007,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_K_+10K",
+     "X_CH4": 0.7815290269202705,
+     "delta": -0.02380795446795647,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate assumption, one half-step"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.8051603553655734,
+     "delta": -0.00017662602265355876,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] opened kij set"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.8053644786663086,
+     "delta": 2.749727808160074e-05,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] opened kij set"
+    },
+    {
+     "perturbation": "pre-reformer C2+ slip 5%",
+     "X_CH4": 0.8046298288670963,
+     "delta": -0.0007071525211306273,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] pre-reformer conversion is modelled, not measured"
+    },
+    {
+     "perturbation": "pre-reformer C2+ slip 20%",
+     "X_CH4": 0.8025159517349028,
+     "delta": -0.002821029653324203,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] pre-reformer conversion is modelled, not measured"
+    }
+   ],
+   "X_model_reported": 0.805336981388227,
+   "reported_minus_banded": 0.0,
+   "gap_over_envelope_half_width": null,
+   "gap_over_quadrature": null,
+   "measurement_inside_model_band": null,
+   "kind": "design point (no external data; band only)"
+  },
+  {
+   "record_id": "design_ammonia",
+   "source_id": "THIS MODEL",
+   "T_K": 1206.9685745472652,
+   "p_bar": 30.7,
+   "S_C": 3.0,
+   "CO2_C": 0.0,
+   "X_measured": null,
+   "label": "ammonia design point (model's own feed)",
+   "inputs": {
+    "T_K": 1206.9685745472652,
+    "p_bar": 30.7,
+    "approach_K": 10.0
+   },
+   "X_base": 0.8911281352921115,
+   "carbon_stable_base": false,
+   "envelope_min": 0.8764096324205829,
+   "envelope_max": 0.904485503746892,
+   "envelope_half_width": 0.014037935663154533,
+   "quadrature_half_width": 0.005886697650077402,
+   "largest_single_effect": {
+    "perturbation": "approach_K_+10K",
+    "X_CH4": 0.8764096324205829,
+    "delta": -0.01471850287152865,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate assumption, one half-step"
+   },
+   "rows": [
+    {
+     "perturbation": "true equilibrium (approach_K=0)",
+     "X_CH4": 0.904485503746892,
+     "delta": 0.013357368454780416,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] the design basis applies a finite-rate approach"
+    },
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.8939078604420819,
+     "delta": 0.00277972514997038,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement (docs/27 sec. 6)"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.8882938878871605,
+     "delta": -0.0028342474049510846,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement (docs/27 sec. 6)"
+    },
+    {
+     "perturbation": "H2O_+2%",
+     "X_CH4": 0.8949345383110852,
+     "delta": 0.003806403018973614,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "H2O_-2%",
+     "X_CH4": 0.8871613245049988,
+     "delta": -0.003966810787112696,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2_+2%",
+     "X_CH4": 0.8911415029803944,
+     "delta": 1.33676882828615e-05,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2_-2%",
+     "X_CH4": 0.8911147895245568,
+     "delta": -1.3345767554739929e-05,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CH4_-1%",
+     "X_CH4": 0.8930330157891047,
+     "delta": 0.001904880496993111,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_K_+10K",
+     "X_CH4": 0.8764096324205829,
+     "delta": -0.01471850287152865,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate assumption, one half-step"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.8910380669976387,
+     "delta": -9.006829447288922e-05,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] opened kij set"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.8911397568488321,
+     "delta": 1.1621556720520232e-05,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] opened kij set"
+    },
+    {
+     "perturbation": "pre-reformer C2+ slip 5%",
+     "X_CH4": 0.8905433156624535,
+     "delta": -0.0005848196296580621,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] pre-reformer conversion is modelled, not measured"
+    },
+    {
+     "perturbation": "pre-reformer C2+ slip 20%",
+     "X_CH4": 0.8887883081204546,
+     "delta": -0.0023398271716569274,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] pre-reformer conversion is modelled, not measured"
+    }
+   ],
+   "X_model_reported": 0.8915375182849358,
+   "reported_minus_banded": 0.0004093829928242254,
+   "gap_over_envelope_half_width": null,
+   "gap_over_quadrature": null,
+   "measurement_inside_model_band": null,
+   "kind": "design point (no external data; band only)"
+  },
+  {
+   "record_id": "design_ft",
+   "source_id": "THIS MODEL",
+   "T_K": 1508.9283219605954,
+   "p_bar": 25.0,
+   "S_C": 0.6,
+   "CO2_C": 0.0,
+   "X_measured": null,
+   "label": "ft design point (model's own feed)",
+   "inputs": {
+    "T_K": 1508.9283219605954,
+    "p_bar": 25.0,
+    "approach_K": 10.0
+   },
+   "X_base": 0.9986247696422658,
+   "carbon_stable_base": false,
+   "envelope_min": 0.9984423275156707,
+   "envelope_max": 0.998783943279521,
+   "envelope_half_width": 0.00017080788192513907,
+   "quadrature_half_width": 7.417911391884076e-05,
+   "largest_single_effect": {
+    "perturbation": "approach_K_+10K",
+    "X_CH4": 0.9984423275156707,
+    "delta": -0.00018244212659501713,
+    "carbon_stable": false,
+    "status": "[ЧАСТИЧНО] finite-rate assumption, one half-step"
+   },
+   "rows": [
+    {
+     "perturbation": "true equilibrium (approach_K=0)",
+     "X_CH4": 0.998783943279521,
+     "delta": 0.000159173637255261,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] the design basis applies a finite-rate approach"
+    },
+    {
+     "perturbation": "T_+2K",
+     "X_CH4": 0.9986583569433926,
+     "delta": 3.358730112679176e-05,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement (docs/27 sec. 6)"
+    },
+    {
+     "perturbation": "T_-2K",
+     "X_CH4": 0.9985902533202542,
+     "delta": -3.451632201156851e-05,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] sensor requirement (docs/27 sec. 6)"
+    },
+    {
+     "perturbation": "H2O_+2%",
+     "X_CH4": 0.9986509115065252,
+     "delta": 2.6141864259421332e-05,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "H2O_-2%",
+     "X_CH4": 0.9985978649762058,
+     "delta": -2.69046660599237e-05,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] steam metering"
+    },
+    {
+     "perturbation": "CO2_+2%",
+     "X_CH4": 0.9986248569077693,
+     "delta": 8.726550349003048e-08,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CO2_-2%",
+     "X_CH4": 0.9986246823705686,
+     "delta": -8.727169720224026e-08,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] CO2 metering"
+    },
+    {
+     "perturbation": "CH4_-1%",
+     "X_CH4": 0.998681595519428,
+     "delta": 5.682587716226983e-05,
+     "carbon_stable": false,
+     "status": "[ДОПУЩЕНИЕ] feed analysis"
+    },
+    {
+     "perturbation": "approach_K_+10K",
+     "X_CH4": 0.9984423275156707,
+     "delta": -0.00018244212659501713,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] finite-rate assumption, one half-step"
+    },
+    {
+     "perturbation": "kij_zero",
+     "X_CH4": 0.9986244544074403,
+     "delta": -3.152348254653603e-07,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] opened kij set"
+    },
+    {
+     "perturbation": "kij_high",
+     "X_CH4": 0.9986248117993989,
+     "delta": 4.2157133117726175e-08,
+     "carbon_stable": false,
+     "status": "[ПОДТВЕРЖДЕНО] opened kij set"
+    },
+    {
+     "perturbation": "pre-reformer C2+ slip 5%",
+     "X_CH4": 0.9986063171424924,
+     "delta": -1.8452499773391473e-05,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] pre-reformer conversion is modelled, not measured"
+    },
+    {
+     "perturbation": "pre-reformer C2+ slip 20%",
+     "X_CH4": 0.9985498355175982,
+     "delta": -7.493412466752503e-05,
+     "carbon_stable": false,
+     "status": "[ЧАСТИЧНО] pre-reformer conversion is modelled, not measured"
+    }
+   ],
+   "X_model_reported": 0.998783943279521,
+   "reported_minus_banded": 0.000159173637255261,
+   "gap_over_envelope_half_width": null,
+   "gap_over_quadrature": null,
+   "measurement_inside_model_band": null,
+   "kind": "design point (no external data; band only)"
+  }
+ ],
+ "n_points": 9,
+ "mean_envelope_half_width": 0.014135502464285292,
+ "mean_quadrature_half_width": 0.007360260772688363,
+ "max_quadrature_half_width": 0.010576423976384761,
+ "pilot_points_inside_model_band": 0,
+ "pilot_points_total": 6,
+ "median_gap_over_envelope": 32.372386613328466,
+ "verdict": "the +0.287 mean bias is NOT explained by input uncertainty: it is 5.8-35.8x the per-point envelope half-width",
+ "how_to_use_in_loop5": "a bias smaller than the band is a null result, not a pass; the band shrinks only when the pilot reports real sensor and analysis uncertainties (data/pilot_schema.json X_CH4_u etc.)",
+ "status": "[ЧАСТИЧНО] computed sensitivity; perturbation magnitudes are documented assumptions"
+}

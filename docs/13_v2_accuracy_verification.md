@@ -8,7 +8,7 @@ accepted equivalent. No claim of a HYSYS run is made.
 
 | loop | passed | key number |
 |---|---|---|
-| 1_sources | YES | 71 claims |
+| 1_sources | YES | 81 claims |
 | 2_arithmetic | YES | max rel error 1.84e-16 |
 | 3_conservation | YES | max error 1.6e-12% |
 | 4_thermo | YES | Q*Kphi/K dev 2.376e-12% |
@@ -18,7 +18,7 @@ Overall: **FAIL (loop 5 open by design)**.
 
 ## 13.2 Loop 1 - sources and claims
 
-71 registered claims: {'[ПОДТВЕРЖДЕНО]': 24, '[ЧАСТИЧНО]': 32, '[ДОПУЩЕНИЕ]': 11, '[НЕ ПОДТВЕРЖДЕНО]': 4}.
+81 registered claims: {'[ПОДТВЕРЖДЕНО]': 29, '[ЧАСТИЧНО]': 36, '[ДОПУЩЕНИЕ]': 12, '[НЕ ПОДТВЕРЖДЕНО]': 4}.
 Problems: []. Full registry: `data/v2_claims.json`,
 `docs/v2_claims_register.md`.
 
@@ -62,7 +62,7 @@ PSA tail gas and dryer water.
   water/steam property source in V2.
 - PR vs ideal X_CH4: 0.80884 -> 0.80730 (delta -0.00155); k_ij spread in X_CH4 = 0.001779.
 - **Independent SciPy SLSQP** real-gas minimisation: success = True, max |Δy_wet| = 1.0949905260293491e-08, X_CH4 SciPy 0.807295 vs model 0.807295. [ПОДТВЕРЖДЕНО] numerical cross-check.
-- Extra V3 checks: {'scipy': True, 'prereformer': True, 'synthesis': True, 'safety': True, 'dP': True, 'NH3_Ka_vs_NIST': True}. Pre-reformer C2+ conversion >0,99; saleable product >0; Ni(CO)4 in normal operation <1 ppb; Ergun Δp ≤ 3 bar after tube-count sizing.
+- Extra V3 checks: {'scipy': True, 'prereformer': True, 'synthesis': True, 'safety': True, 'dP': True, 'NH3_Ka_vs_NIST': True, 'NH3_layout_scan': True}. Pre-reformer C2+ conversion >0,99; saleable product >0; Ni(CO)4 in normal operation <1 ppb; Ergun Δp ≤ 3 bar after tube-count sizing.
 | продукт | C2+ конверсия | продукт т/ч | Ni(CO)4 ppb | Δp бар | труб |
 |---|---|---|---|---|---|
 | methanol | 0.9994 | 40.24 | 0.00057 | 2.828 | 509 |

@@ -340,6 +340,286 @@ def md_table(headers, rows):
     return "\n".join(out)
 
 
+def write_methanol_adiabatic_doc():
+    """docs/31: the methanol adiabatic march against the opened VBF worked case."""
+    path = os.path.join(OUT, "methanol_adiabatic_check.json")
+    if not os.path.exists(path):
+        return False
+    d = json.load(open(path, encoding="utf-8"))
+    from .methanol_converter import VBF_TABLE3 as V3_KEYS
+    tm, cp = d["this_model"], d["comparison"]
+    L = ["# 31. Адиабатический метанольный реактор: сверка с открытым кейсом VBF", "",
+         "Сгенерировано `model/run_v2.py` из `results_v2/methanol_adiabatic_check.json` "
+         "(источник: `python -m model.methanol_converter`).", "",
+         "## 31.1 Зачем это нужно", "",
+         "В V4 кинетика Vanden Bussche–Froment интегрировалась **изотермически**. "
+         "Открытого непоизотермического кейса для этого закона в проекте не было, и "
+         "расхождение «30,22 %/проход против 3,4 мол.% на выходе у промышленной "
+         "установки» нельзя было объяснить: ошибка может быть и в кинетике, и в "
+         "предположении об изотермичности. Теперь найден и открыт кейс, где те же "
+         "авторы сами считают **адиабатический** реактор (Table 3 + Fig. 5 их "
+         "статьи), и модель воспроизводится на нём целиком: кинетика + тепловой "
+         "баланс + энтальпии.", "",
+         "## 31.2 Условия кейса (переписаны дословно из статьи)", "",
+         "| параметр | значение |", "|---|---|",
+         "| T на входе | %s K |" % V3_KEYS["T_in_K"],
+         "| p | %s бар |" % V3_KEYS["p_bar"],
+         "| массовый расход | 2,8·10⁻⁵ кг/с |",
+         "| масса катализатора | %s г (ICI 51‑2, d_p = 0,5 мм) |" % V3_KEYS["catalyst_mass_g"],
+         "| реакция | Cu/ZnO/Al₂O₃, VBF, η = 1 |",
+         "| состав питания, мол.%% | CO %s, CO₂ %s, H₂ %s, инерт %s, H₂O/MeOH 0 |"
+         % (V3_KEYS["feed_molpct"]["CO"], V3_KEYS["feed_molpct"]["CO2"],
+            V3_KEYS["feed_molpct"]["H2"], V3_KEYS["feed_molpct"]["INERT"]),
+         "| W/F (пространственный время) | %s кг·с/моль |"
+         % d["inputs"]["space_time_kg_cat_s_per_mol_feed"], "",
+         "Средняя молярная масса питания %s г/моль → %s моль/ч полного потока; "
+         "давление по постели не меняется (короткий лабораторный реактор), "
+         "напор/Δp не моделируется." % (round(d["inputs"]["mean_molar_mass_g_per_mol"], 3),
+                                       round(d["inputs"]["F_mol_h"]["H2"] / 0.82, 2)), "",
+         "## 31.3 Результат сверки", "",
+         md_table(["показатель", "эта модель", "опубликовано", "отклонение"],
+                  [["T на выходе, K", fnum(cp["T_out_K"]["model"], 2),
+                    fnum(cp["T_out_K"]["published"], 1),
+                    fnum(cp["T_out_K"]["dev_K"], 2)],
+                   ["ΔT адиабатического подъёма, K", fnum(tm["dT_ad_K"], 2), "58,8",
+                    fnum(tm["dT_ad_K"] - 58.8, 2)],
+                   ["CO₂, мол.%", fnum(tm["y_out_molpct"]["CO2"], 3), "2,1",
+                    fnum(cp["CO2_molpct"]["dev_pp"], 3)],
+                   ["CO, мол.%", fnum(tm["y_out_molpct"]["CO"], 3), "2,9",
+                    fnum(cp["CO_molpct"]["dev_pp"], 3)],
+                   ["CH₃OH, мол.%", fnum(tm["y_out_molpct"]["CH3OH"], 3), "2,4",
+                    fnum(cp["MeOH_molpct"]["dev_pp"], 3)],
+                   ["H₂O, мол.%", fnum(tm["y_out_molpct"]["H2O"], 3), "1,1",
+                    fnum(cp["H2O_molpct"]["dev_pp"], 3)]]), "",
+         "Пороги (0,5 мол.% и 15 K) зафиксированы **до** просмотра результата; "
+         "критерий «внутри окна применимости»: кейс лежит в 180–280 °C / 15–51 бар, "
+         "для которых VBF и выводился — в отличие от промышленного кейса V4, где "
+         "GHSV лежал вне открытого коридора. Углерод сходится на "
+         "{:.1e}, невязка энтальпийного баланса {:.1e}.".format(
+             tm["carbon_closure_rel"], tm["enthalpy_residual_rel"]), "",
+         "Энтальпия реакции CO₂ + 3H₂ → CH₃OH + H₂O, собранная из энтальпий этой "
+         "модели: **{} кДж/моль при 298,15 K** против −49,7 кДж/моль (Appl. Sci. "
+         "2017, уже цитируется в проекте) и **{} кДж/моль для CO + 2H₂ → CH₃OH** "
+         "против −90,7 — то есть термодинамическая часть независима от кинетики и "
+         "сходится с цитируемым значением до 0,3 кДж/моль. При T на выходе "
+         "({} K) та же реакция даёт {} кДж/моль: рост модуля на {} кДж/моль "
+         "соответствует среднему Δcp = {} Дж/(моль·K) на интервале 298–{} K — "
+         "это следствие учёта теплоёмкости всех шести компонентов, а не "
+         "расхождение модели и источника."
+         .format(round(tm["dH_CO2_route_kJ_per_mol_at_298_K"], 2),
+                 round(tm["dH_CO_route_kJ_per_mol_at_298_K"], 2),
+                 round(tm["T_out_K"], 1),
+                 round(tm["dH_CO2_route_kJ_per_mol_at_T_out"], 2),
+                 round(abs(tm["dH_CO2_route_kJ_per_mol_at_T_out"]
+                           - tm["dH_CO2_route_kJ_per_mol_at_298_K"]), 2),
+                 round(1000.0 * (tm["dH_CO2_route_kJ_per_mol_at_T_out"]
+                                 - tm["dH_CO2_route_kJ_per_mol_at_298_K"])
+                       / (tm["T_out_K"] - 298.15), 1),
+                 round(tm["T_out_K"], 0)), "",
+         "## 31.4 Чувствительность к недоопределённым входным данным", "",
+         md_table(["вариант", "T на выходе, K", "MeOH, мол.%", "CO₂, мол.%",
+                   "CO, мол.%", "H₂O, мол.%"],
+                  [[v["variant"], fnum(v["T_out_K"], 2), fnum(v["MeOH_molpct"], 3),
+                    fnum(v["CO2_molpct"], 3), fnum(v["CO_molpct"], 3),
+                    fnum(v["H2O_molpct"], 3)] for v in d["sensitivity"]]), "",
+         "Инерт в Table 3 не назван, а ΔfH°(CH₃OH) на странице NIST приведён как "
+         "−205±10 кДж/моль (использовано −201,49 из той же страницы — оно "
+         "воспроизводит обе энтальпии реакций, уже цитируемые в проекте). Оба "
+         "выбора меняют подъём температуры не более чем на 1,1 K — вывод не "
+         "чувствителен.", "",
+         "Самопроверка опубликованных цифр: из MeOH и CO восстанавливаются степени "
+         "протекания a = {} и b = {} (на 100 моль питания, b < 0 = суммарно идёт "
+         "WGS), и предсказанные по ним CO₂/H₂O равны {}/{} мол.% против "
+         "опубликованных 2,1/1,1 — то есть цифры рисунка внутренне согласованы до "
+         "{} мол.%, а не являются ошибкой распознавания."
+         .format(d["published_end_point_self_consistency"]["extent_MeOH_per_100mol_feed"],
+                 d["published_end_point_self_consistency"]["extent_RWGS_per_100mol_feed"],
+                 d["published_end_point_self_consistency"]["predicted_from_extents"]["CO2_molpct"],
+                 d["published_end_point_self_consistency"]["predicted_from_extents"]["H2O_molpct"],
+                 round(d["published_end_point_self_consistency"]["max_self_inconsistency_pp"], 3)), "",
+         "## 31.5 Что это доказывает и чего не доказывает", "",
+         "**Доказывает:** корректность реализации — размерности скоростей VBF, "
+         "знак и величина тепловыделения, связь T с составом, интегратор; "
+         "кинетика VBF при 493–552 K даёт именно тот отклик, который дают её "
+         "авторы; адиабатичность (а не изотермичность) меняет выход MeOH на этом "
+         "кейсе на {} мол.% — то есть допущение об изотермичности в V4 недооценивало "
+         "состав, но НЕ объясняет расхождение с промышленным 3,4 мол.%."
+         .format(round(abs(d["sensitivity"][-1]["MeOH_molpct"]
+                          - tm["y_out_molpct"]["CH3OH"]), 3)), "",
+         "**Не доказывает:** что Cu/ZnO/Al₂O₃ из `cases/config.json` имеет активность "
+         "ICI 51‑2, что наш промышленный реактор адиабатический (у нас tubular с "
+         "теплосъёмом), и что VBF верен за пределами 180–280 °C. Это сверка модели с "
+         "моделью, а не с установкой; контур 5 от неё не закрывается.", "",
+         "## 31.6 Профиль по длине постели (эта модель)", "",
+         md_table(["W/W_total", "T, K", "MeOH, мол.%", "CO₂, мол.%", "CO, мол.%",
+                   "H₂O, мол.%"],
+                  [[fnum(p["W_over_Wtot"], 3), fnum(p["T_K"], 1), p["y_MeOH_molpct"],
+                    p["y_CO2_molpct"], p["y_CO_molpct"], p["y_H2O_molpct"]]
+                   for p in d["profile"]]), "",
+         "Температура на выходе — максимум профиля (промежуточного охлаждения нет). "
+         "Статья описывает смену направления RWGS примерно на 3 мм постели; в этом "
+         "профиле это видно как резкое замедление роста H₂O в первых 5 % длины "
+         "(0,045 → 0,571 → 0,726 мол.%). Разрешение в 20 точек не позволяет "
+         "утверждать, что разворот произошёл именно на 3 мм, — это качественное, а "
+         "не совмёрванное совпадение. Позицию выхода на равновесие статья "
+         "указывает явно: «At 3 cm in the bed, the thermodynamic equilibrium "
+         "concentrations are attained», т.е. W/W_total ~ 0,2; в этом профиле "
+         "прирост MeOH на 10 % длины падает ниже 0,01 мол.% начиная с "
+         "W/W_total = {} — то есть выход на равновесие происходит позже, чем "
+         "указано в подписи (при том что конечная точка совпадает)."
+         .format(_eq_onset(d["profile"]))]
+    notes = ["", "", "---", "", "> Примечания. %s" % " / ".join([
+                 "источник кейса: %s (%s)" % (V3_KEYS["reference"], V3_KEYS["doi"]),
+                 "URL: %s" % V3_KEYS["url"],
+                 "энтальпии: NIST Shomate (CO, CO₂, H₂, H₂O) + таблица Cp NIST/TRC для CH₃OH в data/nist_cp_ch3oh.json",
+                 "приведённые статусы: %s" % d["status"],
+             ]), ""]
+    open(os.path.join(DOCS, "31_v5_methanol_adiabatic.md"), "w",
+         encoding="utf-8").write("\n".join(L + notes))
+    return True
+
+
+def _eq_onset(profile, thr=0.01):
+    """First W/W_total from which the MeOH gain over the next 10 % of the bed
+    stays below `thr` mol% (i.e. the march has effectively reached equilibrium)."""
+    pts = [p for p in (profile or [])]
+    for i, p in enumerate(pts):
+        j = min(i + 2, len(pts) - 1)
+        if j <= i:
+            continue
+        if abs(pts[j]["y_MeOH_molpct"] - p["y_MeOH_molpct"]) < thr:
+            return round(p["W_over_Wtot"], 2)
+    return None
+
+
+def write_uncertainty_doc():
+    """docs/30: model-side input-uncertainty envelope (model/uncertainty.py).
+
+    Generated from the saved JSON only, so it cannot drift from the run."""
+    path = os.path.join(OUT, "model_uncertainty.json")
+    if not os.path.exists(path):
+        return False
+    d = json.load(open(path, encoding="utf-8"))
+    from . import uncertainty as unc
+    L = ["# 30. Собственная неопределённость модели (X_CH4) и её отношение к "
+         "расхождению с пилотом", "",
+         "Сгенерировано `model/run_v2.py` из `results_v2/model_uncertainty.json` "
+         "(источник: `python -m model.uncertainty`).", "",
+         "## 30.1 Постановка", "",
+         "Модель равновесная (Gibbs + подход к равновесию), пилот — кинетический при "
+         "1–10 бар. Перед тем как объяснять расхождение +0.287 по X_CH4 «неточностью "
+         "исходных данных», посчитано, насколько вообще model X_CH4 может двигаться от "
+         "тех входных неопределённостей, которые у нас есть: анализ состава, "
+         "расходомеры, датчики температуры, набор kij, допущение подхода к равновесию "
+         "и (для проектных точек) проскок C2+ в предреформере. Метод — один фактор за "
+         "раз (OFAT), огибающая min/max; квадратичная сумма дана отдельно и "
+         "интерпретируется как нижняя оценка (корреляции знаков между факторами "
+         "игнорируются).", "",
+         "## 30.2 Принятые величины неопределённостей", "",
+         "| возмущение | величина | статус / обоснование |", "|---|---|---|"]
+    def _desc(v):
+        if "dT" in v:
+            return "ΔT = %+.1f K" % v["dT"]
+        if "dSC" in v:
+            return "S/C %+.0f %%" % (100.0 * v["dSC"])
+        if "dCO2C" in v:
+            return "CO2/C %+.0f %%" % (100.0 * v["dCO2C"])
+        if "dCH4" in v:
+            return "доля CH4 %+.0f %%" % (100.0 * v["dCH4"])
+        if "approach_K" in v:
+            return "подход к равновесию %g K" % v["approach_K"]
+        if "kset" in v:
+            return "набор kij → %s" % v["kset"]
+        return str(v)
+
+    for k, v in unc.PERTURB.items():
+        L.append("| %s | %s | %s |" % (k, _desc(v),
+                                       unc.STATUSES.get(next(iter(v)),
+                                                         "[ДОПУЩЕНИЕ]")))
+    L.append("| явный C2+ / проскок через предреформер | 0 → 10 % углерода как "
+             "этана (пилотные точки); 5 и 20 % проскока (проектные точки) | "
+             "[ЧАСТИЧНО] предреформер смоделирован, его эффективность не "
+             "измерена |")
+    L += ["",
+          "Значения взяты из требований к кампанию (docs/27 разд. 6) и из уже "
+          "сконструированных наборов kij; они НЕ измерены — это допущения о приборной "
+          "и аналитической точности, которые кампания должна подтвердить.", "",
+          "## 30.3 Результат: огибающая по каждой точке", "",
+          "| точка | T, K | p, бар | X базы | огибающая | ±полуширина | квадратура | "
+          "X измерения | измерено − модель | зазор/полуширина | крупнейший фактор |",
+          "|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r in d["points"]:
+        xm = r.get("X_measured")
+        gm = r.get("measured_minus_model")
+        L.append("| %s | %.2f | %.1f | %.4f | %.4f–%.4f | %.4f | %.4f | %s | %s | %s | %s |"
+                 % (r["record_id"], r["T_K"], r["p_bar"], r["X_base"],
+                    r["envelope_min"], r["envelope_max"],
+                    r["envelope_half_width"], r["quadrature_half_width"],
+                    ("%.3f" % xm) if xm is not None else "—",
+                    ("%+.3f" % gm) if gm is not None else "—",
+                    ("%.1f×" % r["gap_over_envelope_half_width"])
+                    if r.get("gap_over_envelope_half_width") is not None else "—",
+                    "%s (%+.4f)" % (r["largest_single_effect"]["perturbation"],
+                                    r["largest_single_effect"]["delta"])))
+    s = d
+    L += ["", "## 30.4 Вывод", "",
+          "1. **Термодинамика и состав сырья не объясняют расхождение с piloтом.** "
+          "Собственная огибающая модели по X_CH4 — ±%.4f…±%.4f (в среднем ±%.4f, "
+          "квадратично ±%.4f); расхождение с измеренными значениями превышает её в "
+          "%.1f–%.1f раза, и НИ ОДНА из %d открытых пилотных точек не попадает в полосу "
+          "модели." % (min(r["envelope_half_width"] for r in d["points"] if
+                           r.get("measured_minus_model") is not None),
+                        max(r["envelope_half_width"] for r in d["points"] if
+                            r.get("measured_minus_model") is not None),
+                        s["mean_envelope_half_width"], s["mean_quadrature_half_width"],
+                        min(r["gap_over_envelope_half_width"] for r in d["points"] if
+                            r.get("gap_over_envelope_half_width") is not None),
+                        max(r["gap_over_envelope_half_width"] for r in d["points"] if
+                            r.get("gap_over_envelope_half_width") is not None),
+                        s["pilot_points_total"]),
+          "2. При этом направление расхождения совпадает с физикой: при 1 бар модель "
+          "завышает сильнее всего (+0.461), при 10 бар — наименьшее (+0.095), а тренд по "
+          "давлению воспроизведён. Это признак кинетического ограничения лабораторных "
+          "точек, а не ошибки в данных или в EOS.",
+          "3. **Крупнейший собственный допуск проектных точек — не состав и не kij, а "
+          "допущение о подходе к равновесию**: ±0.022…0.024 по X_CH4 (метанол), против "
+          "≤0.005 от T (±2 K), ≤0.004 от S/C (±2 %), ≤0.0003 от выбора kij. То есть "
+          "первым дело надо измерять кинетику (кампания docs/27), а не «уточнять "
+          "термодинамику».",
+          "4. Полосы проектных точек воспроизводят собственные отчёты моделей "
+          "(|X_базы − X_в отчёте| ≤ %.4f), то есть расчёт чувствительности идёт по той "
+          "же цепочке, что и проект, — а не по её упрощению."
+          % max(abs(r["X_base"] - r["X_model_reported"]) for r in d["points"]
+                if r.get("X_model_reported") is not None), "",
+          "## 30.5 Чего этот расчёт НЕ делает", "",
+          "* не является валидацией и не двигает контур 5 к PASS — он проверяет "
+          "устойчивость *объяснения* расхождения;",
+          "* не охватывает кинетическую неопределённость (η, deactivation, k0 "
+          "синтеза NH3 с множителем 2.36 по docs/26) — она на порядок больше;",
+          "* OFAT-огибающая завышает полосу, когда факторы частично компенсируют друг "
+          "друга (S/C и CO2/C), а квадратурная — занижает при однонаправленных "
+          "эффектах; обе приведены, чтобы не выбирать удобную;",
+          "* допущения о приборах (±2 K, ±1…2 %) взяты из требований к кампании, а не "
+          "из калибровочных сертификатов лаборатории.", "",
+          "## 30.6 Что делать с этим результатом", "",
+          "В кампанию docs/27 добавлен расчётный тест: если после закрытия контракта "
+          "остатки останутся вне полосы (а они вне её на всех открытых точках), вывод "
+          "о кинетическом режиме подтверждается, и следующим шагом становится калибровка "
+          "кинетического множителя по campaign-данным — по той же процедуре из одного "
+          "скаляра, что уже применена к конвертеру NH3 (docs/26 разд. 4), а не "
+          "«уточнение EOS»."]
+    notes = ["", "", "---", "",
+             "> Примечания. %s" % " / ".join([
+                 "полоса = [envelope_min, envelope_max] вокруг X_base при OFAT-возмущениях",
+                 "квадратурная полуширина — нижняя оценка, OFAT-огибающая — верхняя",
+                 "проектные точки используют СОБСТВЕННЫЙ поток сырья модели и "
+                 "подход к равновесию 10 K из config.json",
+             ]), ""]
+    open(os.path.join(DOCS, "30_v5_uncertainty.md"), "w",
+         encoding="utf-8").write("\n".join(L + notes))
+    return True
+
+
 def fnum(x, n=3):
     if x is None: return "n/a"
     try: return f"{float(x):.{n}f}"
@@ -793,6 +1073,37 @@ Still true after V5: **no pilot campaign has been run, no vendor datasheet was
 obtained, no certified HAZOP took place, and no HYSYS run exists** - those are
 physical and organisational acts that a code agent cannot perform; they are
 prepared for, not faked. Loop 5 stays FAILED until the data arrive.
+
+## 17.7 V5.1 state (same data, three closable gaps removed)
+
+Three gaps that did **not** need new data were closed on the model side:
+
+1. **The model's own uncertainty band on X_CH4 is now quantified**
+   (`model/uncertainty.py`, docs/30): OFAT envelope +/-0.014 average over the 6
+   open pilot points and 3 design points, quadrature +/-0.007. The pilot/model
+   bias of +0.287 exceeds the band by 5.8-35.8x at every point, so the
+   discrepancy CANNOT be blamed on feed analysis, T sensors, S/C, CO2/C or kij
+   - it is the kinetic regime, exactly as claimed. Largest single design-side
+   tolerance: the 10 K approach-to-equilibrium assumption (+/-0.023 on X_CH4),
+   5x bigger than all thermodynamic factors combined.
+2. **The ammonia peak-temperature problem is now a design trade-off, not an
+   open defect** (`scan_converter_layouts`, docs/26 sec. 6): 12 layouts
+   (2-5 beds x 0/15/30% cold shot) were scanned at constant catalyst volume;
+   all 12 can be held at or below the assumed 803 K ceiling (inlet 628-666 K),
+   6 of them also inside the opened 15-20% per-pass band, and 5 beds with no
+   quench reproduces the opened 13 mol% outlet benchmark (13.21 mol%) at
+   802.6 K peak.
+3. **The methanol kinetics are now validated against a non-isothermal case**
+   (`model/methanol_converter.py`, docs/31): the adiabatic march reproduces the
+   published VBF bench-scale base case to 0.54 K on T_out and <=0.12 mol% on
+   every species (tolerances fixed beforehand), with carbon closure 1e-9,
+   enthalpy residual 1e-8, and the case inside the 180-280 C / 15-51 bar
+   validity window. This is model-to-model verification of the implementation -
+   NOT pilot or plant validation, and loop 5 is still open because of that.
+
+Loop 5 after V5.1: {l5["subchecks_passed"]} of {l5["subchecks_total"]} subchecks
+pass; the status is FAILED by design until the campaign, the vendor datasheet
+and a certified HAZOP exist.
 """
     open(os.path.join(DOCS, "17_v2_final_report.md"), "w", encoding="utf-8").write(txt)
 
@@ -1162,7 +1473,19 @@ NH₃ на выходе **{tp['outlet_NH3_molpct']:.2f} мол.%** при GHSV
 ## 23.3 Что осталось
 
 FT и оксо по-прежнему стехиометрические (открытых кинетических наборов с
-параметрами в этой сессии не получено). Все кинетические блоки доступны в
+параметрами в этой сессии не получено).
+
+V5.1: для метанольной кинетики найден и открыт **единственный доступный
+непоизотермический кейс** — адиабатический лабораторный реактор Table 3 /
+Fig. 5 той же статьи Vanden Bussche–Froment. Адиабатический марш этого проекта
+(`model/methanol_converter.py`, `docs/31`) воспроизводит его с отклонением
+0,54 K по температуре на выходе и ≤0,12 мол.% по всем четырём табличным
+компонентам; изотермическое упрощение на том же кейсе ошибается на 0,28 мол.%
+по CO₂. Это снимает неопределённость «кинетика или допущение об
+изотермичности» — но является сверкой модели с моделью, поэтому контур 5 оно не
+закрывает.
+
+Все кинетические блоки доступны в
 `results_v2/design_*.json -> synthesis.kinetic` и в панели управления.
 """
     open(os.path.join(DOCS, "23_v4_kinetic_synthesis.md"), "w", encoding="utf-8").write(txt)
@@ -1279,6 +1602,9 @@ FT и оксо по-прежнему стехиометрические (отк�
     ce = cv.get("equilibrium_check") or {}
     rec = cd.get("recycle_closure") or {}
     rm = cv.get("peak_temperature_remedy") or {}
+    ls = cv.get("layout_scan") or {}
+    b1 = ls.get("best_by_outlet_NH3") or {}
+    b2 = ls.get("best_by_outlet_NH3_inside_opened_band") or {}
     txt = f"""# 26. V5 — многосекционный адиабатический конвертор NH₃ и калибровка k₀
 
 Замена изотермического PFR (V4) на промышленно корректный аппарат:
@@ -1386,7 +1712,47 @@ Kp для N₂ + 3H₂ → 2NH₃ пересобран из энергий Ги�
 {'ПРОЙДЕНА' if ce.get('passed_within_15pct') else 'ПРОВАЛЕНА'} и добавлена в контур 4.
 {ce.get('note','')}
 
-## 26.6 Что осталось непроверенным (не скрывать)
+## 26.6 Поиск компоновки: число секций и холодный вброс
+
+Пик температуры над потолком — не приговор конструкции: подъём адиабатической
+секции пропорционален конверсии, которую эта секция несёт, поэтому у реального
+конвертора есть два рычага — разбить тот же объём катализатора на большее число
+секций и вбрасывать между секциями часть свежего газа (холодный вброс). Ниже —
+скан `model/converter.py:scan_converter_layouts`: для каждой компоновки общая
+температура входа в секции бисекцией поднимается до максимума, при котором
+пик ещё не превышает потолок {fnum((ls.get('held_constant') or {}).get('bed_T_max_K_assumed'),1)} K;
+k_scale, давление, GHSV и полный объём катализатора во всех строках одинаковы,
+поэтому строки сравнимы.
+
+{md_table(['секций','холод. вброс, %','T входа, K','T пик, K','X за проход, %','выход NH₃, мол.%','в коридоре 15–20 %','Q межсекц. охлаждения, МВт'],
+          [[r['n_beds'], fnum(100*r['cold_shot_fraction'],0), fnum(r['common_bed_inlet_K'],1),
+            fnum(r['T_peak_K'],1), fnum(r['per_pass_N2_pct'],2),
+            fnum(r['outlet_NH3_molpct'],2),
+            'да' if r['inside_opened_per_pass_band'] else 'нет',
+            fnum(r['interbed_cooling_duty_MW'],1)] for r in ls.get('rows', [])])}
+
+Компоновок, укладывающихся в потолок: **{ls.get('layouts_meeting_ceiling',0)} из
+{ls.get('layouts_total',0)}**; из них одновременно в открытом коридоре
+захода N₂: **{ls.get('layouts_meeting_ceiling_AND_opened_band',0)}**.
+
+- Максимум по выходу NH₃ (главный параметр для разделения):
+  {b1.get('n_beds') if b1 else '—'} секций, вброс
+  {fnum(100*(b1 or {}).get('cold_shot_fraction',0),0)} %, вход
+  {fnum((b1 or {}).get('common_bed_inlet_K',0),1)} K → пик
+  {fnum((b1 or {}).get('T_peak_K',0),1)} K, X {fnum((b1 or {}).get('per_pass_N2_pct',0),2)} %,
+  выход {fnum((b1 or {}).get('outlet_NH3_molpct',0),2)} мол.% NH₃.
+- Лучшая компоновка, попадающая И в потолок, И в коридор 15–20 %:
+  {b2.get('n_beds') if b2 else '—'} секций, вброс
+  {fnum(100*(b2 or {}).get('cold_shot_fraction',0),0)} % → X
+  {fnum((b2 or {}).get('per_pass_N2_pct',0),2)} %, выход
+  {fnum((b2 or {}).get('outlet_NH3_molpct',0),2)} мол.%, Q охлаждения
+  {fnum((b2 or {}).get('interbed_cooling_duty_MW',0),1)} МВт.
+
+Вывод: **потолок выполняется тривиально, а вот сочетание «потолок + коридор
+захода + высокая концентрация NH₃ на выходе» — нет.** {ls.get('finding','')}
+{ls.get('status','')}
+
+## 26.7 Что осталось непроверенным (не скрывать)
 
 1. Калибровка сделана по **чужому** заводу и **чужому** катализатору: это не
    валидация контура 5.
@@ -1401,9 +1767,9 @@ Kp для N₂ + 3H₂ → 2NH₃ пересобран из энергий Ги�
    магнетитового катализатора аммиачного синтеза открытых питательных данных
    по 200–1000 ч в этом проекте нет.
 
-## 26.7 Следующий шаг
+## 26.8 Следующий шаг
 
-Прогнать `model/data_ingest.py` на данных питотной кампании (`docs/27`), затем
+Прогнать `model/data_ingest.py` на данных пилотной кампании (`docs/27`), затем
 пересобрать контур 5. До появления этих данных k_scale остаётся
 подгоночным параметром с неопределённостью ×{fnum(cc.get('k0_uncertainty_factor'),2)}.
 """
@@ -1434,6 +1800,19 @@ def main():
         base["ammonia"]["synthesis"]["kinetic"]["ammonia_converter"] = {
             "computed": False, "error": repr(exc)}
     print(f"[v5] converter done in {time.time()-t0:.1f} s")
+    print("[v5.1] uncertainty envelope + methanol adiabatic benchmark ...")
+    t1 = time.time()
+    try:                                       # writes both result files itself
+        from .uncertainty import main as uncertainty_main
+        uncertainty_main()
+    except Exception as exc:                   # never lose the run
+        print("[v5.1] uncertainty envelope FAILED:", repr(exc))
+    try:
+        from .methanol_converter import build_report as meth_report
+        dump_json(os.path.join(OUT, "methanol_adiabatic_check.json"), meth_report())
+    except Exception as exc:
+        print("[v5.1] methanol adiabatic benchmark FAILED:", repr(exc))
+    print(f"[v5.1] done in {time.time()-t1:.1f} s")
     print("[v2] running five verification loops ...")
     v = verify_all(base, sc)
     # write
@@ -1535,8 +1914,10 @@ def main():
     make_plots(base, sc, v)
     print("[v2] writing reports ...")
     write_reports(base, sc, v)
+    write_uncertainty_doc()
+    write_methanol_adiabatic_doc()
     print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/, docs/12..26 "
-          f"(V5 handover packs: docs/27..29)")
+          f"(V5 handover packs: docs/27..29; V5.1: docs/30..31)")
     print("[v2] verification:", v["summary"])
     return 0
 

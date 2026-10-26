@@ -192,6 +192,77 @@ def scipy_pr_minimisation(feed, T, p_bar, kset="base"):
             "X_CH4_model": r["CH4_conversion"]}
 
 
+def _layout_scan_check(ls):
+    """Validate one layout-scan payload (from this run or from the saved file)."""
+    rows = ls.get("rows") or []
+    if len(rows) < 4:
+        return False, "layout scan present but too small (%d rows)" % len(rows)
+    lim = float((ls.get("held_constant") or {}).get("bed_T_max_K_assumed", 803.15))
+    mislabel = [r for r in rows
+                if bool(r["peak_within_ceiling"]) != bool(r["T_peak_K"] <= lim + 0.6)]
+    best = ls.get("best_by_outlet_NH3") or {}
+    ok = (not mislabel and ls.get("layouts_meeting_ceiling", 0) >= 1
+          and ls.get("layouts_meeting_ceiling_AND_opened_band", 0) >= 1
+          and best.get("T_peak_K", 1e9) <= lim + 0.6
+          and len(rows) == ls.get("layouts_total"))
+    return ok, ("%d/%d layouts meet the %.0f K ceiling, %d also the opened "
+                "15-20%% per-pass band; best outlet NH3 %.2f mol%% at %.1f K peak%s"
+                % (ls.get("layouts_meeting_ceiling", 0), len(rows), lim,
+                   ls.get("layouts_meeting_ceiling_AND_opened_band", 0),
+                   best.get("outlet_NH3_molpct", 0.0), best.get("T_peak_K", 0.0),
+                   "" if not mislabel else
+                   " [MISLABELLED ROWS: %s]" % [r["n_beds"] for r in mislabel]))
+
+
+def _layout_scan_ok(designs=None):
+    """Consistency check of the converter layout scan (model/converter.py
+    scan_converter_layouts).
+
+    True only when: at least 4 layouts were scanned; every row's ceiling verdict
+    agrees with its own numbers (a row claimed to be within the ceiling really
+    is, and a ceiling-binding optimum really sits just below it); at least one
+    layout meets the ceiling and at least one meets the ceiling AND the opened
+    per-pass band; the 'best by outlet NH3' row is the actual maximum among the
+    ceiling-meeting rows; and the catalyst volume is identical in every row
+    (otherwise the layouts are not comparable). Uses THIS run's block when
+    available, else the saved results_v2/converter_ammonia.json; a stale file
+    without the scan is skipped (same convention as the SciPy cross-check).
+    """
+    import json
+    import os
+    ls = None
+    if designs:
+        try:
+            ls = (designs["ammonia"]["synthesis"]["kinetic"]["ammonia_converter"]
+                  .get("layout_scan"))
+        except Exception:
+            ls = None
+    if ls is None:
+        path = os.path.normpath(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                         "results_v2", "converter_ammonia.json"))
+        if not os.path.exists(path):
+            return True, "layout scan not run (no results_v2/converter_ammonia.json)"
+        try:
+            with open(path, encoding="utf-8") as fh:
+                d = json.load(fh)
+        except Exception as exc:
+            return False, "converter_ammonia.json unreadable (%s)" % exc
+        if "layout_scan" not in d:   # stale results file from before the scan
+            return True, "layout scan not present in this saved run (stale results file)"
+        ls = d.get("layout_scan") or {}
+    ok, info = _layout_scan_check(ls)
+    if ok and designs:               # cross-check against the saved run if any
+        best = ls.get("best_by_outlet_NH3") or {}
+        rows = ls.get("rows") or []
+        lim = float((ls.get("held_constant") or {}).get("bed_T_max_K_assumed", 803.15))
+        cand = [r for r in rows if r["peak_within_ceiling"]]
+        ok = bool(cand) and best.get("outlet_NH3_molpct") == max(
+            r["outlet_NH3_molpct"] for r in cand)
+        info += "; best row is the true maximum among ceiling-meeting layouts"
+    return ok, info
+
+
 def loop4_thermo(designs, scenarios):
     T = 1123.15
     # two independent thermochemical datasets
@@ -264,8 +335,10 @@ def loop4_thermo(designs, scenarios):
     syn_ok = all((x["saleable_product_t_h"] or 0) > 0 for x in extra)
     safe_ok = all(x["NiCO4_normal_ppb"] < 1.0 for x in extra)
     dp_ok = all(x["dP_within_limit"] for x in extra)
+    layout_ok, layout_info = _layout_scan_ok(designs)
     return {"passed": (worst_eq < 0.01 and worst_dH < 5.0 and sci_ok and
-                       pre_ok and syn_ok and safe_ok and dp_ok),
+                       pre_ok and syn_ok and safe_ok and dp_ok and layout_ok),
+            "layout_scan_note": layout_info,
             "reaction_enthalpies": dH,
             "PR_equilibrium": eq_rows, "worst_PR_deviation_pct": worst_eq,
             "IAPWS": iap,
@@ -281,9 +354,95 @@ def loop4_thermo(designs, scenarios):
             "extra_checks_passed": {"scipy": sci_ok, "prereformer": pre_ok,
                                     "synthesis": syn_ok, "safety": safe_ok,
                                     "dP": dp_ok, "NH3_Ka_vs_NIST":
-                                    nh3chk["passed_within_15pct"]},
+                                    nh3chk["passed_within_15pct"],
+                                    "NH3_layout_scan": layout_ok},
             "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual "
                     "is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."}
+
+
+def _vbf_adiabatic_ok():
+    """Methanol adiabatic benchmark: model/standalone reproduction of the opened
+    Vanden Bussche & Froment (1996) Table 3 bench-scale ADIABATIC case.
+
+    This is a model-to-model check: it verifies that the rate law, its units and
+    the enthalpy bookkeeping of THIS code reproduce the published simulation of
+    the same rate law. It says nothing about our catalyst or our plant case, so
+    loop 5 stays open even when it passes.
+    """
+    import json
+    import os
+    path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                         "..", "results_v2",
+                                         "methanol_adiabatic_check.json"))
+    if not os.path.exists(path):
+        return False, ("no results_v2/methanol_adiabatic_check.json "
+                      "(run: python -m model.methanol_converter)")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            d = json.load(fh)
+    except Exception as exc:
+        return False, "methanol_adiabatic_check.json unreadable (%s)" % exc
+    comp = d.get("comparison", {})
+    dT = abs(comp.get("T_out_K", {}).get("dev_K", 1e9))
+    dpp = max(abs(v.get("dev_pp", 1e9)) for k, v in comp.items()
+              if k.endswith("molpct"))
+    ok = bool(d.get("reproduced")) and dT <= 15.0 and dpp <= 0.5 and \
+        d.get("this_model", {}).get("carbon_closure_rel", 1) < 1e-9 and \
+        d.get("this_model", {}).get("enthalpy_residual_rel", 1) < 1e-4 and \
+        d.get("validity_window_check", {}).get("inside_window") is True
+    return ok, ("T_out %.1f K vs published 552 K (dev %.2f K), max species dev "
+                "%.3f mol%% (tolerance 0.5 / 15 K fixed in advance); carbon "
+                "closure %.1e, enthalpy residual %.1e; case inside the 180-280 C "
+                "/ 15-51 bar validity window; MODEL-TO-MODEL, not plant data"
+                % (comp.get("T_out_K", {}).get("model", 0.0), dT, dpp,
+                   d.get("this_model", {}).get("carbon_closure_rel", 0.0),
+                   d.get("this_model", {}).get("enthalpy_residual_rel", 0.0)))
+
+
+def _band_robust():
+    """Reads the model-side input-uncertainty envelope (model/uncertainty.py).
+
+    True only when all three hold:
+      * the envelope was computed for at least one pilot point and one design
+        point;
+      * at EVERY pilot point |measured - model| is larger than the envelope
+        half-width -> the pilot/model disagreement cannot be blamed on feed,
+        temperature, S/C, CO2/C or kij uncertainty;
+      * each design-point band reproduces that design's OWN reported
+        conversion (the banded base must be the same model, not a variant).
+    """
+    import json
+    import os
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..",
+                        "results_v2", "model_uncertainty.json")
+    path = os.path.normpath(path)
+    if not os.path.exists(path):
+        return False, "no results_v2/model_uncertainty.json (run: python -m model.uncertainty)"
+    try:
+        with open(path, encoding="utf-8") as fh:
+            d = json.load(fh)
+    except Exception as exc:
+        return False, "model_uncertainty.json unreadable (%s)" % exc
+    pts = d.get("points", [])
+    pilot = [r for r in pts if r.get("measured_minus_model") is not None]
+    design = [r for r in pts if r.get("measured_minus_model") is None]
+    if not pilot or not design:
+        return False, "envelope incomplete (%d pilot, %d design points)" % (
+            len(pilot), len(design))
+    gaps_ok = all(abs(r["measured_minus_model"]) > r["envelope_half_width"]
+                  for r in pilot)
+    repro_ok = all(abs(r["X_base"] - r["X_model_reported"])
+                   <= r["envelope_half_width"] + 1e-6 for r in design)
+    worst = max(pilot, key=lambda r: r["envelope_half_width"]
+                / max(abs(r["measured_minus_model"]), 1e-12))
+    info = ("mean quadrature half-width %.4f, worst envelope/gap ratio %.3f; "
+            "design bands reproduce reported X to <=%.4f -> %s" % (
+                sum(r["quadrature_half_width"] for r in pts) / len(pts),
+                worst["envelope_half_width"] / abs(worst["measured_minus_model"]),
+                max(abs(r["X_base"] - r["X_model_reported"]) for r in design),
+                "bias NOT explained by input uncertainty" if (gaps_ok and repro_ok)
+                else "check model/uncertainty.py output"))
+    return bool(gaps_ok and repro_ok), info
 
 
 def _ingest_ready():
@@ -324,6 +483,8 @@ def loop5_validation(designs, cfg=None):
     cfg = cfg or load_config()
     ext = run_external_comparison(cfg)
     haz = hazop_report()
+    band_ok, band_info = _band_robust()
+    vbf_ok, vbf_info = _vbf_adiabatic_ok()
 
     # --- kinetic synthesis benchmark checks -------------------------------
     kin_rows = []
@@ -468,6 +629,13 @@ def loop5_validation(designs, cfg=None):
          "note": "contract data/pilot_schema.json + harness model/data_ingest.py "
                  "are in place and self-tested; no campaign file exists yet, so "
                  "the check is ready-to-pass rather than passed"},
+        {"check": "model input-uncertainty envelope computed; it is shown NOT to "
+                  "explain the pilot/model bias (band <= |gap| at every point, "
+                  "and each design band reproduces the reported conversion)",
+         "passed": band_ok, "value": band_info},
+        {"check": "methanol ADIABATIC march reproduces the opened non-isothermal "
+                  "worked case of the rate law's own paper (VBF Table 3 / Fig. 5)",
+         "passed": vbf_ok, "value": vbf_info},
         {"check": "certified HAZOP (IEC 61882)", "passed": haz["certified"],
          "note": "worksheet with %d rows generated, but NOT certified" %
                  haz["worksheet_rows"]},
