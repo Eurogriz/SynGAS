@@ -93,7 +93,7 @@ PYTHONPATH=. .venv/bin/python -m model.control set active.climate middle_east
 | `docs/30_v5_uncertainty.md` | V5.1: полоса неопределённости модели и почему она НЕ объясняет расхождение с пилотом |
 | `docs/31_v5_methanol_adiabatic.md` | V5.1: воспроизведение открытого адиабатического кейса VBF (T_out, состав, ΔH) |
 | `docs/32_v5_activity_band.md` | V5.2: коридор активности ×2,36 через объём катализатора, T пик, тоннаж и CAPEX/OPEX |
-| `results_v2/` | `summary_v2.json`, `verification_v2.json`, `design_*.json`, `converter_ammonia.json`, `model_uncertainty.json`, `methanol_adiabatic_check.json`, 18 CSV, 14 PNG, 15 JSON |
+| `results_v2/` | `summary_v2.json`, `verification_v2.json`, `design_*.json`, `converter_ammonia.json`, `model_uncertainty.json`, `methanol_adiabatic_check.json`, `activity_uncertainty.json`, 18 CSV, 14 PNG, 16 JSON |
 | `model/converter.py` | **V5**: многосекционный адиабатический конвертор NH₃ (тепловой баланс по NIST Shomate, норм‑базис GHSV, калибровка одного скалярного множителя k₀) |
 | `data/pilot_schema.json`, `data/pilot_campaign_TEMPLATE.*` | **V5**: контракт данных пилотной кампании (49 полей + 6 полей режима) и пустая форма (заголовки, **без** чисел) |
 | `model/data_ingest.py` | **V5**: валидация кампании (CSV/JSON) + авто‑перезапуск подпроверок контура 5 |
