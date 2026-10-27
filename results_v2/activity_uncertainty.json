@@ -1,0 +1,435 @@
+{
+  "what_this_is": "corridor, not a point: the whole ammonia synthesis reactor decision is re-evaluated across the activity factor that the opened benchmarks leave unresolved",
+  "activity_band": {
+    "k_scale_lo": 0.21339984916320956,
+    "k_scale_hi": 0.5039665850488267,
+    "factor": 2.3616070349861866,
+    "k0_published": 65000000000000.0,
+    "source_of_band": "model/converter.py calibrate_k0: k_lo hits the opened per-pass band midpoint, k_hi hits the opened 13 mol% outlet benchmark; the two opened industrial data disagree by this factor",
+    "status": "[ЧАСТИЧНО] both anchors are opened literature values; the factor itself is a measured inconsistency of the sources, not a fitted spread"
+  },
+  "design_reference": {
+    "k_scale": 0.21339984916320956,
+    "catalyst_volume_m3": 52.90884710390271,
+    "per_pass_N2_pct": 25.353163160321223,
+    "outlet_NH3_molpct": 14.626140774458001,
+    "T_peak_K": 845.3409367299781,
+    "assumed_bed_ceiling_K": 803.15,
+    "recycle_ratio_configured": 3.0,
+    "GHSV_normal_h1": 10000.0,
+    "p_bar": 200.0,
+    "bed_inlet_T_K": 703.15,
+    "n_beds": 3,
+    "note": "the design sits at the LOW edge of the band, so its catalyst volume is the optimistic (small) end and its peak temperature is the pessimistic end of the physical corridor"
+  },
+  "rows": [
+    {
+      "k_scale": 0.21339984916320956,
+      "k0_effective_kmol_m3cat_h": 13870990195608.621,
+      "position_in_band": "lower edge (= calibrated design point)",
+      "at_fixed_geometry": {
+        "catalyst_volume_m3": 52.90884710390271,
+        "per_pass_N2_pct": 25.353163160321223,
+        "outlet_NH3_molpct": 14.626140774458001,
+        "T_peak_K": 845.3409367299781,
+        "peak_over_assumed_ceiling_K": 42.19093672997815,
+        "bed_out_K": [
+          845.3409367299781,
+          750.7321801996387,
+          731.0269975735041
+        ],
+        "reaction_heat_MW": 43.15053372245934,
+        "interbed_cooling_duty_MW": 37.204863832992984,
+        "equilibrium_NH3_molpct_at_inlet_T": 27.10646580978522,
+        "approach_to_equilibrium": 0.5395812525725165,
+        "recycle_ratio_implied": 2.94428101013069,
+        "loop_closure_X_times_1pRR": 1.014126526412849,
+        "NH3_formed_t_h": 49.54236899391094
+      },
+      "volume_to_hold_design_conversion": {
+        "target_X_pct": 25.353163160321223,
+        "V_m3": 52.948,
+        "GHSV_normal_h1": 9992.5,
+        "delta_V_pct": 0.1,
+        "catalyst_mass_t": 94.0,
+        "inventory_cost_USD": 3759000.0,
+        "vessel_scale_factor_capex_exponent_0p7": 1.0005,
+        "converged": true,
+        "iterations": 13,
+        "achieved_X": 0.253576901572533,
+        "X_error_abs": 4.5269969320749226e-05
+      },
+      "ceiling_remedy": {
+        "T_in_common_K": 644.6,
+        "T_peak_K": 803.0391703948018,
+        "feasible": true,
+        "ceiling_binding": true,
+        "per_pass_N2_pct": 22.594880342842682,
+        "outlet_NH3_molpct": 12.899679583866016,
+        "interbed_cooling_duty_MW": 34.44796280602264,
+        "recycle_ratio_implied": 3.4257813488123525
+      },
+      "recycle_compressor_at_this_activity": {
+        "recycle_mol_h": 17288282.846250493,
+        "power_by_loop_dP": [
+          {
+            "dP_loop_bar": 1.0,
+            "power_MW": 0.07962072516350378,
+            "power_cost_USD_y": 50957.26410464242
+          },
+          {
+            "dP_loop_bar": 2.0,
+            "power_MW": 0.15975753890923844,
+            "power_cost_USD_y": 102244.8249019126
+          },
+          {
+            "dP_loop_bar": 3.0,
+            "power_MW": 0.24041641840586048,
+            "power_cost_USD_y": 153866.5077797507
+          }
+        ]
+      }
+    },
+    {
+      "k_scale": 0.2645428430331417,
+      "k0_effective_kmol_m3cat_h": 17195284797154.209,
+      "position_in_band": "interior",
+      "at_fixed_geometry": {
+        "catalyst_volume_m3": 52.90884710390271,
+        "per_pass_N2_pct": 26.668443490798865,
+        "outlet_NH3_molpct": 15.468128516997687,
+        "T_peak_K": 845.4092614540646,
+        "peak_over_assumed_ceiling_K": 42.259261454064585,
+        "bed_out_K": [
+          845.4092614540646,
+          759.5839716893219,
+          733.6541407039452
+        ],
+        "reaction_heat_MW": 45.419840045740955,
+        "interbed_cooling_duty_MW": 38.92048509899933,
+        "equilibrium_NH3_molpct_at_inlet_T": 27.10646580978522,
+        "approach_to_equilibrium": 0.5706434998034239,
+        "recycle_ratio_implied": 2.7497501507540907,
+        "loop_closure_X_times_1pRR": 1.0667377396319546,
+        "NH3_formed_t_h": 52.112545466602114
+      },
+      "volume_to_hold_design_conversion": {
+        "target_X_pct": 25.353163160321223,
+        "V_m3": 42.7,
+        "GHSV_normal_h1": 12390.9,
+        "delta_V_pct": -19.3,
+        "catalyst_mass_t": 75.8,
+        "inventory_cost_USD": 3032000.0,
+        "vessel_scale_factor_capex_exponent_0p7": 0.8607,
+        "converged": true,
+        "iterations": 14,
+        "achieved_X": 0.2535594755851977,
+        "X_error_abs": 2.7843981985464783e-05
+      },
+      "ceiling_remedy": {
+        "T_in_common_K": 635.7,
+        "T_peak_K": 802.9762479662683,
+        "feasible": true,
+        "ceiling_binding": true,
+        "per_pass_N2_pct": 23.558448776483516,
+        "outlet_NH3_molpct": 13.496853377156736,
+        "interbed_cooling_duty_MW": 36.003439203345835,
+        "recycle_ratio_implied": 3.2447616542487236
+      },
+      "recycle_compressor_at_this_activity": {
+        "recycle_mol_h": 16146033.004046215,
+        "power_by_loop_dP": [
+          {
+            "dP_loop_bar": 1.0,
+            "power_MW": 0.07436012400588637,
+            "power_cost_USD_y": 47590.479363767285
+          },
+          {
+            "dP_loop_bar": 2.0,
+            "power_MW": 0.14920223823346318,
+            "power_cost_USD_y": 95489.43246941644
+          },
+          {
+            "dP_loop_bar": 3.0,
+            "power_MW": 0.22453192493536112,
+            "power_cost_USD_y": 143700.4319586311
+          }
+        ]
+      }
+    },
+    {
+      "k_scale": 0.3279426676001729,
+      "k0_effective_kmol_m3cat_h": 21316273394011.24,
+      "position_in_band": "interior",
+      "at_fixed_geometry": {
+        "catalyst_volume_m3": 52.90884710390271,
+        "per_pass_N2_pct": 27.951517407647884,
+        "outlet_NH3_molpct": 16.3015041169508,
+        "T_peak_K": 845.4174858899256,
+        "peak_over_assumed_ceiling_K": 42.26748588992564,
+        "bed_out_K": [
+          845.4174858899256,
+          768.260455884837,
+          736.2544133779706
+        ],
+        "reaction_heat_MW": 47.63627625202782,
+        "interbed_cooling_duty_MW": 40.588803202199976,
+        "equilibrium_NH3_molpct_at_inlet_T": 27.10646580978522,
+        "approach_to_equilibrium": 0.6013880315989437,
+        "recycle_ratio_implied": 2.577623301861914,
+        "loop_closure_X_times_1pRR": 1.1180606963059154,
+        "NH3_formed_t_h": 54.619787700363695
+      },
+      "volume_to_hold_design_conversion": {
+        "target_X_pct": 25.353163160321223,
+        "V_m3": 34.435,
+        "GHSV_normal_h1": 15364.9,
+        "delta_V_pct": -34.9,
+        "catalyst_mass_t": 61.1,
+        "inventory_cost_USD": 2445000.0,
+        "vessel_scale_factor_capex_exponent_0p7": 0.7403,
+        "converged": true,
+        "iterations": 14,
+        "achieved_X": 0.2535418775934395,
+        "X_error_abs": 1.0245990227253365e-05
+      },
+      "ceiling_remedy": {
+        "T_in_common_K": 627.2,
+        "T_peak_K": 803.0906543886956,
+        "feasible": true,
+        "ceiling_binding": true,
+        "per_pass_N2_pct": 24.516181737803347,
+        "outlet_NH3_molpct": 14.096703841924882,
+        "interbed_cooling_duty_MW": 37.519229828004256,
+        "recycle_ratio_implied": 3.07893859939056
+      },
+      "recycle_compressor_at_this_activity": {
+        "recycle_mol_h": 15135335.438547982,
+        "power_by_loop_dP": [
+          {
+            "dP_loop_bar": 1.0,
+            "power_MW": 0.06970538334704701,
+            "power_cost_USD_y": 44611.44534211009
+          },
+          {
+            "dP_loop_bar": 2.0,
+            "power_MW": 0.13986258564439324,
+            "power_cost_USD_y": 89512.05481241168
+          },
+          {
+            "dP_loop_bar": 3.0,
+            "power_MW": 0.2104768397109019,
+            "power_cost_USD_y": 134705.17741497722
+          }
+        ]
+      }
+    },
+    {
+      "k_scale": 0.40653677113179026,
+      "k0_effective_kmol_m3cat_h": 26424890123566.367,
+      "position_in_band": "interior",
+      "at_fixed_geometry": {
+        "catalyst_volume_m3": 52.90884710390271,
+        "per_pass_N2_pct": 29.092562022052377,
+        "outlet_NH3_molpct": 17.052800697756613,
+        "T_peak_K": 845.41805328003,
+        "peak_over_assumed_ceiling_K": 42.26805328003002,
+        "bed_out_K": [
+          845.41805328003,
+          775.4135537487472,
+          739.1536286238419
+        ],
+        "reaction_heat_MW": 49.609577925581064,
+        "interbed_cooling_duty_MW": 41.96165395507554,
+        "equilibrium_NH3_molpct_at_inlet_T": 27.10646580978522,
+        "approach_to_equilibrium": 0.6291045397589489,
+        "recycle_ratio_implied": 2.4373046940382657,
+        "loop_closure_X_times_1pRR": 1.163702480882095,
+        "NH3_formed_t_h": 56.849491858691636
+      },
+      "volume_to_hold_design_conversion": {
+        "target_X_pct": 25.353163160321223,
+        "V_m3": 27.797,
+        "GHSV_normal_h1": 19033.7,
+        "delta_V_pct": -47.5,
+        "catalyst_mass_t": 49.3,
+        "inventory_cost_USD": 1974000.0,
+        "vessel_scale_factor_capex_exponent_0p7": 0.6373,
+        "converged": true,
+        "iterations": 14,
+        "achieved_X": 0.2535848721242416,
+        "X_error_abs": 5.324052102934074e-05
+      },
+      "ceiling_remedy": {
+        "T_in_common_K": 619.5,
+        "T_peak_K": 803.007596142936,
+        "feasible": true,
+        "ceiling_binding": true,
+        "per_pass_N2_pct": 25.43756435073079,
+        "outlet_NH3_molpct": 14.679802029200296,
+        "interbed_cooling_duty_MW": 38.93559716465913,
+        "recycle_ratio_implied": 2.9311939862326923
+      },
+      "recycle_compressor_at_this_activity": {
+        "recycle_mol_h": 14311410.082136553,
+        "power_by_loop_dP": [
+          {
+            "dP_loop_bar": 1.0,
+            "power_MW": 0.06591081711155165,
+            "power_cost_USD_y": 42182.922951393055
+          },
+          {
+            "dP_loop_bar": 2.0,
+            "power_MW": 0.13224885741262998,
+            "power_cost_USD_y": 84639.26874408318
+          },
+          {
+            "dP_loop_bar": 3.0,
+            "power_MW": 0.1990190688620655,
+            "power_cost_USD_y": 127372.2040717219
+          }
+        ]
+      }
+    },
+    {
+      "k_scale": 0.5039665850488267,
+      "k0_effective_kmol_m3cat_h": 32757828028173.74,
+      "position_in_band": "upper edge",
+      "at_fixed_geometry": {
+        "catalyst_volume_m3": 52.90884710390271,
+        "per_pass_N2_pct": 30.008305601493124,
+        "outlet_NH3_molpct": 17.662810135415373,
+        "T_peak_K": 845.4180728783257,
+        "peak_over_assumed_ceiling_K": 42.26807287832571,
+        "bed_out_K": [
+          845.4180728783257,
+          780.0400024256402,
+          742.6080941047157
+        ],
+        "reaction_heat_MW": 51.19474380824893,
+        "interbed_cooling_duty_MW": 42.84890994555,
+        "equilibrium_NH3_molpct_at_inlet_T": 27.10646580978522,
+        "approach_to_equilibrium": 0.651608743808986,
+        "recycle_ratio_implied": 2.332410744144924,
+        "loop_closure_X_times_1pRR": 1.200332224059725,
+        "NH3_formed_t_h": 58.638937460787254
+      },
+      "volume_to_hold_design_conversion": {
+        "target_X_pct": 25.353163160321223,
+        "V_m3": 22.406,
+        "GHSV_normal_h1": 23613.6,
+        "delta_V_pct": -57.7,
+        "catalyst_mass_t": 39.8,
+        "inventory_cost_USD": 1591000.0,
+        "vessel_scale_factor_capex_exponent_0p7": 0.548,
+        "converged": true,
+        "iterations": 15,
+        "achieved_X": 0.2535379718564885,
+        "X_error_abs": 6.340253276282404e-06
+      },
+      "ceiling_remedy": {
+        "T_in_common_K": 613.9,
+        "T_peak_K": 803.1212174906834,
+        "feasible": true,
+        "ceiling_binding": true,
+        "per_pass_N2_pct": 26.34821239188112,
+        "outlet_NH3_molpct": 15.261992726880507,
+        "interbed_cooling_duty_MW": 40.21014613722277,
+        "recycle_ratio_implied": 2.7953238919090304
+      },
+      "recycle_compressor_at_this_activity": {
+        "recycle_mol_h": 13695491.877190476,
+        "power_by_loop_dP": [
+          {
+            "dP_loop_bar": 1.0,
+            "power_MW": 0.06307422225968953,
+            "power_cost_USD_y": 40367.5022462013
+          },
+          {
+            "dP_loop_bar": 2.0,
+            "power_MW": 0.12655728136273198,
+            "power_cost_USD_y": 80996.66007214847
+          },
+          {
+            "dP_loop_bar": 3.0,
+            "power_MW": 0.19045391232332815,
+            "power_cost_USD_y": 121890.50388693002
+          }
+        ]
+      }
+    }
+  ],
+  "spans": {
+    "per_pass_N2_pct": [
+      25.353163160321223,
+      30.008305601493124
+    ],
+    "catalyst_volume_to_hold_design_m3": [
+      22.406,
+      52.948
+    ],
+    "T_peak_K": [
+      845.3409367299781,
+      845.4180728783257
+    ],
+    "outlet_NH3_molpct": [
+      14.626140774458001,
+      17.662810135415373
+    ]
+  },
+  "production_is_not_activity_limited": {
+    "argument": "at fixed fresh syngas flow and fixed loop pressure the net NH3 rate is set by the closure X*(1+RR) >= 1; the activity changes what recycle ratio is needed, not the stoichiometric ceiling on tonnage. A closure ABOVE 1.0 does NOT mean more product: it means the configured recycle is larger than this activity requires, and the loop would settle at a lower RR (or with a different inert balance) - so the corridor is reported as the RR that the kinetics imply, with tonnage held at the loop value",
+    "closure_at_low_edge": 1.014126526412849,
+    "closure_at_high_edge": 1.200332224059725,
+    "NH3_design_t_h": 47.38668861574572,
+    "recycle_ratio_needed_corridor": [
+      2.332410744144924,
+      2.94428101013069
+    ]
+  },
+  "money": {
+    "catalyst_inventory_corridor_USD": [
+      3759000.0,
+      1591000.0
+    ],
+    "price_used": 40.0,
+    "price_status": "[ДОПУЩЕНИЕ] PRICES['catalyst_USD_per_kg'] is the project's screening price for Ni/MgAl2O4 reforming catalyst; no promoted-iron ammonia-catalyst price was opened (docs/28 asks for it), and no catalyst LIFE for the NH3 bed was opened either, so annual replacement cost is deliberately NOT computed",
+    "density_used_kg_m3": 1775.0,
+    "density_status": "[ЧАСТИЧНО] 1775 kg/m3 is the VBF Cu/ZnO bulk density reused as a placeholder; the NH3 catalyst value is exactly what docs/28 item 12 asks for",
+    "vessel_scaling": "(V/V_ref)^[CAPEX_scale_exponent] with the project's own exponent 0.7; the converter's SHARE of the 281.4 M USD screening CAPEX is not resolved by the model, so only the relative factor is reported",
+    "recycle_compressor": {
+      "power_by_loop_dP": [
+        {
+          "dP_loop_bar": 1.0,
+          "power_MW_min": 0.06307422225968953,
+          "power_MW_max": 0.07962072516350378,
+          "delta_power_MW": 0.01654650290381425,
+          "delta_cost_USD_y": 10589.76185844112
+        },
+        {
+          "dP_loop_bar": 2.0,
+          "power_MW_min": 0.12655728136273198,
+          "power_MW_max": 0.15975753890923844,
+          "delta_power_MW": 0.03320025754650646,
+          "delta_cost_USD_y": 21248.16482976414
+        },
+        {
+          "dP_loop_bar": 3.0,
+          "power_MW_min": 0.19045391232332815,
+          "power_MW_max": 0.24041641840586048,
+          "delta_power_MW": 0.04996250608253233,
+          "delta_cost_USD_y": 31976.003892820692
+        }
+      ],
+      "note": "estimate for the recycle loop only, at the assumed loop pressure drops listed per row; the project's compressor model is [ASSUMPTION] (k, eta; catalogue curves not opened), so this is a bracket for a re-rating decision, not a purchase figure"
+    }
+  },
+  "not_covered": [
+    "catalyst price and life for promoted iron (docs/28 p. 12-13) - so no annualised catalyst cost line",
+    "converter vendor layout and quench control (docs/28 p. 14-18)",
+    "real loop closure: purge rate, inert build-up, separator pressure - the ammonia loop in model/synthesis.py is stoichiometric",
+    "deactivation over the run: no 200-1000 h series for this catalyst",
+    "the band is an activity band only; feed/temperature uncertainty is quantified separately in model/uncertainty.py (docs/30)"
+  ],
+  "how_to_use": "report the corridor in every ammonia answer: catalyst volume, peak temperature and outlet NH3 as ranges over the factor; single numbers may be quoted only together with the k_scale they belong to\nthe corridor is NOT plant validation and NOT a vendor guarantee; it stays a model band until docs/27 (activity at our conditions) and docs/28 (vendor layout, density, ceiling) are closed\nthe band is activity-only: feed and temperature uncertainty is quantified separately in model/uncertainty.py (docs/30), where 0 of 6 pilot points fall inside the model band - that disagreement is NOT covered by this corridor and is not fixed by it"
+}

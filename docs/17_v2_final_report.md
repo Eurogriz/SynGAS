@@ -80,8 +80,8 @@ CLOSED (docs/20); stoichiometric
 synthesis loops (docs/18) are now complemented by VBF/Graaf and
 Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
 (docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
-loop 5 was rerun and remains FAILED with {l5["subchecks_passed"]} of
-{l5["subchecks_total"]} subchecks passing (docs/25, docs/26).
+loop 5 was rerun and remains FAILED with 11 of
+26 subchecks passing (docs/25, docs/26).
 
 ## 17.6 V5 state
 
@@ -129,6 +129,18 @@ Three gaps that did **not** need new data were closed on the model side:
    validity window. This is model-to-model verification of the implementation -
    NOT pilot or plant validation, and loop 5 is still open because of that.
 
-Loop 5 after V5.1: {l5["subchecks_passed"]} of {l5["subchecks_total"]} subchecks
-pass; the status is FAILED by design until the campaign, the vendor datasheet
-and a certified HAZOP exist.
+Loop 5 after V5.1: 11 of 26
+subchecks pass; the status is FAILED by design until the campaign, the vendor
+datasheet and a certified HAZOP exist.
+
+## 17.8 V5.2 state (the activity disagreement became a corridor)
+
+The x2.362 disagreement between the two opened NH3 benchmarks is no longer a footnote on k0: it is carried as a corridor over 5 activities (docs/32, `model/activity_uncertainty.py`).
+
+* fixed geometry (V = 52.9 m3, 3 beds, inlet 703.1 K, 200 bar): per-pass N2 25.35 -> 30.01 %, outlet NH3 14.63 -> 17.66 mol%, interbed duty 37.2 -> 42.8 MW, recycle implied by kinetics 2.944 -> 2.332 against the configured 3.0.
+* volume needed to hold the design conversion (25.35 %): 22.4 -> 52.9 m3 (-57.7 %), i.e. GHSV 23614 -> 9992 1/h. The as-built 52.9 m3 is the CONSERVATIVE bound, because the design is calibrated at the low edge of the band.
+* peak temperature is activity-INSENSITIVE (845.34 -> 845.42 K): every bed reaches the equilibrium pinch, so the 42 K exceedance of the assumed ceiling is an inlet-temperature choice, not catalyst evidence. Holding the ceiling instead costs outlet NH3 down to 12.90 mol% at the low edge (below the opened 13.0 benchmark) vs 15.26 mol% at the high edge.
+* tonnage does NOT move (loop value 47.387 t/h NH3): at fixed fresh feed activity changes the recycle needed, not the stoichiometric ceiling.
+* money: catalyst inventory 1.59e+06 -> 3.76e+06 USD and vessel factor (V/V0)^0.7 -> 0.548, while the recycle compressor changes by <= 3.2e+04 USD/y -> an inventory/CAPEX question, not an OPEX one. Density and price remain placeholders (docs/28 items 12-13).
+
+Not touched by the corridor: equilibrium (Ka, outlet ceiling), the feed and temperature envelope of docs/30, loop stoichiometry, catalyst price/life, and loop 5, which stays FAILED - a corridor is an honest spread, not validation.

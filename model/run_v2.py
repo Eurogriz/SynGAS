@@ -340,6 +340,219 @@ def md_table(headers, rows):
     return "\n".join(out)
 
 
+def activity_summary_17():
+    """Short docs/17 section on the V5.2 corridor, read from the saved artifact.
+
+    Returns a placeholder string when the corridor was not computed, so the
+    report never silently claims a band that was not produced by this run.
+    """
+    path = os.path.join(OUT, "activity_uncertainty.json")
+    if not os.path.exists(path):
+        return ("not computed in this run (`model/activity_uncertainty.py` did "
+                "not write results_v2/activity_uncertainty.json)")
+    d = json.load(open(path, encoding="utf-8"))
+    sp, dr = d["spans"], d["design_reference"]
+    r0, rN = d["rows"][0], d["rows"][-1]
+    f0, fN = r0["at_fixed_geometry"], rN["at_fixed_geometry"]
+    v0, vN = (r0["volume_to_hold_design_conversion"],
+              rN["volume_to_hold_design_conversion"])
+    inv = d["money"]["catalyst_inventory_corridor_USD"]
+    dop = max(x["delta_cost_USD_y"]
+              for x in d["money"]["recycle_compressor"]["power_by_loop_dP"])
+    return (
+        "The x%.3f disagreement between the two opened NH3 benchmarks is no "
+        "longer a footnote on k0: it is carried as a corridor over %.d "
+        "activities (docs/32, `model/activity_uncertainty.py`).\n\n"
+        "* fixed geometry (V = %.1f m3, %d beds, inlet %.1f K, %g bar): "
+        "per-pass N2 %.2f -> %.2f %%, outlet NH3 %.2f -> %.2f mol%%, interbed "
+        "duty %.1f -> %.1f MW, recycle implied by kinetics %.3f -> %.3f "
+        "against the configured %.1f.\n"
+        "* volume needed to hold the design conversion (%.2f %%): %.1f -> "
+        "%.1f m3 (%.1f %%), i.e. GHSV %.0f -> %.0f 1/h. The as-built %.1f m3 "
+        "is the CONSERVATIVE bound, because the design is calibrated at the low "
+        "edge of the band.\n"
+        "* peak temperature is activity-INSENSITIVE (%.2f -> %.2f K): every bed "
+        "reaches the equilibrium pinch, so the %.0f K exceedance of the assumed "
+        "ceiling is an inlet-temperature choice, not catalyst evidence. Holding "
+        "the ceiling instead costs outlet NH3 down to %.2f mol%% at the low edge "
+        "(below the opened 13.0 benchmark) vs %.2f mol%% at the high edge.\n"
+        "* tonnage does NOT move (loop value %.3f t/h NH3): at fixed fresh feed "
+        "activity changes the recycle needed, not the stoichiometric ceiling.\n"
+        "* money: catalyst inventory %.3g -> %.3g USD and vessel factor "
+        "(V/V0)^0.7 -> %.3f, while the recycle compressor changes by <= %.3g "
+        "USD/y -> an inventory/CAPEX question, not an OPEX one. Density and "
+        "price remain placeholders (docs/28 items 12-13).\n\n"
+        "Not touched by the corridor: equilibrium (Ka, outlet ceiling), the feed "
+        "and temperature envelope of docs/30, loop stoichiometry, catalyst "
+        "price/life, and loop 5, which stays FAILED - a corridor is an honest "
+        "spread, not validation."
+        % (d["activity_band"]["factor"], len(d["rows"]),
+           dr["catalyst_volume_m3"], dr["n_beds"], dr["bed_inlet_T_K"],
+           dr["p_bar"], f0["per_pass_N2_pct"], fN["per_pass_N2_pct"],
+           f0["outlet_NH3_molpct"], fN["outlet_NH3_molpct"],
+           f0["interbed_cooling_duty_MW"], fN["interbed_cooling_duty_MW"],
+           f0["recycle_ratio_implied"], fN["recycle_ratio_implied"],
+           dr["recycle_ratio_configured"], dr["per_pass_N2_pct"],
+           vN["V_m3"], v0["V_m3"], vN["delta_V_pct"], vN["GHSV_normal_h1"],
+           v0["GHSV_normal_h1"], dr["catalyst_volume_m3"],
+           sp["T_peak_K"][0], sp["T_peak_K"][1],
+           f0["peak_over_assumed_ceiling_K"],
+           r0["ceiling_remedy"]["outlet_NH3_molpct"],
+           rN["ceiling_remedy"]["outlet_NH3_molpct"],
+           d["production_is_not_activity_limited"]["NH3_design_t_h"],
+           min(inv), max(inv), vN["vessel_scale_factor_capex_exponent_0p7"],
+           dop))
+
+
+def write_activity_band_doc():
+    """docs/32: the activity-uncertainty corridor (model/activity_uncertainty.py).
+
+    Generated from the saved JSON only, so the corridor cannot drift from the run.
+    """
+    path = os.path.join(OUT, "activity_uncertainty.json")
+    if not os.path.exists(path):
+        return False
+    d = json.load(open(path, encoding="utf-8"))
+    ab, dr = d["activity_band"], d["design_reference"]
+    rows, sp, money = d["rows"], d["spans"], d["money"]
+    prod = d["production_is_not_activity_limited"]
+    vols = [r["volume_to_hold_design_conversion"] for r in rows]
+    fixs = [r["at_fixed_geometry"] for r in rows]
+    dVs = [v["delta_V_pct"] for v in vols if v["delta_V_pct"] is not None]
+    L = ["# 32. Коридор неопределённости активности катализатора (NH₃‑конвертор)",
+         "",
+         "Сгенерировано `model/run_v2.py` из `results_v2/activity_uncertainty.json` "
+         "(источник: `python -m model.activity_uncertainty`).", "",
+         "## 32.1 Откуда берётся множитель", "",
+         "`model/converter.py:calibrate_k0` подбирает **один** безразмерный "
+         "множитель активности k_scale по двум открытым промышленным ориентирам, "
+         "которые между собой не сходятся: середина коридора захода N₂ за проход "
+         f"→ k_scale = {round(ab['k_scale_lo'], 4)}; выход 13,0 мол.% NH₃ → "
+         f"k_scale = {round(ab['k_scale_hi'], 4)}. Отношение — **×"
+         f"{round(ab['factor'], 3)}**. Это не разброс подгонки и не погрешность "
+         "нашей лаборатории: это противоречие открытых источников, и снять его "
+         "может только кампания (`docs/27`) либо конверторные данные завода на "
+         "этом катализаторе (`docs/28`). Всё остальное в модели либо опубликовано "
+         "(α, E_a, K_a, энтальпии), либо задано схемой.", "",
+         f"## 32.2 Проект при фиксированной геометрии "
+         f"(V = {round(dr['catalyst_volume_m3'], 2)} м³, {dr['n_beds']} секции, "
+         f"вход {round(dr['bed_inlet_T_K'], 1)} K, "
+         f"GHSV {round(dr['GHSV_normal_h1'], 0)} ч⁻¹, "
+         f"{round(dr['p_bar'] if 'p_bar' in dr else 200, 0)} бар)", "",
+         "| k_scale | положение | X за проход | выход NH₃ | T пик, K | выше потолка | Q межсекц., МВт | RR по кинетике | X·(1+RR) |",
+         "|---|---|---|---|---|---|---|---|---|"]
+    for r in rows:
+        f = r["at_fixed_geometry"]
+        L.append(f"| {r['k_scale']:.4f} | {r['position_in_band']} | "
+                 f"{f['per_pass_N2_pct']:.2f} % | {f['outlet_NH3_molpct']:.2f} мол.% | "
+                 f"{f['T_peak_K']:.1f} | {f['peak_over_assumed_ceiling_K']:+.1f} K | "
+                 f"{f['interbed_cooling_duty_MW']:.1f} | {f['recycle_ratio_implied']:.3f} | "
+                 f"{f['loop_closure_X_times_1pRR']:.3f} |")
+    L += ["",
+          f"Главное: **пиковая температура от активности не зависит** — "
+          f"{sp['T_peak_K'][0]:.2f}…{sp['T_peak_K'][1]:.2f} K (разница "
+          f"{sp['T_peak_K'][1] - sp['T_peak_K'][0]:.2f} K): первая секция доходит до "
+          "равновесного пинча, а подъём до пинча задаётся термодинамикой, а не "
+          f"скоростью. Значит превышение предполагаемого потолка "
+          f"{round(dr['assumed_bed_ceiling_K'], 1)} K — следствие выбора температуры "
+          "входа (решение проектировщика), а не неопределённость катализатора. "
+          f"Чувствительны к активности выход NH₃ ({sp['outlet_NH3_molpct'][0]:.2f}…"
+          f"{sp['outlet_NH3_molpct'][1]:.2f} мол.%) и межсекционное охлаждение "
+          f"({min(fixs, key=lambda x: x['interbed_cooling_duty_MW'])['interbed_cooling_duty_MW']:.1f}…"
+          f"{max(fixs, key=lambda x: x['interbed_cooling_duty_MW'])['interbed_cooling_duty_MW']:.1f} МВт).",
+          "",
+          "## 32.3 Объём катализатора, если держать проектную конверсию", "",
+          f"Цель — удержать X за проход = {dr['per_pass_N2_pct']:.2f} % (значение "
+          "проекта) при другой активности; объём — единственный свободный рычаг "
+          "(GHSV = Q/V).", "",
+          "| k_scale | V нужно, м³ | ΔV к проекту | GHSV, ч⁻¹ | масса, т | инвентарь, USD | (V/V₀)^0,7 |",
+          "|---|---|---|---|---|---|---|"]
+    for r in rows:
+        v = r["volume_to_hold_design_conversion"]
+        L.append(f"| {r['k_scale']:.4f} | {v['V_m3']} | {v['delta_V_pct']} % | "
+                 f"{v['GHSV_normal_h1']} | {v['catalyst_mass_t']} | "
+                 f"{v['inventory_cost_USD']:.3g} | {v['vessel_scale_factor_capex_exponent_0p7']} |")
+    v_lo = min(v["V_m3"] for v in vols if v["V_m3"])
+    v_hi = max(v["V_m3"] for v in vols if v["V_m3"])
+    m_lo = min(v["catalyst_mass_t"] for v in vols if v["catalyst_mass_t"])
+    m_hi = max(v["catalyst_mass_t"] for v in vols if v["catalyst_mass_t"])
+    L += ["",
+          f"Катализаторный коридор: **{v_lo:.1f}…{v_hi:.1f} м³** (масса "
+          f"{m_lo:.1f}…{m_hi:.1f} т). Верхняя граница совпадает с проектом, потому "
+          "что проект откалиброван на НИЖнем крае полосы: заявленные 52,91 м³ — это "
+          "консервативная (большая) оценка объёма, а не «уточнённая». Если реальная "
+          f"активность окажется на верхнем крае, тот же результат требует на "
+          f"{abs(min(dVs)):.1f} % меньший слой.", "",
+          "## 32.4 Мера по потолку при каждой активности", "",
+          "| k_scale | общий вход секций, K | T пик, K | X за проход | выход NH₃, мол.% | RR по кинетике |",
+          "|---|---|---|---|---|---|"]
+    for r in rows:
+        c = r["ceiling_remedy"]
+        L.append(f"| {r['k_scale']:.4f} | {c['T_in_common_K']:.1f} | "
+                 f"{c['T_peak_K']:.1f} | {c['per_pass_N2_pct']:.2f} % | "
+                 f"{c['outlet_NH3_molpct']:.2f} | {c['recycle_ratio_implied']:.3f} |")
+    ce_lo = rows[0]["ceiling_remedy"]
+    ce_hi = rows[-1]["ceiling_remedy"]
+    L += ["",
+          f"Смысл: при нижнем крае полосы уложиться в потолок "
+          f"{round(dr['assumed_bed_ceiling_K'], 1)} K удаётся ценой выхода "
+          f"{ce_lo['outlet_NH3_molpct']:.2f} мол.% (ниже открытого ориентира 13,0), "
+          f"при верхнем — {ce_hi['outlet_NH3_molpct']:.2f} мол.% (выше ориентира). "
+          "Устойчивый вывод один: **и потолок, и 13 мол.% на выходе одновременно "
+          "выполняются только в верхней половине полосы активности** — то есть вопрос "
+          "к поставщику по активности важнее вопроса по конструкции секций, и без "
+          "данных он не закрывается (`docs/28`).", "",
+          "## 32.5 Деньги: что полоса меняет и чего не меняет", "",
+          "| канал | коридор | статус |", "|---|---|---|"]
+    for x in money["recycle_compressor"]["power_by_loop_dP"]:
+        L.append(f"| рецикловый компрессор при Δp контура {x['dP_loop_bar']} бар | "
+                 f"{x['power_MW_min']:.2f}…{x['power_MW_max']:.2f} МВт "
+                 f"(Δ {x['delta_cost_USD_y']:.3g} USD/год) | [ЧАСТИЧНО] политропная "
+                 "оценка, k и η из config, каталожные кривые не открыты |")
+    inv = money["catalyst_inventory_corridor_USD"]
+    sc = [v["vessel_scale_factor_capex_exponent_0p7"] for v in vols
+          if v["vessel_scale_factor_capex_exponent_0p7"]]
+    L += [f"| инвентарь катализатора | {min(inv):.3g}…{max(inv):.3g} USD | "
+          "[ДОПУЩЕНИЕ] цена скрининга Ni/MgAl2O4 из `model/economics.py`; цены и "
+          "ресурса промоторированного железного аммиачного катализатора не "
+          "открыто, поэтому годовая замена намеренно не считается |",
+          f"| перевод объём→масса | ×{money['density_used_kg_m3']} кг/м³ | "
+          "[ЧАСТИЧНО] плотность Cu/ZnO из VBF взята как заполнитель; значение для "
+          "аммиачного катализатора запрашивает `docs/28` п. 12 |",
+          f"| масштабирование корпуса | (V/V₀)^0,7 → {min(sc):.3f}…{max(sc):.3f} | "
+          "(V/V_ref)^0,7 с показателем проекта; доля конвертора в скрининговом "
+          "CAPEX 281,4 млн USD моделью не разрешается — приводится только "
+          "относительный множитель |",
+          f"| тоннаж NH₃ | {prod['NH3_design_t_h']:.2f} т/ч (без изменений) | "
+          "при фиксированной подаче и давлении тоннаж задаётся замыканием "
+          "X·(1+RR) ≥ 1; активность меняет требуемый RR, а не предел по "
+          "стехиометрии (замыкание > 1 — избыточный рецикл, не прирост продукта) |", "",
+          f"Итог по экономике: неопределённость активности — это **вопрос "
+          f"инвестиционного объёма (катализатор и корпус: до −{abs(min(dVs)):.0f} %), "
+          "а не эксплуатационных расходов** (рецикл: десятые доли мега Ватт, "
+          f"{money['recycle_compressor']['power_by_loop_dP'][-1]['delta_cost_USD_y']:.3g} "
+          "USD/год на всём коридоре). Годовая стоимость замены катализатора "
+          "намеренно НЕ считается: ни цена, ни ресурс промоторированного железного "
+          "катализатора в проекте не открыты.", "",
+          "## 32.6 Как это докладывать", "",
+          "Дословные формулировки модели (из "
+          "`results_v2/activity_uncertainty.json`):", "",
+          "\n".join("* " + x for x in d["how_to_use"].split("\n")), "",
+          "## 32.7 Чего коридор не покрывает", "",
+          "Список — это открытые вопросы, а не замечания к расчёту; каждый из них "
+          "уже учтён статусом петлей проверки.", "",
+          "\n".join("* " + x for x in d["not_covered"]), "", "---", "",
+          "> Примечания. Источник полосы — `model/converter.py:calibrate_k0`: "
+          "нижний край бьёт в середину открытого коридора захода N₂ за проход, "
+          "верхний — в открытый ориентир 13,0 мол.% NH₃ на выходе; обе точки — "
+          "литературные значения, поэтому сам множитель ×2,362 является "
+          "[ЧАСТИЧНО] (измеренное противоречие источников, а не подгонка). "
+          "Формулировки пунктов 32.6–32.7 приведены дословно из JSON модели.", ""]
+    open(os.path.join(DOCS, "32_v5_activity_band.md"), "w",
+         encoding="utf-8").write("\n".join(L))
+    return True
+
+
 def write_methanol_adiabatic_doc():
     """docs/31: the methanol adiabatic march against the opened VBF worked case."""
     path = os.path.join(OUT, "methanol_adiabatic_check.json")
@@ -845,13 +1058,22 @@ Ni metal from NiO: 17 wt% * 58.6934/74.6924 = """ + fnum(designs["methanol"]["ca
 GHSV = 2500 Nm3/(m3cat h) for the main reformer, 5000 for the pre-reformer
 (opened electrified-SMR value + [ДОПУЩЕНИЕ] pre-reformer).
 
-{md_table(["product", "V_reformer m3", "V_pre m3", "catalyst t", "Ni inventory t",
-           "Ni t/y (4 y life)", "catalyst t/y", "ZnO kg", "Ni kg/1000 Nm3"], rows)}
+""" + md_table(["product", "V_reformer m3", "V_pre m3", "catalyst t",
+                "Ni inventory t", "Ni t/y (4 y life)", "catalyst t/y", "ZnO kg",
+                "Ni inventory, kg per 1000 Nm3 of annual product"], rows) + """
+
+**Unit note (V5.2 fix).** The last column and the `Ni_consumption_kg_per_1000Nm3`
+field of the life sensitivity used to carry two cancelling `/1000` factors, i.e.
+they returned kg per **Nm3** under a key that says kg per **1000 Nm3** - values
+were 1000x low. `model/catalyst_inventory.py` now multiplies by 1000 once; the
+table above is the corrected basis. `Ni_per_1000Nm3_product_kg` is an inventory
+intensity (installed Ni per annual product volume), NOT a consumption rate - the
+consumption rate is the `/life` version in the sensitivity below.
 
 ## 14.4 Life sensitivity (methanol example)
 
-{md_table(["life y", "Ni t/y", "catalyst t/y"],
-          [[r[1], r[2], r[3]] for r in life_rows])}
+""" + md_table(["life y", "Ni t/y", "catalyst t/y"],
+               [[r[1], r[2], r[3]] for r in life_rows]) + """
 
 Nickel price """ + fnum(load_config().catalyst["Ni_price_USD_per_t"], 0) + """ USD/t is an
 [ДОПУЩЕНИЕ] (no LME quote opened); annual Ni make-up cost is
@@ -1052,8 +1274,8 @@ CLOSED (docs/20); stoichiometric
 synthesis loops (docs/18) are now complemented by VBF/Graaf and
 Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
 (docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
-loop 5 was rerun and remains FAILED with {l5["subchecks_passed"]} of
-{l5["subchecks_total"]} subchecks passing (docs/25, docs/26).
+loop 5 was rerun and remains FAILED with """ + f"""{l5["subchecks_passed"]} of
+{l5["subchecks_total"]}""" + """ subchecks passing (docs/25, docs/26).
 
 ## 17.6 V5 state
 
@@ -1101,10 +1323,13 @@ Three gaps that did **not** need new data were closed on the model side:
    validity window. This is model-to-model verification of the implementation -
    NOT pilot or plant validation, and loop 5 is still open because of that.
 
-Loop 5 after V5.1: {l5["subchecks_passed"]} of {l5["subchecks_total"]} subchecks
-pass; the status is FAILED by design until the campaign, the vendor datasheet
-and a certified HAZOP exist.
-"""
+Loop 5 after V5.1: """ + f"""{l5["subchecks_passed"]} of {l5["subchecks_total"]}""" + """
+subchecks pass; the status is FAILED by design until the campaign, the vendor
+datasheet and a certified HAZOP exist.
+
+## 17.8 V5.2 state (the activity disagreement became a corridor)
+
+""" + activity_summary_17() + "\n"
     open(os.path.join(DOCS, "17_v2_final_report.md"), "w", encoding="utf-8").write(txt)
 
     # 18 synthesis loops ----------------------------------------------------
@@ -1812,6 +2037,12 @@ def main():
         dump_json(os.path.join(OUT, "methanol_adiabatic_check.json"), meth_report())
     except Exception as exc:
         print("[v5.1] methanol adiabatic benchmark FAILED:", repr(exc))
+    try:                                     # activity corridor for loop 4
+        from .activity_uncertainty import band as activity_band
+        dump_json(os.path.join(OUT, "activity_uncertainty.json"),
+                  activity_band(designs=base))
+    except Exception as exc:
+        print("[v5.1] activity band FAILED:", repr(exc))
     print(f"[v5.1] done in {time.time()-t1:.1f} s")
     print("[v2] running five verification loops ...")
     v = verify_all(base, sc)
@@ -1916,8 +2147,10 @@ def main():
     write_reports(base, sc, v)
     write_uncertainty_doc()
     write_methanol_adiabatic_doc()
+    write_activity_band_doc()
     print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/, docs/12..26 "
-          f"(V5 handover packs: docs/27..29; V5.1: docs/30..31)")
+          f"(V5 handover packs: docs/27..29; V5.1: docs/30..31; "
+          f"V5.2 activity corridor: docs/32)")
     print("[v2] verification:", v["summary"])
     return 0
 

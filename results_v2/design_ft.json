@@ -391,7 +391,7 @@
     "Ni_in_reformer_t": 4.526450718190437,
     "Ni_in_pre_reformer_t": 2.2632253590952187,
     "total_Ni_inventory_t": 6.789676077285656,
-    "Ni_per_1000Nm3_product_kg": 8.487095096607069e-06,
+    "Ni_per_1000Nm3_product_kg": 0.008487095096607071,
     "design_life_years": 4.0,
     "catalyst_consumption_t_per_y": 11.316126795476094,
     "Ni_consumption_t_per_y": 1.697419019321414,
@@ -402,25 +402,25 @@
         "life_years": 3.0,
         "catalyst_consumption_t_per_y": 15.088169060634792,
         "Ni_consumption_t_per_y": 2.2632253590952187,
-        "Ni_consumption_kg_per_1000Nm3": 2.8290316988690236e-06
+        "Ni_consumption_kg_per_1000Nm3": 0.002829031698869023
       },
       {
         "life_years": 5.0,
         "catalyst_consumption_t_per_y": 9.052901436380875,
         "Ni_consumption_t_per_y": 1.3579352154571311,
-        "Ni_consumption_kg_per_1000Nm3": 1.697419019321414e-06
+        "Ni_consumption_kg_per_1000Nm3": 0.001697419019321414
       },
       {
         "life_years": 8.0,
         "catalyst_consumption_t_per_y": 5.658063397738047,
         "Ni_consumption_t_per_y": 0.848709509660707,
-        "Ni_consumption_kg_per_1000Nm3": 1.0608868870758836e-06
+        "Ni_consumption_kg_per_1000Nm3": 0.001060886887075884
       },
       {
         "life_years": 10.0,
         "catalyst_consumption_t_per_y": 4.526450718190437,
         "Ni_consumption_t_per_y": 0.6789676077285656,
-        "Ni_consumption_kg_per_1000Nm3": 8.48709509660707e-07
+        "Ni_consumption_kg_per_1000Nm3": 0.000848709509660707
       }
     ],
     "source": "JM KATALCO brochure https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214 (opened): 16-18% NiO, loaded density 780-1140 kg/m3, QUADRALOBE lives >8-10 y; Catalysts 2019 9,801 (opened): 15 wt% Ni/MgAl2O4 86 m2/g 6.6 nm; Applied Energy 377 (2025) 124556 (opened): GHSV 2500 h-1; Digital Refining (opened): changeout 4-6 y",

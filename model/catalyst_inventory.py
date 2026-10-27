@@ -47,8 +47,11 @@ def inventory(cfg, feed_Nm3_h, dry_gas_Nm3_h, product_Nm3_h,
             "life_years": ly,
             "catalyst_consumption_t_per_y": mass_total / 1000.0 / ly,
             "Ni_consumption_t_per_y": ni_total / 1000.0 / ly,
+            # kg of annual Ni make-up per 1000 Nm3 of annual product. The two
+            # /1000 factors used to cancel each other (V5.2 unit fix: the value
+            # was kg per Nm3 while the key says kg per 1000 Nm3, i.e. 1000x low).
             "Ni_consumption_kg_per_1000Nm3": (ni_total / ly /
-                                              (product_Nm3_h * hours / 1000.0) / 1000.0),
+                                              (product_Nm3_h * hours) * 1000.0),
         })
     return {
         "basis": "Ni/MgAl2O4",
@@ -67,8 +70,12 @@ def inventory(cfg, feed_Nm3_h, dry_gas_Nm3_h, product_Nm3_h,
         "Ni_in_reformer_t": ni_reformer / 1000.0,
         "Ni_in_pre_reformer_t": ni_pre / 1000.0,
         "total_Ni_inventory_t": ni_total / 1000.0,
-        "Ni_per_1000Nm3_product_kg": (ni_total / (product_Nm3_h * hours / 1000.0) / 1000.0)
-                                      if product_Nm3_h else None,
+        # kg of installed Ni per 1000 Nm3 of ANNUAL product (inventory
+        # intensity, not consumption - see Ni_consumption_kg_per_1000Nm3 in
+        # life_sensitivity for the make-up rate). V5.2 unit fix: the previous
+        # "/1000 /1000" cancelled and returned kg per Nm3.
+        "Ni_per_1000Nm3_product_kg": (ni_total / (product_Nm3_h * hours) * 1000.0)
+                                     if product_Nm3_h else None,
         "design_life_years": life,
         "catalyst_consumption_t_per_y": mass_total / 1000.0 / life,
         "Ni_consumption_t_per_y": ni_total / 1000.0 / life,

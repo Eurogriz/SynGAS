@@ -1440,7 +1440,7 @@
       "life_years": 3.0,
       "catalyst_consumption_t_per_y": 23.533677204287553,
       "Ni_consumption_t_per_y": 3.5300515806431325,
-      "Ni_kg_per_1000Nm3": 4.412564475803916e-06,
+      "Ni_kg_per_1000Nm3": 0.004412564475803915,
       "Ni_inventory_t": 10.590154741929398,
       "catalyst_volume_m3": 78.4455906809585
     },
@@ -1449,7 +1449,7 @@
       "life_years": 5.0,
       "catalyst_consumption_t_per_y": 14.120206322572532,
       "Ni_consumption_t_per_y": 2.1180309483858797,
-      "Ni_kg_per_1000Nm3": 2.6475386854823494e-06,
+      "Ni_kg_per_1000Nm3": 0.0026475386854823493,
       "Ni_inventory_t": 10.590154741929398,
       "catalyst_volume_m3": 78.4455906809585
     },
@@ -1458,7 +1458,7 @@
       "life_years": 8.0,
       "catalyst_consumption_t_per_y": 8.825128951607832,
       "Ni_consumption_t_per_y": 1.3237693427411747,
-      "Ni_kg_per_1000Nm3": 1.6547116784264686e-06,
+      "Ni_kg_per_1000Nm3": 0.0016547116784264683,
       "Ni_inventory_t": 10.590154741929398,
       "catalyst_volume_m3": 78.4455906809585
     },
@@ -1467,7 +1467,7 @@
       "life_years": 10.0,
       "catalyst_consumption_t_per_y": 7.060103161286266,
       "Ni_consumption_t_per_y": 1.0590154741929398,
-      "Ni_kg_per_1000Nm3": 1.3237693427411747e-06,
+      "Ni_kg_per_1000Nm3": 0.0013237693427411747,
       "Ni_inventory_t": 10.590154741929398,
       "catalyst_volume_m3": 78.4455906809585
     },
@@ -1476,7 +1476,7 @@
       "life_years": 3.0,
       "catalyst_consumption_t_per_y": 15.088169060634792,
       "Ni_consumption_t_per_y": 2.2632253590952187,
-      "Ni_kg_per_1000Nm3": 2.8290316988690236e-06,
+      "Ni_kg_per_1000Nm3": 0.002829031698869023,
       "Ni_inventory_t": 6.789676077285656,
       "catalyst_volume_m3": 50.29389686878264
     },
@@ -1485,7 +1485,7 @@
       "life_years": 5.0,
       "catalyst_consumption_t_per_y": 9.052901436380875,
       "Ni_consumption_t_per_y": 1.3579352154571311,
-      "Ni_kg_per_1000Nm3": 1.697419019321414e-06,
+      "Ni_kg_per_1000Nm3": 0.001697419019321414,
       "Ni_inventory_t": 6.789676077285656,
       "catalyst_volume_m3": 50.29389686878264
     },
@@ -1494,7 +1494,7 @@
       "life_years": 8.0,
       "catalyst_consumption_t_per_y": 5.658063397738047,
       "Ni_consumption_t_per_y": 0.848709509660707,
-      "Ni_kg_per_1000Nm3": 1.0608868870758836e-06,
+      "Ni_kg_per_1000Nm3": 0.001060886887075884,
       "Ni_inventory_t": 6.789676077285656,
       "catalyst_volume_m3": 50.29389686878264
     },
@@ -1503,7 +1503,7 @@
       "life_years": 10.0,
       "catalyst_consumption_t_per_y": 4.526450718190437,
       "Ni_consumption_t_per_y": 0.6789676077285656,
-      "Ni_kg_per_1000Nm3": 8.48709509660707e-07,
+      "Ni_kg_per_1000Nm3": 0.000848709509660707,
       "Ni_inventory_t": 6.789676077285656,
       "catalyst_volume_m3": 50.29389686878264
     },
@@ -1512,7 +1512,7 @@
       "life_years": 3.0,
       "catalyst_consumption_t_per_y": 11.000470961323833,
       "Ni_consumption_t_per_y": 1.650070644198575,
-      "Ni_kg_per_1000Nm3": 4.125176610496438e-06,
+      "Ni_kg_per_1000Nm3": 0.004125176610496438,
       "Ni_inventory_t": 4.9502119325957255,
       "catalyst_volume_m3": 36.66823653774611
     },
@@ -1521,7 +1521,7 @@
       "life_years": 5.0,
       "catalyst_consumption_t_per_y": 6.600282576794299,
       "Ni_consumption_t_per_y": 0.9900423865191451,
-      "Ni_kg_per_1000Nm3": 2.475105966297863e-06,
+      "Ni_kg_per_1000Nm3": 0.0024751059662978625,
       "Ni_inventory_t": 4.9502119325957255,
       "catalyst_volume_m3": 36.66823653774611
     },
@@ -1530,7 +1530,7 @@
       "life_years": 8.0,
       "catalyst_consumption_t_per_y": 4.125176610496437,
       "Ni_consumption_t_per_y": 0.6187764915744657,
-      "Ni_kg_per_1000Nm3": 1.5469412289361643e-06,
+      "Ni_kg_per_1000Nm3": 0.0015469412289361643,
       "Ni_inventory_t": 4.9502119325957255,
       "catalyst_volume_m3": 36.66823653774611
     },
@@ -1539,7 +1539,7 @@
       "life_years": 10.0,
       "catalyst_consumption_t_per_y": 3.3001412883971497,
       "Ni_consumption_t_per_y": 0.49502119325957256,
-      "Ni_kg_per_1000Nm3": 1.2375529831489315e-06,
+      "Ni_kg_per_1000Nm3": 0.0012375529831489312,
       "Ni_inventory_t": 4.9502119325957255,
       "catalyst_volume_m3": 36.66823653774611
     },
@@ -1548,7 +1548,7 @@
       "life_years": 3.0,
       "catalyst_consumption_t_per_y": 26.35911832358934,
       "Ni_consumption_t_per_y": 3.9538677485384004,
-      "Ni_kg_per_1000Nm3": 4.940851985267299e-06,
+      "Ni_kg_per_1000Nm3": 0.0049408519852673005,
       "Ni_inventory_t": 11.861603245615202,
       "catalyst_volume_m3": 87.86372774529778
     },
@@ -1557,7 +1557,7 @@
       "life_years": 5.0,
       "catalyst_consumption_t_per_y": 15.815470994153603,
       "Ni_consumption_t_per_y": 2.3723206491230404,
-      "Ni_kg_per_1000Nm3": 2.9645111911603795e-06,
+      "Ni_kg_per_1000Nm3": 0.00296451119116038,
       "Ni_inventory_t": 11.861603245615202,
       "catalyst_volume_m3": 87.86372774529778
     },
@@ -1566,7 +1566,7 @@
       "life_years": 8.0,
       "catalyst_consumption_t_per_y": 9.884669371346002,
       "Ni_consumption_t_per_y": 1.4827004057019002,
-      "Ni_kg_per_1000Nm3": 1.8528194944752374e-06,
+      "Ni_kg_per_1000Nm3": 0.0018528194944752376,
       "Ni_inventory_t": 11.861603245615202,
       "catalyst_volume_m3": 87.86372774529778
     },
@@ -1575,7 +1575,7 @@
       "life_years": 10.0,
       "catalyst_consumption_t_per_y": 7.907735497076802,
       "Ni_consumption_t_per_y": 1.1861603245615202,
-      "Ni_kg_per_1000Nm3": 1.4822555955801898e-06,
+      "Ni_kg_per_1000Nm3": 0.00148225559558019,
       "Ni_inventory_t": 11.861603245615202,
       "catalyst_volume_m3": 87.86372774529778
     },
@@ -1584,7 +1584,7 @@
       "life_years": 3.0,
       "catalyst_consumption_t_per_y": 22.621768280284936,
       "Ni_consumption_t_per_y": 3.3932652420427396,
-      "Ni_kg_per_1000Nm3": 3.222822913437466e-06,
+      "Ni_kg_per_1000Nm3": 0.003222822913437466,
       "Ni_inventory_t": 10.17979572612822,
       "catalyst_volume_m3": 75.40589426761645
     },
@@ -1593,7 +1593,7 @@
       "life_years": 5.0,
       "catalyst_consumption_t_per_y": 13.57306096817096,
       "Ni_consumption_t_per_y": 2.035959145225644,
-      "Ni_kg_per_1000Nm3": 1.9336937480624797e-06,
+      "Ni_kg_per_1000Nm3": 0.0019336937480624796,
       "Ni_inventory_t": 10.17979572612822,
       "catalyst_volume_m3": 75.40589426761645
     },
@@ -1602,7 +1602,7 @@
       "life_years": 8.0,
       "catalyst_consumption_t_per_y": 8.48316310510685,
       "Ni_consumption_t_per_y": 1.2724744657660274,
-      "Ni_kg_per_1000Nm3": 1.2085585925390497e-06,
+      "Ni_kg_per_1000Nm3": 0.0012085585925390497,
       "Ni_inventory_t": 10.17979572612822,
       "catalyst_volume_m3": 75.40589426761645
     },
@@ -1611,7 +1611,7 @@
       "life_years": 10.0,
       "catalyst_consumption_t_per_y": 6.78653048408548,
       "Ni_consumption_t_per_y": 1.017979572612822,
-      "Ni_kg_per_1000Nm3": 9.668468740312398e-07,
+      "Ni_kg_per_1000Nm3": 0.0009668468740312398,
       "Ni_inventory_t": 10.17979572612822,
       "catalyst_volume_m3": 75.40589426761645
     }

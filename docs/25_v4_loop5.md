@@ -7,7 +7,7 @@
 **Вердикт:** FAILED (now evidence-based, not just absence-of-data)
 **Причина:** External pilot data WERE found and compared. The model is an EQUILIBRIUM model; the lab data are KINETIC at 1-10 bar, so the mean bias is +0.287 X_CH4. A commercial Ni/MgAl2O4 catalyst datasheet, a design-point pilot campaign, a 200-1000 h sintering series and a certified HAZOP are still absent. The methanol kinetic model reproduces two opened benchmarks. The ammonia model was rebuilt as a multi-bed adiabatic converter and now needs ONE documented activity scalar (k_scale=0.213) to sit on the opened per-pass benchmark; the two opened ammonia benchmarks themselves disagree by a factor of 2.36 on that scalar, so this is calibration, not validation.
 
-## 25.1 Подпроверки: 10 из 25
+## 25.1 Подпроверки: 11 из 26
 
 | статус | проверка | примечание |
 |---|---|---|
@@ -26,6 +26,7 @@
 | ПРОВЕРЕНО | k_scale calibration reproduces the opened benchmark AT THE BENCHMARK POINT | true BY CONSTRUCTION (the fit target is that number) - it validates the calibration pr |
 | НЕ ПРОЙДЕНО | converter design point inside the wider opened 15-25% band | 200 bar design point sits slightly above the opened band; the band belongs to another  |
 | НЕ ПРОЙДЕНО | the two opened NH3 benchmarks are mutually consistent | matching 17.5% per-pass needs k_scale=0.213, matching 13 mol% NH3 needs k_scale=0.504  |
+| ПРОВЕРЕНО | activity corridor (x2.362 on k_scale) propagated through catalyst volume, peak T, duty and recycle - as corridors, not points | model/activity_uncertainty.py + docs/32_v5_activity_band.md; T_peak turns out activity |
 | ПРОВЕРЕНО | converter bed enthalpy balance closes (H=const per bed) | relative residual of the per-bed adiabatic invariant; the profile is written to result |
 | НЕ ПРОЙДЕНО | converter peak bed T within the catalyst ceiling at the design inlet temperature | peak 845 K vs assumed ceiling 803 K; remedy (cooler inlets or more beds with cold shot |
 | ПРОВЕРЕНО | converter recycle closure X*(1+RR) >= 1 at the configured RR |  |

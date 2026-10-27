@@ -26,13 +26,30 @@ Ni metal from NiO: 17 wt% * 58.6934/74.6924 = 13.36 wt%.
 GHSV = 2500 Nm3/(m3cat h) for the main reformer, 5000 for the pre-reformer
 (opened electrified-SMR value + [ДОПУЩЕНИЕ] pre-reformer).
 
-{md_table(["product", "V_reformer m3", "V_pre m3", "catalyst t", "Ni inventory t",
-           "Ni t/y (4 y life)", "catalyst t/y", "ZnO kg", "Ni kg/1000 Nm3"], rows)}
+| product | V_reformer m3 | V_pre m3 | catalyst t | Ni inventory t | Ni t/y (4 y life) | catalyst t/y | ZnO kg | Ni inventory, kg per 1000 Nm3 of annual product |
+|---|---|---|---|---|---|---|---|---|
+| methanol | 52.30 | 26.15 | 70.60 | 10.590 | 2.648 | 17.65 | 65538 | 0.0132 |
+| ft | 33.53 | 16.76 | 45.26 | 6.790 | 1.697 | 11.32 | 42019 | 0.0085 |
+| oxo | 24.45 | 12.22 | 33.00 | 4.950 | 1.238 | 8.25 | 30635 | 0.0124 |
+| hydrogen | 58.58 | 29.29 | 79.08 | 11.862 | 2.965 | 19.77 | 73407 | 0.0148 |
+| ammonia | 50.27 | 25.14 | 67.87 | 10.180 | 2.545 | 16.97 | 62999 | 0.0097 |
+
+**Unit note (V5.2 fix).** The last column and the `Ni_consumption_kg_per_1000Nm3`
+field of the life sensitivity used to carry two cancelling `/1000` factors, i.e.
+they returned kg per **Nm3** under a key that says kg per **1000 Nm3** - values
+were 1000x low. `model/catalyst_inventory.py` now multiplies by 1000 once; the
+table above is the corrected basis. `Ni_per_1000Nm3_product_kg` is an inventory
+intensity (installed Ni per annual product volume), NOT a consumption rate - the
+consumption rate is the `/life` version in the sensitivity below.
 
 ## 14.4 Life sensitivity (methanol example)
 
-{md_table(["life y", "Ni t/y", "catalyst t/y"],
-          [[r[1], r[2], r[3]] for r in life_rows])}
+| life y | Ni t/y | catalyst t/y |
+|---|---|---|
+| 3.0 | 3.530 | 23.53 |
+| 5.0 | 2.118 | 14.12 |
+| 8.0 | 1.324 | 8.83 |
+| 10.0 | 1.059 | 7.06 |
 
 Nickel price 18000 USD/t is an
 [ДОПУЩЕНИЕ] (no LME quote opened); annual Ni make-up cost is

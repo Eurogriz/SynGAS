@@ -821,6 +821,96 @@
    "url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Units=SI&Mask=1",
    "status": "[ЧАСТИЧНО]",
    "used_in_result": true
+  },
+  {
+   "id": "C82",
+   "name": "Activity-corridor factor implied by the two opened NH3 benchmarks",
+   "value": "k_scale 0.21340 hits the midpoint of the opened 15-20 % per-pass band, k_scale 0.50400 hits the opened 13.0 mol% outlet value, at 703.15 K / 200 bar / GHSV 10000 h^-1 (normal basis) -> factor 2.3616 || both anchors are opened literature values from other plants and other catalysts; the factor is a MEASURED inconsistency of the sources, not a fitted spread and not a measurement error of this project",
+   "unit": "-",
+   "source": "model/converter.py calibrate_k0 (primary objective) vs alternative_objective; anchors: Humphreys et al. 2021 (15-20 %/pass at 10000-30000 h^-1) and the Rase/COMSOL 13 mol% outlet figure",
+   "url": "local:docs/32_v5_activity_band.md",
+   "status": "[ЧАСТИЧНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C83",
+   "name": "Catalyst-volume corridor at fixed design conversion",
+   "value": "holding X_per-pass = 25.353 % requires 52.948 m3 at the low-activity edge and 22.406 m3 at the high-activity edge (-57.7 %), i.e. GHSV 9993 -> 23614 h^-1; the as-built 52.909 m3 is the conservative (large) bound because the design is calibrated at the LOW edge of the corridor || deterministic model result, bisection converged in 13 iterations with |X error| <= 5e-5 on the same converter code as the design",
+   "unit": "m3",
+   "source": "THIS MODEL - model/activity_uncertainty.py volume_to_hold_design_conversion",
+   "url": "local:results_v2/activity_uncertainty.json",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C84",
+   "name": "Peak bed temperature is insensitive to catalyst activity",
+   "value": "T_peak spans only 845.34 -> 845.42 K (0.08 K) across the whole x2.36 corridor, because every bed runs into the equilibrium pinch and the rise to the pinch is set by thermodynamics, not by rate; therefore the 42 K exceedance of the assumed 803.15 K ceiling follows from the chosen 703.15 K inlet (designer's choice) and CANNOT be read as evidence about the catalyst || ceiling itself is an assumption, no vendor datasheet",
+   "unit": "K",
+   "source": "THIS MODEL - model/activity_uncertainty.py at_fixed_geometry",
+   "url": "local:docs/32_v5_activity_band.md",
+   "status": "[ЧАСТИЧНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C85",
+   "name": "Ceiling-limited operation at each activity",
+   "value": "to keep the peak <= 803.15 K the common bed inlet must drop from 644.6 K (low edge) to 613.9 K (high edge); the outlet then falls to 12.90 mol% NH3 at the low edge (BELOW the opened 13.0 mol% benchmark) and 15.26 mol% at the high edge (above it) - ceiling and benchmark are met simultaneously only in the upper half of the corridor || model-side bisection on inlet temperature; the benchmark belongs to another plant",
+   "unit": "K / mol%",
+   "source": "THIS MODEL - model/activity_uncertainty.py _ceiling_inlet",
+   "url": "local:docs/32_v5_activity_band.md",
+   "status": "[ЧАСТИЧНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C86",
+   "name": "Heat duty and recycle corridor produced by the activity band",
+   "value": "interbed cooling 37.2 -> 42.8 MW and recycle ratio implied by kinetics 2.944 -> 2.332 against the configured 3.0; loop closure X*(1+RR) 1.014 -> 1.200, so the configured recycle closes the loop at every activity in the corridor || internal enthalpy bookkeeping closes to 4e-16; loop closure is stoichiometric (no purge/inert balance)",
+   "unit": "MW / -",
+   "source": "THIS MODEL - model/activity_uncertainty.py at_fixed_geometry",
+   "url": "local:results_v2/activity_uncertainty.json",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C87",
+   "name": "Ammonia tonnage is not activity-limited at fixed feed",
+   "value": "net NH3 stays 47.387 t/h across the corridor: at fixed fresh syngas flow and fixed loop pressure tonnage is set by the closure X*(1+RR)>=1, while activity changes the recycle ratio needed to reach it; a closure above 1.0 means the configured recycle is oversized, not more product || the loop model has no purge/inert balance, so the real settling point of the loop is not resolved",
+   "unit": "t/h",
+   "source": "THIS MODEL - model/activity_uncertainty.py production_is_not_activity_limited",
+   "url": "local:docs/32_v5_activity_band.md",
+   "status": "[ЧАСТИЧНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C88",
+   "name": "Money exposure of the activity corridor",
+   "value": "catalyst inventory 3.76 -> 1.59 M USD (delta 2.17 M USD) at the screening price 40 USD/kg, vessel-scale proxy (V/V_ref)^0.7 = 1.000 -> 0.548, recycle-compressor power 0.063-0.080 / 0.127-0.160 / 0.190-0.240 MW for a 1 / 2 / 3 bar loop pressure drop, i.e. 1.1e4-3.2e4 USD/y => the activity corridor is a CAPEX/inventory question, not an OPEX one || 40 USD/kg is the Ni/MgAl2O4 reforming screening price, no promoted-iron price or life was opened (no annualised replacement cost), compressor is polytropic with assumed k and eta, and the converter's share of the 281.4 M USD screening CAPEX is not resolved",
+   "unit": "USD",
+   "source": "THIS MODEL - model/activity_uncertainty.py money (model/economics.py PRICES, model/equipment.py compressor_power)",
+   "url": "local:docs/32_v5_activity_band.md",
+   "status": "[ДОПУЩЕНИЕ]",
+   "used_in_result": true
+  },
+  {
+   "id": "C89",
+   "name": "Catalyst mass conversion uses a placeholder bulk density",
+   "value": "corridor mass 94.0 -> 39.8 t at 1775 kg/m3, a value taken from the Vanden Bussche & Froment Cu/ZnO case because no bulk density for a promoted-iron ammonia catalyst was ever opened in this project; the density enters mass and inventory cost linearly || exactly docs/28 item 12; volume-side conclusions of the corridor are density-free",
+   "unit": "kg/m3",
+   "source": "THIS MODEL - model/activity_uncertainty.py RHO_CAT",
+   "url": "local:docs/28_v5_vendor_rfi.md",
+   "status": "[ДОПУЩЕНИЕ]",
+   "used_in_result": true
+  },
+  {
+   "id": "C90",
+   "name": "The activity corridor is not plant validation",
+   "value": "the corridor bounds only what the disagreement of two opened literature benchmarks implies for THIS model; it does not validate the converter, and it is orthogonal to the 0/6 pilot points inside the feed/temperature envelope of docs/30; loop 5 therefore stays FAILED (10/25) even with the corridor computed || no measured NH3 converter point on 15 wt% Ni/MgAl2O4 exists in the workspace",
+   "unit": "-",
+   "source": "THIS MODEL - model/verify_v2.py _activity_band_ok + loop 5 subchecks",
+   "url": "local:results_v2/verification_v2.json",
+   "status": "[НЕ ПОДТВЕРЖДЕНО]",
+   "used_in_result": false
   }
  ]
 }

@@ -220,16 +220,20 @@ def api_converter():
 
 @app.get("/api/quality")
 def api_quality():
-    """V5.1 model-quality pack: the model's own input-uncertainty band on X_CH4
-    and the methanol adiabatic benchmark against the opened VBF worked case.
+    """V5.1/V5.2 model-quality pack: the model's own input-uncertainty band on
+    X_CH4, the methanol adiabatic benchmark against the opened VBF worked case,
+    and the catalyst-activity corridor of the ammonia converter.
 
-    Both are read from the saved run when present; otherwise they are computed
-    once (tens of seconds) and cached. Neither is a validation: the first shows
-    that input uncertainty cannot explain the pilot gap, the second is a
-    model-to-model reproduction of a published simulation."""
+    All three are read from the saved run when present; otherwise they are
+    computed once (tens of seconds) and cached. None of them is a validation:
+    the first shows that input uncertainty cannot explain the pilot gap, the
+    second is a model-to-model reproduction of a published simulation, and the
+    third only propagates a disagreement between two opened literature
+    benchmarks through volume, peak temperature, duty and cost."""
     out = {"from_saved_run": True}
     files = {"uncertainty": ("model_uncertainty.json", None),
-             "methanol_adiabatic": ("methanol_adiabatic_check.json", None)}
+             "methanol_adiabatic": ("methanol_adiabatic_check.json", None),
+             "activity_band": ("activity_uncertainty.json", None)}
     missing = []
     for key, (fn, _f) in files.items():
         path = os.path.join(ROOT, "results_v2", fn)
@@ -254,6 +258,9 @@ def api_quality():
             if "methanol_adiabatic" in missing:
                 from model.methanol_converter import build_report
                 obj["methanol_adiabatic"] = build_report(n_steps=800)
+            if "activity_band" in missing:
+                from model.activity_uncertainty import band
+                obj["activity_band"] = band()
             _CACHE["quality"] = obj
             for k in missing:
                 out[k] = obj.get(k)
@@ -411,7 +418,7 @@ a{color:var(--acc)}
 <button onclick="tab('t9',this)">Безопасность</button>
 <button onclick="tab('t10',this)">Кинетика / контур 5</button>
 <button onclick="tab('t11',this);conv()">Конвертор NH₃ (V5)</button>
-<button onclick="tab('t12',this);qual()">Качество модели (V5.1)</button></div>
+<button onclick="tab('t12',this);qual()">Качество модели (V5.1–V5.2)</button></div>
 <div id="t1"></div><div id="t2" class="hidden"></div><div id="t3" class="hidden"></div>
 <div id="t4" class="hidden"></div><div id="t5" class="hidden"></div>
 <div id="t6" class="hidden"></div><div id="t7" class="hidden"><pre id="raw"></pre></div>
@@ -631,12 +638,45 @@ async function conv(){
   '<div class="row"><input id="ingfile" size="34" placeholder="data/my_campaign.csv"><button onclick="ing()">Проверить и перезапустить контур 5</button></div><pre id="ingout"></pre>'+
   '<div class="note">Контур 5 остаётся НЕ ПРОЙДЕННЫМ: ни пилотной кампании в расчётной точке, ни даташита катализатора, ни сертифицированной HAZOP нет. Калибровка по чужому промышленному бенчмарку валидацией не считается.</div>';
  say('конвертор NH3: готово');}
+function actab(ab){
+ if(!ab) return '<div class="note">коридор активности не рассчитан (нет results_v2/activity_uncertainty.json).</div>';
+ const ab0=ab.activity_band||{}, rows=ab.rows||[], sp=ab.spans||{}, dr=ab.design_reference||{}, mo=ab.money||{};
+ const h='<h2>Коридор активности катализатора: множитель ×'+fmt(ab0.factor,3)+'</h2>'+
+  '<div class="note">k_scale '+fmt(ab0.k_scale_lo,4)+' … '+fmt(ab0.k_scale_hi,4)+
+  ' — это не подгонка, а противоречие двух открытых ориентиров (середина коридора захода N₂ за проход против 13 мол.% NH₃ на выходе). '+
+  'Проект стоит на НИЖНЕМ крае полосы, поэтому 52,91 м³ — консервативная оценка объёма, а 845 K — пессимистичный пик.</div>'+
+  tbl(['k_scale','позиция','X за проход, %','выход NH₃, мол.%','T пик, K','выше потолка, K','Q межсекц., МВт','RR по кинетике','замыкание X·(1+RR)'],
+   rows.map(r=>{const f=r.at_fixed_geometry||{};return [fmt(r.k_scale,4),r.position_in_band,fmt(f.per_pass_N2_pct,2),
+     fmt(f.outlet_NH3_molpct,2),fmt(f.T_peak_K,1),fmt(f.peak_over_assumed_ceiling_K,1),fmt(f.interbed_cooling_duty_MW,1),
+     fmt(f.recycle_ratio_implied,3),fmt(f.loop_closure_X_times_1pRR,3)];}))+
+  '<p><span class="pass">T пик почти не зависит от активности: '+fmt(sp.T_peak_K[0],2)+'…'+fmt(sp.T_peak_K[1],2)+' K</span> — секции упираются в равновесие, '+
+  'превышение потолка задаётся температурой входа, а не катализатором.</p>'+
+  '<h2>Объём, если держать проектную конверсию ('+fmt(dr.per_pass_N2_pct,2)+' %)</h2>'+
+  tbl(['k_scale','V нужно, м³','ΔV, %','GHSV, ч⁻¹','масса, т','инвентарь, USD','множитель корпуса (V/V₀)^0,7','сходимость'],
+   rows.map(r=>{const v=r.volume_to_hold_design_conversion||{};return [fmt(r.k_scale,4),fmt(v.V_m3,2),fmt(v.delta_V_pct,1),
+     fmt(v.GHSV_normal_h1,0),fmt(v.catalyst_mass_t,1),(v.inventory_cost_USD==null?'—':fmt(v.inventory_cost_USD/1e6,2)+' M'),
+     fmt(v.vessel_scale_factor_capex_exponent_0p7,3),v.converged?'да':'НЕТ'];}))+
+  '<h2>Мера по потолку при каждой активности</h2>'+
+  tbl(['k_scale','общий вход секций, K','T пик, K','X за проход, %','выход NH₃, мол.%','RR по кинетике'],
+   rows.map(r=>{const c=r.ceiling_remedy||{};return [fmt(r.k_scale,4),fmt(c.T_in_common_K,1),fmt(c.T_peak_K,1),
+     fmt(c.per_pass_N2_pct,2),fmt(c.outlet_NH3_molpct,2),fmt(c.recycle_ratio_implied,3)];}))+
+  '<p>тоннаж NH₃ по всему коридору: '+fmt((ab.production_is_not_activity_limited||{}).NH3_design_t_h,2)+
+  ' т/ч (без изменений) — активность меняет требуемый рецикл, а не стехиометрический предел.</p>'+
+  tbl(['канал','коридор','статус'],
+   (mo.recycle_compressor&&mo.recycle_compressor.power_by_loop_dP||[]).map(x=>['рецикловый компрессор, Δp контура '+fmt(x.dP_loop_bar,0)+' бар',
+     fmt(x.power_MW_min,2)+'…'+fmt(x.power_MW_max,2)+' МВт (Δ '+fmt(x.delta_cost_USD_y,0)+' USD/год)','[ЧАСТИЧНО] политропная оценка'])
+   .concat([['инвентарь катализатора',fmt(Math.min.apply(null,mo.catalyst_inventory_corridor_USD||[0])/1e6,2)+'…'+
+      fmt(Math.max.apply(null,mo.catalyst_inventory_corridor_USD||[0])/1e6,2)+' M USD','[ДОПУЩЕНИЕ] цена 40 USD/kg — скрининг для Ni/MgAl₂O₄'],
+     ['перевод объём→масса','×'+fmt(mo.density_used_kg_m3,0)+' кг/м³','[ЧАСТИЧНО] заполнитель из кейса VBF; плотность аммиачного катализатора — docs/28 п.12']]))+
+  '<div class="note">Охват: '+(ab.not_covered||[]).join('; ')+'</div>'+
+  '<div class="note"><b>'+((ab.how_to_use||'')+'')+'</b> Коридор не является заводской валидацией.</div>';
+ return h;}
 async function qual(){
- say('качество модели: полоса неопределённости + адиабатический бенчмарк метанола ...');
+ say('качество модели: полоса входа + адиабатический бенчмарк метанола + коридор активности ...');
  const q=await (await fetch('/api/quality')).json();
  if(q.error){$('t12').innerHTML='<h2>Качество модели</h2><div class="note">ошибка: '+q.error+'</div>';say(q.error,true);return;}
  const u=q.uncertainty||{}, ma=q.methanol_adiabatic||{}, tm=ma.this_model||{}, cm=ma.comparison||{};
- $('t12').innerHTML='<h2>Качество модели V5.1: собственная полоса неопределённости и адиабатический бенчмарк</h2>'+
+ $('t12').innerHTML='<h2>Качество модели V5.1–V5.2: полоса неопределённости входа, адиабатический бенчмарк метанола, коридор активности</h2>'+
   '<div class="note">'+(q.from_saved_run?'Числа из сохранённого прогона `results_v2/`.':'Рассчитано по запросу (в кэше панели).')+' '+
    'Ни один из этих расчётов не является валидацией: они показывают, чего НЕ может быть объяснено исходными данными, и сверяют реализацию с опубликованной моделью.</div>'+
   '<h2>Полоса неопределённости X_CH4 (OFAT)</h2>'+
@@ -660,8 +700,8 @@ async function qual(){
    'углерод '+((tm.carbon_closure_rel||0).toExponential(1))+', невязка энтальпии '+((tm.enthalpy_residual_rel||0).toExponential(1))+'</p>'+
   tbl(['вариант входных допущений','T на выходе, K','MeOH, мол.%','CO2, мол.%'],
    ((ma.sensitivity)||[]).map(v=>[v.variant,fmt(v.T_out_K,2),fmt(v.MeOH_molpct,3),fmt(v.CO2_molpct,3)]))+
-  '<div class="note">'+(ma.status||'')+'</div>'+
-  '<div class="note">Подробнее: docs/30 (полоса неопределённости) и docs/31 (адиабатический кейс VBF).</div>';
+  '<div class="note">'+(ma.status||'')+'</div>'+actab(q.activity_band)+
+  '<div class="note">Подробнее: docs/30 (полоса неопределённости входа), docs/31 (адиабатический кейс VBF), docs/32 (коридор активности).</div>';
  say('качество модели: готово');}
 async function ing(){const f=$('ingfile').value;say('ингестирование '+f+' ...');
  const r=await fetch('/api/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({file:f})});

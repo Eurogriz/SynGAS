@@ -126,8 +126,8 @@
   },
   "loop5": {
     "status": "FAILED (now evidence-based, not just absence-of-data)",
-    "subchecks_passed": 10,
-    "subchecks_total": 25,
+    "subchecks_passed": 11,
+    "subchecks_total": 26,
     "mean_pilot_bias": 0.2867605845140648,
     "catalyst_datasheet_found": false
   },
@@ -148,7 +148,7 @@
     "computed": true
   },
   "overall_passed": false,
-  "runtime_s": 272.4,
+  "runtime_s": 369.8,
   "optional_packages": {
     "iapws": true
   }

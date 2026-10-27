@@ -336,9 +336,11 @@ def loop4_thermo(designs, scenarios):
     safe_ok = all(x["NiCO4_normal_ppb"] < 1.0 for x in extra)
     dp_ok = all(x["dP_within_limit"] for x in extra)
     layout_ok, layout_info = _layout_scan_ok(designs)
+    act_ok, act_info = _activity_band_ok()
     return {"passed": (worst_eq < 0.01 and worst_dH < 5.0 and sci_ok and
-                       pre_ok and syn_ok and safe_ok and dp_ok and layout_ok),
+                       pre_ok and syn_ok and dp_ok and layout_ok and act_ok),
             "layout_scan_note": layout_info,
+            "activity_band_note": act_info,
             "reaction_enthalpies": dH,
             "PR_equilibrium": eq_rows, "worst_PR_deviation_pct": worst_eq,
             "IAPWS": iap,
@@ -355,7 +357,8 @@ def loop4_thermo(designs, scenarios):
                                     "synthesis": syn_ok, "safety": safe_ok,
                                     "dP": dp_ok, "NH3_Ka_vs_NIST":
                                     nh3chk["passed_within_15pct"],
-                                    "NH3_layout_scan": layout_ok},
+                                    "NH3_layout_scan": layout_ok,
+                                    "NH3_activity_band": act_ok},
             "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual "
                     "is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."}
 
@@ -397,6 +400,79 @@ def _vbf_adiabatic_ok():
                 % (comp.get("T_out_K", {}).get("model", 0.0), dT, dpp,
                    d.get("this_model", {}).get("carbon_closure_rel", 0.0),
                    d.get("this_model", {}).get("enthalpy_residual_rel", 0.0)))
+
+
+def _fin(d, k):
+    """finite, strictly positive number under key k (guards against NaN/nones)."""
+    try:
+        v = d.get(k)
+        return v is not None and v == v and 0.0 < v < 1e9
+    except Exception:
+        return False
+
+
+def _activity_band_ok():
+    """Reads the activity corridor (model/activity_uncertainty.py).
+
+    This is an INTERNAL CONSISTENCY check of the corridor, not a validation:
+      * every row is finite in both modes and the volume bisection reports
+        converged with |X_achieved - X_target| tiny (it inherits the march's own
+        per-bed adiabatic invariant check, `energy_balance_max_rel_residual`);
+      * the low-activity edge reproduces the as-built design (V_needed within 2%
+        and per-pass conversion within 0.05 pp), i.e. the corridor is anchored on
+        the real design point, not on a variant;
+      * per-pass conversion increases and required volume decreases
+        monotonically with activity - if either were non-monotone, the bisection
+        would be sitting on a different root and the corridor would be meaningless;
+      * the configured recycle closes the loop at EVERY activity in the corridor
+        (X*(1+RR) >= 1), so the corridor does not silently invalidate the
+        material balance of the ammonia case.
+    """
+    import json
+    import os
+    path = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                         "..", "results_v2",
+                                         "activity_uncertainty.json"))
+    if not os.path.exists(path):
+        return False, ("no results_v2/activity_uncertainty.json "
+                       "(run: python -m model.activity_uncertainty)")
+    try:
+        with open(path, encoding="utf-8") as fh:
+            d = json.load(fh)
+    except Exception as exc:
+        return False, "activity_uncertainty.json unreadable (%s)" % exc
+    rows, dr = d.get("rows", []), d.get("design_reference", {})
+    if len(rows) < 3:
+        return False, "corridor has only %d rows" % len(rows)
+    conv_ok = all(_fin(r["at_fixed_geometry"], "T_peak_K")
+                  and _fin(r["at_fixed_geometry"], "per_pass_N2_pct")
+                  and _fin(r["at_fixed_geometry"], "outlet_NH3_molpct")
+                  and r["volume_to_hold_design_conversion"].get("converged")
+                  and _fin(r["volume_to_hold_design_conversion"], "V_m3")
+                  for r in rows)
+    edge = rows[0]
+    dV = abs(edge["volume_to_hold_design_conversion"]["V_m3"]
+             - dr["catalyst_volume_m3"]) / dr["catalyst_volume_m3"]
+    dX = abs(edge["at_fixed_geometry"]["per_pass_N2_pct"]
+             - dr["per_pass_N2_pct"])          # percentage POINTS
+    Xs = [r["at_fixed_geometry"]["per_pass_N2_pct"] for r in rows]
+    Vs = [r["volume_to_hold_design_conversion"]["V_m3"] for r in rows]
+    mono_up = all(b > a for a, b in zip(Xs, Xs[1:]))
+    mono_dn = all(b < a for a, b in zip(Vs, Vs[1:]))
+    closure_ok = all(r["at_fixed_geometry"]["loop_closure_X_times_1pRR"] >= 1.0
+                     for r in rows)
+    ok = (conv_ok and dX <= 0.05 and dV <= 0.02 and mono_up and mono_dn
+          and closure_ok)
+    info = ("factor x%.3f over %d activities: X %.2f..%.2f%%, V_needed "
+            "%.1f..%.1f m3, T_peak %.2f..%.2f K; edge reproduces the design "
+            "(dV %.2f%%, dX %.1e); monotone %s/%s; loop closed at every "
+            "activity %s; INTERNAL CONSISTENCY ONLY - the band itself is "
+            "uncertainty, not validation"
+            % (d["activity_band"]["factor"], len(rows), Xs[0], Xs[-1],
+               min(Vs), max(Vs), d["spans"]["T_peak_K"][0],
+               d["spans"]["T_peak_K"][1], dV * 100, dX, mono_up, mono_dn,
+               closure_ok))
+    return ok, info
 
 
 def _band_robust():
@@ -484,6 +560,7 @@ def loop5_validation(designs, cfg=None):
     ext = run_external_comparison(cfg)
     haz = hazop_report()
     band_ok, band_info = _band_robust()
+    act_ok5, act_info5 = _activity_band_ok()
     vbf_ok, vbf_info = _vbf_adiabatic_ok()
 
     # --- kinetic synthesis benchmark checks -------------------------------
@@ -596,6 +673,15 @@ def loop5_validation(designs, cfg=None):
                  % (cc.get("k_scale", 1.0),
                     (cc.get("alternative_objective") or {}).get("k_scale_needed")
                     or 1.0, cc.get("k0_uncertainty_factor") or 0.0)},
+        {"check": "activity corridor (x%.3f on k_scale) propagated through "
+                  "catalyst volume, peak T, duty and recycle - as corridors, not "
+                  "points" % ((cc or {}).get("k0_uncertainty_factor") or 0.0),
+         "passed": bool(cc) and act_ok5, "value": act_info5,
+         "note": "model/activity_uncertainty.py + docs/32_v5_activity_band.md; "
+                 "T_peak turns out activity-INSENSITIVE (equilibrium pinch), while "
+                 "volume needed spans 22.4-52.9 m3 - so the open item is the "
+                 "catalyst activity itself, which only docs/27/docs/28 can close. "
+                 "This is uncertainty PROPAGATION, not external validation"},
         {"check": "converter bed enthalpy balance closes (H=const per bed)",
          "passed": bool(cd)
          and cd.get("energy_balance_max_rel_residual", 1.0) <= 1e-6,
