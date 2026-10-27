@@ -971,6 +971,36 @@
    "url": "local:results_v2/activity_uncertainty.json",
    "status": "[ЧАСТИЧНО]",
    "used_in_result": true
+  },
+  {
+   "id": "C97",
+   "name": "Entered numbers are cross-referenced to the vendor request automatically",
+   "value": "the 18 numbered items of docs/28 are parsed back from the RFI tables and linked to form fields by the '28 п.N' references, so the form says which request item a number closes (open / partial / single source / verified) and which items (9, 10 - reduction programme, TPR/TPO curves) no number can close || mapping built by parsing docs/28 at read time, cached on file stat; integrity is a loop-5 subcheck and a selftest assertion, so a typo in a reference fails loudly",
+   "unit": "-",
+   "source": "THIS MODEL - model/operator_data.py rfi_items/rfi_coverage + docs/28 §28.1-28.2 tables",
+   "url": "local:docs/33_v5_manual_data_entry.md",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C98",
+   "name": "Pellet transport constants are now enterable instead of hardcoded",
+   "value": "tau = 3.5, pore radius 50 nm and pellet porosity 0.5 were function defaults in model/data_ingest.py:regime_screening and could not be replaced by vendor data; they are config keys (catalyst.pellet_tortuosity / pellet_pore_radius_nm / pellet_porosity) with the same values, three new form fields (docs/28 item 7) pin them, and the screening report states where each constant came from || values unchanged when no form exists, so every previously published Weisz-Prater number is reproduced; transport properties are still [ДОПУЩЕНИЕ] until the supplier answers item 7",
+   "unit": "-/-/nm",
+   "source": "THIS MODEL - cases/config.json catalyst + model/data_ingest.py _transport_defaults",
+   "url": "local:docs/28_v5_vendor_rfi.md",
+   "status": "[ДОПУЩЕНИЕ]",
+   "used_in_result": true
+  },
+  {
+   "id": "C99",
+   "name": "A dimensionless entry must still declare its unit field",
+   "value": "the validator used to skip the unit check whenever the declared unit was '-', which let '2.8 x' pass for a tortuosity; dimensionless and choice fields now accept only '-' or empty and anything else is rejected, and the exemption is keyed on the field TYPE || found while building the RFI map (3 fields of item 7 were silently unvalidated); selftest catches grew from 11 to 12",
+   "unit": "-",
+   "source": "THIS MODEL - model/operator_data.py validate() unit rule",
+   "url": "local:docs/33_v5_manual_data_entry.md",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
   }
  ]
 }

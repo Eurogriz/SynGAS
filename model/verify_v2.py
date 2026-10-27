@@ -663,6 +663,24 @@ def loop5_validation(designs, cfg=None):
         if set(fids) <= set(_ver):
             return "closed_verified", got
         return "single_source", got
+
+    def _rfi_tag(fids):
+        """which docs/28 vendor-request items these entered fields answer"""
+        try:
+            from .operator_data import rfi_refs
+            items = sorted({n for fid in (fids or ()) for n in rfi_refs(fid)})
+        except Exception:
+            items = []
+        return (" закрывает 28 п." + ", ".join(str(n) for n in items)) if items else ""
+
+    _rfi_sum = (_ovl.get("rfi_coverage") or {})
+    _rfi_line = (
+        ("RFI docs/28: %d из %d пунктов с полем формы закрыто вводом "
+         "(с второй подписью %d), открыто %d, вне формы %d"
+         % (_rfi_sum.get("n_answered", 0), _rfi_sum.get("n_with_field", 0),
+            _rfi_sum.get("n_answered_verified", 0), _rfi_sum.get("n_open", 0),
+            _rfi_sum.get("n_not_answerable", 0)))
+        if _rfi_sum else "RFI docs/28: состояние формы не прочитано")
     vbf_ok, vbf_info = _vbf_adiabatic_ok()
 
     # --- kinetic synthesis benchmark checks -------------------------------
@@ -832,7 +850,7 @@ def loop5_validation(designs, cfg=None):
                   != "open" else
                   "no vendor converter datasheet; bed-T ceiling is an assumption "
                   "(docs/28_v5_vendor_rfi.md asks for it; the entry point is now "
-                  "data/operator_inputs.json)")},
+                  "data/operator_inputs.json). " + _rfi_line)},
         {"check": "catalyst ACTIVITY pinned by operator data (corridor collapses to "
                   "a point only with provenance; the V5.2 literature band is still "
                   "printed next to it)",
@@ -845,6 +863,17 @@ def loop5_validation(designs, cfg=None):
         {"check": "operator data entry validated and consistently applied "
                   "(docs/33; a rejected form is a FAILURE, not a silent no-op)",
          "passed": bool(op_ok5), "value": op_info5},
+        {"check": "operator form <-> docs/28 cross-reference resolves "
+                  "(every '28 п.N' in the form maps to a real RFI item and every "
+                  "RFI item is either linked or declared out of reach)",
+         "passed": bool(_rfi_sum) and not _rfi_sum.get("unresolved_field_refs") \
+            and not _rfi_sum.get("fields_without_item") \
+            and _rfi_sum.get("n_items", 0) >= 18,
+         "value": "%d пунктов, %d связаны с полями, %d вне формы"
+                   % (_rfi_sum.get("n_items", 0), _rfi_sum.get("n_with_field", 0),
+                      _rfi_sum.get("n_not_answerable", 0)),
+         "note": _rfi_sum.get("note", "состояние формы не прочитано - ссылка не "
+                                     "построена")},
         {"check": "pilot campaign file ingested and validated against the "
                   "contract", "passed": _ingest_ready(),
          "note": "contract data/pilot_schema.json + harness model/data_ingest.py "
@@ -905,14 +934,17 @@ def loop5_validation(designs, cfg=None):
         hit = [key for key in _anno if key in item]
         fids = [f for key in hit for f in _anno[key]]
         state, got = _opc(*fids) if fids else ("open", None)
+        tag = _rfi_tag(got)
         if state == "open" or not got:
             unchecked.append(item)
         elif state == "single_source":
             unchecked.append(item + "  == внесено оператором (" + ", ".join(sorted(got))
+                             + (", " + tag if tag else "")
                              + "), независимая сверка документа не выполнена")
         else:
             unchecked.append(item + "  == ЗАКРЫТО вводом оператора с второй "
-                             "подписью (" + ", ".join(sorted(got)) + ")")
+                             "подписью (" + ", ".join(sorted(got))
+                             + (", " + tag if tag else "") + ")")
     return {
         "passed": False,
         "status": "FAILED (now evidence-based, not just absence-of-data)",

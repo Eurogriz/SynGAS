@@ -271,6 +271,18 @@ def api_quality():
 
 
 
+def _rfi_view():
+    """RFI coverage plus the two lookups a browser wants: which item a field row
+    can shade, and the short keys the JS reads. Counts come from the model, so the
+    panel cannot show an item as closed that the validator did not accept."""
+    from model.operator_data import rfi_coverage
+    cov = rfi_coverage()
+    cov["by_item"] = {str(r["item"]): r for r in cov.get("rows", [])}
+    cov["unresolved"] = cov.get("unresolved_field_refs") or []
+    cov["orphan_fields"] = cov.get("fields_without_item") or []
+    return cov
+
+
 def _operator_placeholder_table():
     """What the model substitutes while the operator has not entered a value.
 
@@ -388,7 +400,8 @@ def api_operator():
     corridor (docs/32) - that is the recommendation, and it is also printed in
     `status.recommendation`."""
     from model.operator_data import (FIELDS, GROUPS, template_doc, status,
-                                     recommendation, FORM_PATH, validate)
+                                     recommendation, FORM_PATH, validate,
+                                     rfi_questions)
     doc = None
     if os.path.exists(FORM_PATH):
         try:
@@ -399,11 +412,14 @@ def api_operator():
     errors, warnings, _clean = validate(doc) if doc else ([], [], {})
     spec = [{k: f[k] for k in ("id", "group", "label", "unit", "type", "lo", "hi",
                               "options", "rfi", "pins", "warn")} for f in FIELDS]
+    for row in spec:                   # the vendor question itself, not a number
+        row["questions"] = rfi_questions(row["id"])
     return jsonify(to_jsonable({
         "fields": spec, "groups": GROUPS,
         "doc": doc or template_doc(), "has_saved_form": bool(doc),
         "validation_errors": errors, "validation_warnings": warnings,
         "status": status(), "recommendation": recommendation(),
+        "rfi": _rfi_view(),
         "placeholder_now": _operator_placeholder_table()}))
 
 
@@ -416,8 +432,8 @@ def api_operator_post():
     action=clear    : remove the form (model returns to pure corridor mode)
     action=recompute: run the ammonia corridor with the entered data and return it
     """
-    from model.operator_data import (FORM_PATH, ROOT as _R, save, clear, status,
-                                     validate, write_template, activity_overrides)
+    from model.operator_data import (save, clear, status, validate,
+                                     write_template, activity_overrides)
     a = request.get_json(force=True, silent=True) or {}
     action = a.get("action", "validate")
     if action == "clear":
@@ -926,7 +942,7 @@ function opField(f,e){
  else {inp='<input id="'+id+'" type="text" value="'+(e.value==null?'':e.value)+'"'+
    (f.lo!=null?' placeholder="'+f.lo+' … '+f.hi+'"':'')+'>';}
  const range=f.type==='number'||f.type==='int'||f.type==='list'?('допустимо '+f.lo+' … '+f.hi):(f.type==='choice'?('одно из: '+f.options.join(' / ')):'текст');
- return '<tr><td><b>'+f.label+'</b><br><span class="u">'+f.id+(f.rfi?' · RFI '+f.rfi:'')+' · '+range+
+ return '<tr><td><b>'+f.label+'</b><br><span class="u">'+f.id+' · '+range+rfiAsk(f)+
   (f.pins?'<br>закрепляет: '+f.pins:'')+(f.warn?'<br><span class="warn">⚠ '+f.warn+'</span>':'')+
   '</span></td><td>'+inp+'</td>'+
   '<td><input id="'+opid(f.id,'unit')+'" value="'+(e.unit||'')+'" placeholder="'+(f.unit||'')+'"></td>'+
@@ -987,6 +1003,7 @@ async function opd(){
       (rec.rows||[]).map(r=>[r.quantity,r.model_value_now,r.operator_value==null?'—':r.operator_value,
        '<span class="'+(r.state==='corridor_required'?'warn':'pass')+'">'+r.state+'</span>',r.report_as]))+
     '<div class="note">'+(rec.note||'')+'</div>'+
+    '<h2>Карта покрытия запроса поставщику</h2>'+rfiMapBlock()+
     '<h2>Провенанс сохранённой формы</h2><pre id="opprov">'+
      ((st.groups||[]).length?JSON.stringify(st.groups.map(g=>({group:g.group,внесено:g.n_applied,открыто:g.open.length})),null,1).slice(0,4000):'формы ещё нет - бланк data/operator_inputs_TEMPLATE.json')+
     '</pre><div id="opcorr"></div>';
@@ -1003,7 +1020,54 @@ async function opSave(validateOnly){
    (j.saved?'; записано в '+j.path:' (не сохранено)')+
    ((j.validation_warnings||[]).length?'; предупреждения:<ul><li>'+j.validation_warnings.join('</li><li>')+'</li></ul>':''));
  if(j.status){$('opprov').textContent=JSON.stringify((j.status.groups||[]).map(g=>({group:g.group,внесено:g.n_applied,открыто:g.open.length})),null,1);}
- if(j.saved) say('форма сохранена — пересчитайте контур/коридор');
+ if(j.saved){await opd();
+  $('opout').innerHTML='<span class="pass">ПРИНЯТО</span>: форма сохранена, счётчики и карта RFI пересчитаны; кнопка «Пересчитать коридор» обновит полосу.';}
+}
+function rfiAsk(f){
+ let out='';
+ const bi=(OP&&OP.rfi)?OP.rfi.by_item:{};
+ (f.questions||[]).forEach(q=>{
+  out+='<br>RFI '+q.section+' п.'+q.n+': '+q.text;
+  const st=bi[q.n]; if(st){out+=' <b>['+rfiStateRu(st)+']</b>';}
+ });
+ return out;
+}
+function rfiStateRu(r){
+ const m={open:'открыт', partial:'частично', answered_single_source:'точка+коридор',
+  answered_verified:'закрыт с 2-й подписью', not_answerable_by_form:'вне формы'};
+ return m[r.state]||r.state;
+}
+function rfiMapBlock(){
+ const rf=(OP&&OP.rfi)||null;
+ if(!rf||!rf.rows){return '<div class="fail">карта RFI не прочитана</div>';}
+ const cards='<div class="cards">'
+  +'<div class="card"><div class="k">пунктов в запросе</div><div class="v">'+rf.n_items+'</div><div class="u">'+rf.source+'</div></div>'
+  +'<div class="card"><div class="k">с полем формы</div><div class="v">'+rf.n_with_field+'</div><div class="u">остальные — документ или кривая</div></div>'
+  +'<div class="card"><div class="k">закрыто вводом</div><div class="v '+(rf.n_answered?'pass':'warn')+'">'+rf.n_answered+'</div><div class="u">с 2-й подписью '+rf.n_answered_verified+'</div></div>'
+  +'<div class="card"><div class="k">открыто</div><div class="v warn">'+rf.n_open+'</div><div class="u">ждут числа с провенансом</div></div></div>';
+ const rows=rf.rows.map(r=>{
+  const flds=(r.fields||[]).map(f=>{
+   let cls='u'; if(f.in_force){cls=f.verified?'pass':'warn';}
+   return '<span class="'+cls+'">'+f.id+(f.in_force?' ✓':'')+'</span>';}).join(', ')||'—';
+  return ['<b>п.'+r.item+'</b> '+r.section, r.text, flds, rfiStateRu(r),
+    r.state_note, r.model_uses_it_for||'—'];});
+ let tail='';
+ if((rf.unresolved||[]).length||(rf.orphan_fields||[]).length){
+  tail='<div class="fail">Ссылки не разрешились: '+JSON.stringify(rf.unresolved)
+      +' ; поля без пункта: '+JSON.stringify(rf.orphan_fields)+'</div>';
+ } else {
+  tail='<div class="note">Все ссылки «поле → пункт RFI» разрешились: это отдельная '
+      +'подпроверка контура 5, она не зависит от того, заполнена ли форма.</div>';
+ }
+ if((rf.other_sources||[]).length){
+  tail+='<div class="note">Отдельные ссылки формы ведут на программу кампании (`'
+      +rf.other_sources.join('`, `')+'`): их закрывает не ввод числа, а '
+      +'`model/data_ingest.py` по контракту `data/pilot_schema.json`.</div>';
+ }
+ return '<h2>Карта: какое число закрывает какой пункт запроса (docs/28)</h2>'+cards
+  +'<div class="note">'+(rf.note||'')+'</div>'
+  +tbl(['пункт','что запрошено у поставщика','поля формы','состояние','что это значит','зачем модели'],rows)
+  +tail;
 }
 function bandNote(ab){
  if(ab.pinned_by_operator){
@@ -1037,8 +1101,8 @@ async function opRecompute(){
 }
 async function opClear(){say('удаление формы …');
  const j=await opPost({action:'clear'},'удаление …');
- $('opout').textContent=j.cleared?'форма удалена — модель снова отчитывается коридором':'формы не было';
- opd();}
+ await opd();
+ $('opout').textContent=j.cleared?'форма удалена — модель снова отчитывается коридором':'формы не было';}
 async function verify(){const j=await call('/api/verify',{});
  if(j.summary){$('t6').innerHTML='<h2>Пять циклов проверки</h2>'+tbl(['цикл','статус'],
   Object.entries(j.summary).map(([k,v])=>[k,'<span class="'+(v?'pass':'fail')+'">'+(v?'PASS':'FAIL')+'</span>']))

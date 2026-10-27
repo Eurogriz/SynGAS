@@ -98,7 +98,17 @@ FIELDS = [
        0.5, 50.0, [("equipment.pellet_d_m", 1e-3)], rfi="28 п.6",
        pins="Δp слоя (Эргун) и число Вейса–Пратера"),
     _f("bed_voidage", G1, "Порозность слоя", "-", "number", 0.2, 0.7,
-       [("equipment.bed_voidage", 1.0)], rfi="28 п.6/7", pins="Δp и V_bed↔V_cat"),
+       [("equipment.bed_voidage", 1.0)], rfi="28 п.6/17",
+       pins="Δp и V_bed↔V_cat (порозность СЛОЯ, не зерна)"),
+    _f("pellet_tortuosity", G1, "Извилистость пор носителя τ", "-", "number",
+       1.0, 10.0, [("catalyst.pellet_tortuosity", 1.0)], rfi="28 п.7",
+       pins="D_eff → модуль Вейса–Пратера → годен ли пилотный пункт для сверки"),
+    _f("pellet_pore_radius_nm", G1, "Средний радиус пор носителя", "nm", "number",
+       1.0, 1000.0, [("catalyst.pellet_pore_radius_nm", 1.0)], rfi="28 п.7",
+       pins="Knudsen → D_eff (сейчас 50 нм [ДОПУЩЕНИЕ])"),
+    _f("pellet_porosity", G1, "Порозность зерна (не слоя)", "-", "number",
+       0.05, 0.9, [("catalyst.pellet_porosity", 1.0)], rfi="28 п.7",
+       pins="второй множитель D_eff (сейчас 0,5 [ДОПУЩЕНИЕ])"),
     _f("reformer_T_max_C", G1, "Максимальная рабочая температура постели",
        "degC", "number", 400.0, 1400.0,
        [("model.reformer_bed_T_max_K", "C2K"), ("model.reformer_bed_T_max_C", 1.0)],
@@ -113,7 +123,10 @@ FIELDS = [
     _f("catalyst_price_USD_per_kg", G1, "Цена катализатора риформинга", "USD/kg",
        "number", 0.5, 200.0,
        [("catalyst.catalyst_price_USD_per_t", 1000.0),
-        ("model.catalyst_USD_per_kg", 1.0)], rfi="28 п.11",
+        ("model.catalyst_USD_per_kg", 1.0)],
+       # docs/28 п.11 asks for the activity/deactivation guarantee, not for money:
+       # a price never closes a technical item (commercial terms go to the RFQ).
+       rfi="",
        pins="CAPEX/OPEX-строка катализатора",
        warn="в проекте ДВЕ цены: config 5 USD/kg (5000 USD/t) и model/economics.py "
             "PRICES 40 USD/kg — введите ту, что по квитанции, и модель "
@@ -152,10 +165,13 @@ FIELDS = [
        "number", 300.0, 3000.0, [("model.nh3_rho_kg_m3", 1.0)], rfi="28 п.18",
        pins="масса слоя и стоимость инвентаря (сейчас 1775 — заполнитель из VBF)"),
     _f("nh3_catalyst_price", G2, "Цена катализатора синтеза NH₃", "USD/kg",
-       "number", 0.5, 200.0, [("model.nh3_catalyst_USD_per_kg", 1.0)], rfi="28 п.13/18",
-       pins="инвентарь и годовая замена в коридоре"),
+       "number", 0.5, 200.0, [("model.nh3_catalyst_USD_per_kg", 1.0)],
+       # docs/28 п.13/п.18 asked for light-off and for гранулы+насыпная плотность,
+       # not for the price: no RFI item is closed by a money number, so none is
+       # claimed here (the price is a commercial term, cf. п.2/п.11 for SMR).
+       rfi="", pins="инвентарь и годовая замена в коридоре; в docs/28 пункта о цене нет"),
     _f("nh3_catalyst_life_y", G2, "Ресурс слоя конвертора", "y", "number", 0.5, 15.0,
-       [("model.nh3_catalyst_life_years", 1.0)], rfi="28 п.11/15",
+       [("model.nh3_catalyst_life_years", 1.0)], rfi="28 п.15",
        pins="годовая стоимость замены (сейчас НЕ считается — нет данных)"),
     _f("nh3_dP_loop_bar", G2, "Сопротивление слоя / Δp контура рецикла", "bar",
        "number", 0.05, 20.0, [("model.dp_loop_bar", 1.0), ("equipment.dP_max_bar", 1.0)],
@@ -238,13 +254,18 @@ FIELDS = [
     _f("feed_T_C", G6, "Температура газа на входе", "degC", "number", -50.0, 80.0,
        [("feeds.russia_h.T_C", 1.0)]),
     # ---- 7. converter topology / heat integration --------------------------
+    # n_beds / T_in_bed_K / cold_shot are OUR topology choices: they are shaped
+    # by the vendor's answers (п.13, п.14) but they are not answers to the
+    # vendor, so they must never gate whether an RFI item counts as closed.
     _f("n_beds", G7, "Число секций конвертора", "-", "int", 1, 8,
-       [("kinetics.ammonia.n_beds", 1)], rfi="28 п.14", pins="профиль T и Q"),
+       [("kinetics.ammonia.n_beds", 1)], rfi="выбор проекта (связан с RFI 14)",
+       pins="профиль T и Q"),
     _f("T_in_bed_K", G7, "Температуры входа секций (список через запятую)", "K",
-       "list", 450.0, 900.0, [("kinetics.ammonia.T_in_bed_K", 1.0)], rfi="28 п.13/14",
-       pins="пик постели и мера по потолку"),
+       "list", 450.0, 900.0, [("kinetics.ammonia.T_in_bed_K", 1.0)],
+       rfi="выбор проекта (зависит от RFI 13)", pins="пик постели и мера по потолку"),
     _f("cold_shot", G7, "Доля холодного впрыска", "-", "number", 0.0, 0.8,
-       [("kinetics.ammonia.cold_shot_fraction", 1.0)], rfi="28 п.14"),
+       [("kinetics.ammonia.cold_shot_fraction", 1.0)],
+       rfi="выбор проекта (связан с RFI 14)"),
     _f("recycle_ratio", G7, "Коэффициент рецикла контура", "-", "number", 0.0, 20.0,
        [("kinetics.ammonia.recycle_ratio", 1.0)], pins="замыкание X·(1+RR) и тоннаж"),
     _f("pinch_dT", G7, "Минимальный пч ТЭ (теплоинтеграция)", "K", "number", 5.0, 80.0,
@@ -383,13 +404,21 @@ def validate(doc):
                 full = p if os.path.isabs(p) else os.path.join(ROOT, p)
                 if not os.path.exists(full):
                     errors.append("%s: файл не найден (%s)" % (f["id"], p))
-        if applied:
+        if applied and f["type"] in ("number", "int", "list", "choice"):
+            # keyed on the field TYPE, not on the unit string: a dimensionless
+            # number still has to say so, otherwise "2.8 USD" would be accepted
+            # for a tortuosity and reach the model as a bare 2.8
             u = f["unit"]
-            if u not in ("text", "date", "bool", "path", "-"):
-                if str(f_e.get("unit") or "").strip() != u:
-                    errors.append("%s: unit должно быть ровно %r (числа без единиц "
-                                  "или с другой единицей в модель не попадают)"
-                                  % (f["id"], u))
+            want = str(f_e.get("unit") or "").strip()
+            if u == "-":
+                if want not in ("", "-"):
+                    errors.append("%s: величина безразмерная - в unit пишите '-' "
+                                  "или оставьте пусто, получено %r"
+                                  % (f["id"], want))
+            elif want != u:
+                errors.append("%s: unit должно быть ровно %r (числа без единиц "
+                              "или с другой единицей в модель не попадают)"
+                              % (f["id"], u))
             for k in PROV_KEYS:
                 if not str(f_e.get(k) or "").strip():
                     errors.append("%s: applied=true требует заполненное поле %r"
@@ -768,6 +797,156 @@ def activity_overrides():
     return out
 
 
+# --------------------------------------------------- RFI cross-reference -----
+# The questions live in docs/28_v5_vendor_rfi.md; the form only points at their
+# numbers. Reading them back from the document (instead of restating them here)
+# means the mapping cannot silently drift, and a new RFI item shows up in the
+# panel and in docs/33 as UNANSWERED without any code change.
+RFI_DOC = os.path.join(ROOT, "docs", "28_v5_vendor_rfi.md")
+_RFI_ROW = re.compile(r"^\|\s*(\d{1,2})\s*\|")
+_RFI_SECTION = re.compile(r"^##\s*(28\.\d+)")
+_RFI_REF = re.compile(r"28\s*п\.\s*(\d{1,2})(?:\s*/\s*(\d{1,2}))?")
+
+
+_RFI_CACHE = {}      # (path, mtime_ns, size) -> items: docs/28 is read at most
+                     # once per edit, the panel asks for it on every field row
+
+
+def rfi_items(path=None):
+    """{n: {n, section, block, text, why}} parsed from the RFI tables of docs/28."""
+    path = path or RFI_DOC
+    try:
+        st = os.stat(path)
+        key = (path, st.st_mtime_ns, st.st_size)
+    except OSError:
+        return {}
+    if _RFI_CACHE.get("key") == key:
+        return _RFI_CACHE["items"]
+    items, section = {}, ""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            lines = fh.read().split("\n")
+    except OSError:
+        return {}
+    for ln in lines:
+        m = _RFI_SECTION.match(ln)
+        if m:
+            section = m.group(1)
+            continue
+        if not _RFI_ROW.match(ln):
+            continue
+        cells = [c.strip() for c in ln.strip().strip("|").split("|")]
+        try:
+            n = int(cells[0])
+        except (ValueError, IndexError):
+            continue
+        if n in items or len(cells) < 2 or not cells[1]:
+            continue
+        items[n] = {"n": n, "section": section,
+                    "block": ("конвертор NH3 / катализатор синтеза"
+                              if section.startswith("28.2")
+                              else "катализатор риформинга"),
+                    "text": cells[1],
+                    "why": cells[2] if len(cells) > 2 else ""}
+    _RFI_CACHE["key"], _RFI_CACHE["items"] = key, items
+    return items
+
+
+def rfi_refs(spec):
+    """Item numbers of docs/28 that this field answers ("28 п.13/14" -> 13, 14).
+
+    Accepts a field id or the reference text itself, so a report can ask the
+    same question without going through ``BY_ID``."""
+    if spec in BY_ID:
+        spec = (BY_ID[spec].get("rfi") or "")
+    out = []
+    for a, b in _RFI_REF.findall(spec or ""):
+        for x in (a, b):
+            if x and int(x) not in out:
+                out.append(int(x))
+    return out
+
+
+def rfi_questions(fid):
+    """What the vendor was actually asked, next to the field that answers it."""
+    items = rfi_items()
+    return [{"n": n, "text": items[n]["text"], "section": items[n]["section"]}
+            for n in rfi_refs(fid) if n in items]
+
+
+def rfi_coverage(applied=None, verified=None, items=None):
+    """Which RFI item is closed by which entered number (and which are not)."""
+    items = rfi_items() if items is None else items
+    by_item = {n: [] for n in items}
+    orphan_refs, unlinked = [], []
+    for f in FIELDS:
+        rfi_txt = f.get("rfi") or ""
+        refs = rfi_refs(f["id"])
+        if rfi_txt.startswith("28") and not refs:
+            unlinked.append(f["id"])
+        for n in refs:
+            if n in by_item:
+                by_item[n].append(f["id"])
+            else:
+                orphan_refs.append({"field": f["id"], "item": n})
+    if applied is None:
+        over = runtime_overlay()
+        applied = set(over.get("_applied_ids") or [])
+        verified = set(over.get("_verified_ids") or [])
+    applied, verified = set(applied), set(verified)
+    rows = []
+    for n in sorted(items):
+        ids = by_item[n]
+        got = [i for i in ids if i in applied]
+        ver = [i for i in ids if i in verified]
+        if not ids:
+            state = "not_answerable_by_form"
+            note = ("форма не отвечает: ответ на этот пункт - документ, кривая или "
+                    "условие гарантии, а не число, которое модель читает")
+        elif not got:
+            state, note = "open", "ждёт ввода оператора"
+        elif len(got) < len(ids):
+            state = "partial"
+            note = ("закрыт не полностью: %d из %d полей введено"
+                    % (len(got), len(ids)))
+        elif len(ver) == len(ids):
+            state = "answered_verified"
+            note = "закрыт вводом с второй подписью (независимой сверкой)"
+        else:
+            state = "answered_single_source"
+            note = ("один источник: точка закреплена, коридор печатается рядом; "
+                    "сверку документа это не заменяет")
+        rows.append({"item": n, "section": items[n]["section"],
+                     "block": items[n]["block"], "text": items[n]["text"],
+                     "model_uses_it_for": items[n]["why"],
+                     "fields": [{"id": i, "label": BY_ID[i]["label"],
+                                 "in_force": i in applied,
+                                 "verified": i in verified} for i in ids],
+                     "n_fields": len(ids), "n_applied": len(got),
+                     "n_verified": len(ver), "state": state, "state_note": note})
+    answered = [r for r in rows if r["state"].startswith("answered")]
+    return {
+        "source": "docs/28_v5_vendor_rfi.md", "n_items": len(rows),
+        "n_with_field": sum(1 for r in rows if r["n_fields"]),
+        "n_answered": len(answered),
+        "n_answered_verified": sum(1 for r in rows
+                                   if r["state"] == "answered_verified"),
+        "n_open": sum(1 for r in rows if r["state"] in ("open", "partial")),
+        "n_not_answerable": sum(1 for r in rows
+                                if r["state"] == "not_answerable_by_form"),
+        "rows": rows,
+        "unresolved_field_refs": orphan_refs, "fields_without_item": unlinked,
+        # only real document references count as "another source" ("27",
+        # "27 §Δp"); free-text notes such as "выбор проекта (...)" are not sources
+        "other_sources": sorted({f["rfi"] for f in FIELDS if f["rfi"]
+                                 and not f["rfi"].startswith("28")
+                                 and re.match(r"\d{2}\s*($|[§п.])", f["rfi"])}),
+        "note": ("сопоставление построено разборкой таблицы docs/28: форма ссылается "
+                 "на номера пунктов, а их формулировки читаются из самого запроса, "
+                 "поэтому новый пункт RFI сразу виден как незакрытый"),
+    }
+
+
 # ---------------------------------------------------------------- report ------
 def status():
     """Full status of manual data entry: coverage per group + what it pins."""
@@ -782,7 +961,8 @@ def status():
                                  "значения+провенанс, либо введите через панель "
                                  "(вкладка «Ручной ввод данных»); до этого модель "
                                  "обязана показывать коридор (docs/32)"),
-                "recommendation": recommendation()}
+                "recommendation": recommendation(),
+                "rfi_coverage": rfi_coverage([], [])}
     errors, warnings, clean = validate(doc)
     groups = []
     for g in GROUPS:
@@ -821,6 +1001,7 @@ def status():
            "model_only": {k: v for k, v in model_over.items()
                           if not str(k).startswith("_")},
            "recommendation": rec,
+           "rfi_coverage": rfi_coverage(in_force, in_force_verified),
            "loop5_note": ("ввод данных оператором НЕ закрывает контур 5: он "
                           "закрывает отдельные подпроверки только при полном "
                           "провенансе, а overall остаётся FAILED, потому что "
@@ -836,7 +1017,27 @@ def main(argv=None):
     ap.add_argument("--validate", action="store_true", help="validate the saved form")
     ap.add_argument("--clear", action="store_true", help="remove the saved form")
     ap.add_argument("--selftest", action="store_true", help="run built-in checks")
+    ap.add_argument("--rfi", action="store_true",
+                    help="which docs/28 vendor-RFI items each entered number closes")
     a = ap.parse_args(argv)
+    if a.rfi:
+        cov = rfi_coverage()
+        print("RFI %s: %d пунктов, у %d есть поле формы, закрыто %d "
+              "(с второй подписью %d), открыто %d, вне формы %d"
+              % (cov["source"], cov["n_items"], cov["n_with_field"], cov["n_answered"],
+                 cov["n_answered_verified"], cov["n_open"], cov["n_not_answerable"]))
+        for r in cov["rows"]:
+            print("  п.%-3d %-26s %s  %s%s"
+                  % (r["item"], r["state"],
+                     (r["text"][:58] + ("…" if len(r["text"]) > 58 else "")),
+                     "поля: " + ", ".join(f["id"] + ("✓" if f["in_force"] else "·")
+                                          for f in r["fields"]) if r["fields"]
+                     else "поля формы: нет",
+                     "" if not r["state_note"] else "  | " + r["state_note"]))
+        if cov["unresolved_field_refs"] or cov["fields_without_item"]:
+            print("  ! нераспознанные ссылки формы:", cov["unresolved_field_refs"],
+                  cov["fields_without_item"])
+        return 0
     if a.template:
         j, c, n = write_template()
         print("template written: %s + %s for %d fields"
@@ -925,6 +1126,18 @@ def selftest():
     out["recommendation_all_corridors"] = all(
         r["state"] == "corridor_required" for r in recommendation()["rows"]) \
         if not load() else "form present - see status()"
+    items = rfi_items()
+    cov = rfi_coverage([], [])
+    out["rfi_items_parsed"] = len(items)
+    out["rfi_rows_match_items"] = (len(items) == cov["n_items"]
+                                  and all(r["text"] for r in cov["rows"]))
+    out["rfi_refs_resolve"] = (not cov["unresolved_field_refs"]
+                               and not cov["fields_without_item"])
+    out["rfi_state_machine_no_form"] = sorted(
+        {r["state"] for r in cov["rows"]}) == sorted(["not_answerable_by_form", "open"])
+    out["rfi_item7_has_fields"] = {"pellet_tortuosity", "pellet_pore_radius_nm",
+                                   "pellet_porosity"} <= {
+        f["id"] for f in FIELDS if 7 in rfi_refs(f["id"])}
     out["fields"] = len(FIELDS)
     return out
 

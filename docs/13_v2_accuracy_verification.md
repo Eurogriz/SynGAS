@@ -8,7 +8,7 @@ accepted equivalent. No claim of a HYSYS run is made.
 
 | loop | passed | key number |
 |---|---|---|
-| 1_sources | YES | 96 claims |
+| 1_sources | YES | 99 claims |
 | 2_arithmetic | YES | max rel error 1.84e-16 |
 | 3_conservation | YES | max error 1.6e-12% |
 | 4_thermo | YES | Q*Kphi/K dev 2.376e-12% |
@@ -18,7 +18,7 @@ Overall: **FAIL (loop 5 open by design)**.
 
 ## 13.2 Loop 1 - sources and claims
 
-96 registered claims: {'[ПОДТВЕРЖДЕНО]': 35, '[ЧАСТИЧНО]': 41, '[ДОПУЩЕНИЕ]': 15, '[НЕ ПОДТВЕРЖДЕНО]': 5}.
+99 registered claims: {'[ПОДТВЕРЖДЕНО]': 37, '[ЧАСТИЧНО]': 41, '[ДОПУЩЕНИЕ]': 16, '[НЕ ПОДТВЕРЖДЕНО]': 5}.
 Problems: []. Full registry: `data/v2_claims.json`,
 `docs/v2_claims_register.md`.
 

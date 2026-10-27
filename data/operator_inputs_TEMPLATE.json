@@ -83,6 +83,36 @@
    "received_date": "",
    "entered_by": ""
   },
+  "pellet_tortuosity": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "pellet_pore_radius_nm": {
+   "value": null,
+   "unit": "nm",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "pellet_porosity": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
   "reformer_T_max_C": {
    "value": null,
    "unit": "degC",

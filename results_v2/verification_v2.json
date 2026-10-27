@@ -2,11 +2,11 @@
   "loops": {
     "1_sources": {
       "passed": true,
-      "n_claims": 96,
+      "n_claims": 99,
       "by_status": {
-        "[ПОДТВЕРЖДЕНО]": 35,
+        "[ПОДТВЕРЖДЕНО]": 37,
         "[ЧАСТИЧНО]": 41,
-        "[ДОПУЩЕНИЕ]": 15,
+        "[ДОПУЩЕНИЕ]": 16,
         "[НЕ ПОДТВЕРЖДЕНО]": 5
       },
       "problems": [],
@@ -697,7 +697,7 @@
           "check": "ammonia converter geometry / ceiling confirmed by vendor datasheet",
           "passed": false,
           "value": null,
-          "note": "no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.md asks for it; the entry point is now data/operator_inputs.json)"
+          "note": "no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.md asks for it; the entry point is now data/operator_inputs.json). RFI docs/28: 0 из 16 пунктов с полем формы закрыто вводом (с второй подписью 0), открыто 16, вне формы 2"
         },
         {
           "check": "catalyst ACTIVITY pinned by operator data (corridor collapses to a point only with provenance; the V5.2 literature band is still printed next to it)",
@@ -709,6 +709,12 @@
           "check": "operator data entry validated and consistently applied (docs/33; a rejected form is a FAILURE, not a silent no-op)",
           "passed": true,
           "value": "no operator form (data/operator_inputs.json) - the model reports corridors and its placeholders stay flagged [ДОПУЩЕНИЕ]/[ЧАСТИЧНО]; docs/33 is the entry point"
+        },
+        {
+          "check": "operator form <-> docs/28 cross-reference resolves (every '28 п.N' in the form maps to a real RFI item and every RFI item is either linked or declared out of reach)",
+          "passed": true,
+          "value": "18 пунктов, 16 связаны с полями, 2 вне формы",
+          "note": "сопоставление построено разборкой таблицы docs/28: форма ссылается на номера пунктов, а их формулировки читаются из самого запроса, поэтому новый пункт RFI сразу виден как незакрытый"
         },
         {
           "check": "pilot campaign file ingested and validated against the contract",
@@ -736,8 +742,8 @@
           "note": "not installed; Python equivalent confirmed by user answer 11"
         }
       ],
-      "subchecks_passed": 12,
-      "subchecks_total": 28,
+      "subchecks_passed": 13,
+      "subchecks_total": 29,
       "external_data": {
         "n_records_total": 30,
         "n_numeric_X_CH4_comparable": 6,

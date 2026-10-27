@@ -364,16 +364,46 @@ def sintering_check(records):
                        "[НЕ ПОДТВЕРЖДЕНО] no 200-1000 h sintering series")}
 
 
-def regime_screening(records, tau=3.5, r_pore_nm=50.0, eps_p=0.5):
+def _transport_defaults(tau, r_pore_nm, eps_p):
+    """Screening transport constants (docs/28 item 7): explicit argument wins,
+    then `cases/config.json` (which is exactly where an operator entry lands),
+    then the labelled model assumption. Returns (values, provenance)."""
+    val = {"tau": tau, "r_pore_nm": r_pore_nm, "eps_p": eps_p}
+    want = [k for k, v in val.items() if v is None]
+    src = {k: ("передано вызывающим кодом" if val[k] is not None else None)
+           for k in val}
+    if want:
+        try:
+            from .config import load_config
+            cat = dict(load_config().catalyst or {})
+        except Exception:
+            cat = {}
+        for k in want:
+            v = cat.get({"tau": "pellet_tortuosity",
+                         "r_pore_nm": "pellet_pore_radius_nm",
+                         "eps_p": "pellet_porosity"}[k])
+            if v is not None:
+                val[k], src[k] = float(v), "cases/config.json (можно закрепить вводом оператора, docs/33)"
+            else:
+                val[k] = {"tau": 3.5, "r_pore_nm": 50.0, "eps_p": 0.5}[k]
+                src[k] = "[ДОПУЩЕНИЕ] экранное значение по умолчанию"
+    return (val["tau"], val["r_pore_nm"], val["eps_p"], src)
+
+
+def regime_screening(records, tau=None, r_pore_nm=None, eps_p=None):
     """Screening check of internal transport - documented inputs, no fitting.
 
     D_eff is built from kinetic theory only: Knudsen diffusivity in a cylinder of
     radius r_pore plus a parallel tortuosity/porosity factor eps_p/tau. The
     Weisz-Prater modulus is then compared with 1. If it exceeds 1 the point is
     NOT equilibrium-limited and must not be used to falsify the equilibrium model.
-    tau=3.5, pore radius 50 nm and porosity 0.5 are ASSUMPTIONS to be replaced by
-    the vendor datasheet (docs/28_v5_vendor_rfi.md items 5-8).
+    tau, pore radius and porosity are ASSUMPTIONS (3.5 / 50 nm / 0.5) that the
+    vendor datasheet replaces - see docs/28_v5_vendor_rfi.md item 7 and the manual
+    entry form (`model/operator_data.py`, docs/33): an entered value lands in
+    `cases/config.json` handling and is read here, so the check follows the datum
+    instead of the placeholder.
     """
+    tau, r_pore_nm, eps_p, transport_src = _transport_defaults(tau, r_pore_nm, eps_p)
     rows = []
     M = 0.016
     for r in records:
@@ -396,13 +426,16 @@ def regime_screening(records, tau=3.5, r_pore_nm=50.0, eps_p=0.5):
                      "D_Knudsen_m2_s": D_K, "D_eff_m2_s": D_eff,
                      "Weisz_Prater": Phi,
                      "internal_gradients_negligible": Phi < 1.0,
-                     "assumptions": {"tau": tau, "r_pore_nm": r_pore_nm,
-                                     "eps_p": eps_p}})
+                     "assumptions": dict({"tau": tau, "r_pore_nm": r_pore_nm,
+                                        "eps_p": eps_p}, **{"_source": transport_src})})
     return {"rows": rows, "n": len(rows),
             "all_kinetic_clean": bool(rows) and all(
                 x["internal_gradients_negligible"] for x in rows),
+            "transport_provenance": transport_src,
             "status": "[ДОПУЩЕНИЕ] screening only: tau, pore radius and porosity "
-                      "are assumed, not vendor data",
+                      "read from cases/config.json (3,5 / 50 nm / 0,5), not "
+                      "vendor data; pin them with the operator form "
+                      "(docs/33, запрос docs/28 п.7)",
             "note": "a modulus above 1 means the measured point is transport-"
                     "limited, so neither the equilibrium nor the intrinsic-"
                     "kinetic model should be compared with it without a corrected "

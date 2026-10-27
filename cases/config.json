@@ -327,7 +327,11 @@
   "Ni_price_USD_per_t": 18000.0,
   "catalyst_price_USD_per_t": 5000.0,
   "source": "JM KATALCO brochure https://matthey.com/documents/161599/440146/JM+Steam+reforming+catalysts+product+brochure.pdf/2860977b-e095-d6ef-92e8-150791fd103a?t=1721749571214 (opened): 16-18% NiO, loaded density 780-1140 kg/m3, QUADRALOBE lives >8-10 y; Catalysts 2019 9,801 (opened): 15 wt% Ni/MgAl2O4 86 m2/g 6.6 nm; Applied Energy 377 (2025) 124556 (opened): GHSV 2500 h-1; Digital Refining (opened): changeout 4-6 y",
-  "status": "[PARTIAL] commercial data are an α-Al2O3/Ca-aluminate PROXY; the MgAl2O4 chemistry basis is from the lab source. Ni price is [ASSUMPTION]."
+  "status": "[PARTIAL] commercial data are an α-Al2O3/Ca-aluminate PROXY; the MgAl2O4 chemistry basis is from the lab source. Ni price is [ASSUMPTION].",
+  "pellet_tortuosity": 3.5,
+  "pellet_pore_radius_nm": 50.0,
+  "pellet_porosity": 0.5,
+  "pellet_transport_status": "[ДОПУЩЕНИЕ] т=3,5 / r_pore=50 нм / eps_p=0,5 - экранное значение из model/data_ingest.py; заменяется вводом оператора (пункт 7 запроса docs/28)"
  },
  "eos": {
   "enabled": true,

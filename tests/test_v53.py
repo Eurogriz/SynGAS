@@ -17,10 +17,8 @@ Tests that need a form write it under a temporary path and point
 model.operator_data.FORM_PATH at it (never into data/, so no fabricated datum is
 ever committed), and always restore the module state.
 """
-import copy
 import json
 import os
-import tempfile
 
 import pytest
 
@@ -455,3 +453,148 @@ def test_rejected_form_advertises_nothing_as_in_force(form):
         R.OUT = saved_out
         os.remove(os.path.join(os.path.dirname(form),
                                "operator_data_report.json"))
+
+
+# ------------------------------------------------- docs/28 cross-reference ----
+def test_rfi_items_are_parsed_from_the_request_document():
+    from model.operator_data import rfi_items
+    items = rfi_items()
+    assert sorted(items) == list(range(1, 19))
+    assert items[12]["section"] == "28.2" and "температура постели" in items[12]["text"]
+    assert items[1]["section"] == "28.1" and items[1]["why"]
+    # every row of both tables is read, none invented
+    assert all(items[n]["text"] and not items[n]["text"].startswith("пункт")
+               for n in items)
+
+
+def test_a_new_rfi_item_shows_up_without_any_code_change(tmp_path):
+    from model import operator_data as od
+    src = open(od.RFI_DOC, encoding="utf-8").read()
+    fake = tmp_path / "28_fake.md"
+    fake.write_text(src + "\n| 19 | гарантированный срок до регенерации, ч | "
+                           "планирование ЗО | по партии |\n", encoding="utf-8")
+    items = od.rfi_items(str(fake))
+    assert 19 in items and "регенерации" in items[19]["text"]
+    cov = od.rfi_coverage([], [], )
+    assert 19 not in {r["item"] for r in cov["rows"]}      # real doc: no such item
+
+
+def test_every_form_reference_resolves_to_a_real_item():
+    from model.operator_data import rfi_coverage, rfi_refs
+    cov = rfi_coverage([], [])
+    assert cov["unresolved_field_refs"] == [] and cov["fields_without_item"] == []
+    assert cov["n_items"] == 18 and cov["n_with_field"] == 16
+    # items that no number can answer are stated, not dropped
+    assert cov["n_not_answerable"] == 2
+    out = [r["item"] for r in cov["rows"] if r["state"] == "not_answerable_by_form"]
+    assert out == [9, 10]
+    assert all("вне формы" in r["state_note"] or "форма не отвечает" in r["state_note"]
+               for r in cov["rows"] if r["state"] == "not_answerable_by_form")
+    # a field that cites an item must be listed under it, and vice versa
+    linked = {f["id"] for r in cov["rows"] for f in r["fields"]}
+    assert {"nh3_bed_T_max_C", "pellet_tortuosity", "Ni_wt_pct"} <= linked
+    assert rfi_refs("nh3_GHSV_basis") == [14] and rfi_refs("bed_voidage") == [6, 17]
+
+
+def test_rfi_states_follow_the_entered_numbers(form):
+    from model.operator_data import rfi_coverage
+    by = lambda doc: {r["item"]: r["state"] for r in rfi_coverage(
+        {k for k, e in doc["entries"].items() if e.get("applied")},
+        {k for k, e in doc["entries"].items() if e.get("applied")
+         and e.get("independently_verified")})["rows"]}
+    assert by(od.template_doc())[12] == "open"
+    one = _doc({"nh3_bed_T_max_C": (470.0, "degC")})
+    expected = by(od.template_doc())
+    expected[12] = "answered_single_source"
+    assert by(one) == expected
+    ver = _doc({"nh3_bed_T_max_C": (470.0, "degC")}, verified=True)
+    assert by(ver)[12] == "answered_verified"
+    # п.14 is answered by the vendor's own basis statement; three fields, and
+    # two of them is "partial", not "answered"
+    two = _doc({"nh3_GHSV_h1": (9000.0, "1/h"), "nh3_GHSV_basis": "normal"})
+    assert by(two)[14] == "partial"
+    three = _doc({"nh3_GHSV_h1": (9000.0, "1/h"), "nh3_GHSV_basis": "normal",
+                  "nh3_volume_basis": "catalyst"})
+    assert by(three)[14] == "answered_single_source"
+    # our own topology choices do not gate a vendor item (they are not data
+    # the vendor can answer with), but they still say so in the label
+    cov = rfi_coverage(set(), set())
+    p14 = {f["id"] for r in cov["rows"] if r["item"] == 14 for f in r["fields"]}
+    assert p14 == {"nh3_GHSV_h1", "nh3_GHSV_basis", "nh3_volume_basis"}
+    assert by(three)[13] == "open"      # п.13 needs the light-off number alone
+    assert by(_doc({"nh3_light_off_K": (668.0, "K")}))[13] == "answered_single_source"
+    # a rejected form answers nothing, so no item may look closed
+    bad = _doc({"nh3_bed_T_max_C": (470.0, "degC")})
+    bad["entries"]["nh3_bed_T_max_C"]["unit"] = "K"
+    od.save(bad, form)
+    st = od.status()
+    assert st["rejected"] is True
+    live = st["rfi_coverage"]
+    assert live["n_answered"] == 0 and live["n_open"] == 16
+
+
+def test_item7_transport_constants_reach_the_screening_check(form):
+    from model.config import load_config
+    cfg = load_config()
+    assert cfg.catalyst["pellet_tortuosity"] == 3.5
+    assert cfg.catalyst["pellet_pore_radius_nm"] == 50.0
+    from model.data_ingest import regime_screening
+    rec = {"run_id": "A1", "T_K": 1023.0, "p_bar": 2.5, "W_cat_g": 1.2,
+           "flow_total_NmL_min": 120.0, "y_CH4_in_dry": 1.0,
+           "y_CH4_out_dry": 0.55, "X_CH4": 0.45}
+    out = regime_screening([rec])
+    a0 = out["rows"][0]["assumptions"]
+    assert (a0["tau"], a0["r_pore_nm"], a0["eps_p"]) == (3.5, 50.0, 0.5)
+    assert "config" in a0["_source"]["tau"]
+    od.save(_doc({"pellet_tortuosity": (2.4, "-"),
+                  "pellet_pore_radius_nm": (120.0, "nm")}), form)
+    out2 = regime_screening([rec])
+    a2 = out2["rows"][0]["assumptions"]
+    assert a2["tau"] == pytest.approx(2.4) and a2["r_pore_nm"] == pytest.approx(120.0)
+    assert out2["transport_provenance"]["tau"].startswith("cases/config.json")
+    # and an explicit argument still wins over everything
+    assert regime_screening([rec], tau=9.0)["rows"][0]["assumptions"]["tau"] == 9.0
+
+
+def test_dimensionless_fields_still_have_to_declare_the_unit():
+    for fid, val in (("pellet_tortuosity", 2.8), ("nh3_volume_basis", "bed"),
+                     ("nh3_GHSV_basis", "actual")):      # numbers and choices only:
+        # a bool / text / date field has no unit to declare, so it is exempt
+        ok = _doc({fid: (val, "-")})
+        e_ok, _w, _c = od.validate(ok)
+        assert e_ok == [], (fid, e_ok)
+        empty = _doc({fid: (val, "")})
+        assert od.validate(empty)[0] == [], fid
+        wrong = _doc({fid: (val, "USD/quarter")})
+        assert any("unit" in e or "безразмерная" in e for e in od.validate(wrong)[0]), fid
+
+
+def test_docs_and_reports_carry_the_map():
+    txt = open(os.path.join(ROOT, "docs", "33_v5_manual_data_entry.md"),
+               encoding="utf-8").read()
+    head, sec = txt.split("## 33.7", 1)
+    for n in range(1, 19):
+        assert "\n| %d | " % n in sec, n
+    assert "вне формы" in sec and "разборк" in sec
+    import model.run_v2 as R
+    assert R._rfi_summary_17({}).startswith("\n\nThe docs/28 cross-reference was not")
+    rep = json.load(open(os.path.join(RESULTS, "operator_data_report.json"),
+                         encoding="utf-8"))
+    cov = rep.get("rfi_coverage") or {}
+    assert cov.get("n_items") == 18 and len(cov.get("rows")) == 18
+    assert cov["n_answered"] == 0                    # no form on disk in the run
+    assert "docs/28" in R._rfi_summary_17(rep)
+
+
+def test_panel_endpoints_and_scripts_expose_the_map(form):
+    od.save(_doc({"nh3_bed_T_max_C": (470.0, "degC")}), form)
+    import web.app as W
+    g = W.app.test_client().get("/api/operator").get_json()
+    cov = g["rfi"]
+    assert cov["n_items"] == 18 and cov["by_item"]["12"]["state"] == "answered_single_source"
+    assert cov["unresolved"] == [] and cov["orphan_fields"] == []
+    qs = [f["questions"] for f in g["fields"] if f["id"] == "nh3_bed_T_max_C"][0]
+    assert qs and qs[0]["n"] == 12 and "постели" in qs[0]["text"]
+    js = open("/tmp/panel.js", encoding="utf-8").read() if os.path.exists("/tmp/panel.js") else ""
+    for fn in ("function rfiAsk", "function rfiMapBlock", "function rfiStateRu"):
+        assert fn in js, fn
