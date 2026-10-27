@@ -911,6 +911,66 @@
    "url": "local:results_v2/verification_v2.json",
    "status": "[НЕ ПОДТВЕРЖДЕНО]",
    "used_in_result": false
+  },
+  {
+   "id": "C91",
+   "name": "Manual data-entry channel for every open item",
+   "value": "61 form fields in 7 groups (model/operator_data.py), validated with unit + method + source document + date + who entered it; anything invalid or out of range is REJECTED and nothing is applied, so a half-entered datasheet cannot reach the model || the mechanism is internal and deterministic; the values themselves are supplied by a human and are not checked against their source documents by the model",
+   "unit": "fields",
+   "source": "THIS MODEL - model/operator_data.py (validate, adjust_map, overlay_adjust) + docs/33",
+   "url": "local:docs/33_v5_manual_data_entry.md",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C92",
+   "name": "Operator overlay is applied through cases/config.json adjust, not by editing it",
+   "value": "load_config() injects the accepted entries into raw['adjust'] and records them in raw['operator_overlay'] (provenance included), so one entry propagates to every loop and every product; cases/config.json is never rewritten || overlay read per load_config, cached on file stat; verified by loop-4 check 'operator_overlay' comparing each applied value against the loaded config",
+   "unit": "-",
+   "source": "THIS MODEL - model/config.py load_config + model/operator_data.overlay_adjust",
+   "url": "local:results_v2/operator_data_report.json",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C93",
+   "name": "Corridor remains the recommended reporting form while any dimension is open",
+   "value": "10 ammonia quantities are tracked (activity centre, activity spread, bed-T ceiling, light-off floor, bulk density, price, life, loop dP, GHSV, GHSV basis); until each is entered with provenance the answer MUST be a corridor; a single-source entry pins the point but literature_reference_rows keeps the V5.2 band printed beside it || policy implemented in operator_data.recommendation() and enforced in the artifact by data_entry.corridor_recommended",
+   "unit": "-",
+   "source": "THIS MODEL - model/operator_data.py recommendation + activity_uncertainty data_entry",
+   "url": "local:docs/33_v5_manual_data_entry.md",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C94",
+   "name": "Two conflicting catalyst prices existed in the project",
+   "value": "cases/config.json carried catalyst_price_USD_per_t = 5000 (5 USD/kg) while model/economics.py PRICES used 40 USD/kg for the same task - a factor of 8 on every catalyst cost line; the operator form resolves it by one entered price that is written to BOTH places (reported as prices_synced) || conflict found by inspection in V5.3; until a real quote is entered both numbers stay [ДОПУЩЕНИЕ], and the corridor reports which one it used",
+   "unit": "USD/kg",
+   "source": "THIS MODEL - model/economics.py PRICES vs cases/config.json catalyst",
+   "url": "local:docs/33_v5_manual_data_entry.md",
+   "status": "[ДОПУЩЕНИЕ]",
+   "used_in_result": true
+  },
+  {
+   "id": "C95",
+   "name": "Data entry does not close verification loop 5",
+   "value": "entering a vendor datasheet value flips only the subchecks that ask 'is this datum present' (catalyst datasheet, converter geometry/ceiling, activity pinned, certified HAZOP when facilitator+date+report reference are all present); loop 5 remains FAILED because independent validation of the model - pilot campaign at the design point and a HYSYS/DWSIM run - is not produced by typing || subcheck wording marks every such item 'entered by operator, document not verified'",
+   "unit": "-",
+   "source": "THIS MODEL - model/verify_v2.py loop5_validation + model/hazop.py operator_record",
+   "url": "local:results_v2/verification_v2.json",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C96",
+   "name": "Entered values can pin the ammonia corridor",
+   "value": "when nh3_activity_k_scale is entered the band becomes [k/f, k*f] with the entered guaranteed spread f (f absent -> a single point); density, price, life, ceiling, light-off floor, GHSV and loop dP are consumed directly by model/activity_uncertainty.py, and the annualised catalyst replacement cost - previously deliberately not computed - appears as soon as price AND life are both entered || GHSV basis conversion actual->normal is ideal-gas at the first bed inlet without a Z correction and stays [ЧАСТИЧНО]",
+   "unit": "-",
+   "source": "THIS MODEL - model/activity_uncertainty.py band(overrides=...)",
+   "url": "local:results_v2/activity_uncertainty.json",
+   "status": "[ЧАСТИЧНО]",
+   "used_in_result": true
   }
  ]
 }

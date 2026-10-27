@@ -69,7 +69,9 @@ def test_grid_is_geometric_and_spans_the_edges(ab):
     assert len(ks) == 5
     assert ks[0] == pytest.approx(ab["activity_band"]["k_scale_lo"], rel=1e-6)
     assert ks[-1] == pytest.approx(ab["activity_band"]["k_scale_hi"], rel=1e-6)
-    assert [r["position_in_band"] for r in ab["rows"]][0].startswith("lower edge")
+    # labels are Russian on purpose (docs/32 and the panel print them verbatim)
+    assert "нижний край" in ab["rows"][0]["position_in_band"]
+    assert "верхний край" in ab["rows"][-1]["position_in_band"]
 
 
 def test_low_edge_reproduces_the_as_built_design(ab, conv):

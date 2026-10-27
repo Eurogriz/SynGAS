@@ -337,10 +337,15 @@ def loop4_thermo(designs, scenarios):
     dp_ok = all(x["dP_within_limit"] for x in extra)
     layout_ok, layout_info = _layout_scan_ok(designs)
     act_ok, act_info = _activity_band_ok()
+    op_ok, op_info = _operator_overlay_ok()
+    # the operator overlay gates loop 4 on purpose: a half-filled or wrong-unit
+    # form must stop the run rather than silently change some products only
     return {"passed": (worst_eq < 0.01 and worst_dH < 5.0 and sci_ok and
-                       pre_ok and syn_ok and dp_ok and layout_ok and act_ok),
+                       pre_ok and syn_ok and dp_ok and layout_ok and act_ok and
+                       op_ok),
             "layout_scan_note": layout_info,
             "activity_band_note": act_info,
+            "operator_overlay_note": op_info,
             "reaction_enthalpies": dH,
             "PR_equilibrium": eq_rows, "worst_PR_deviation_pct": worst_eq,
             "IAPWS": iap,
@@ -358,7 +363,8 @@ def loop4_thermo(designs, scenarios):
                                     "dP": dp_ok, "NH3_Ka_vs_NIST":
                                     nh3chk["passed_within_15pct"],
                                     "NH3_layout_scan": layout_ok,
-                                    "NH3_activity_band": act_ok},
+                                    "NH3_activity_band": act_ok,
+                                    "operator_overlay": op_ok},
             "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual "
                     "is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."}
 
@@ -409,6 +415,75 @@ def _fin(d, k):
         return v is not None and v == v and 0.0 < v < 1e9
     except Exception:
         return False
+
+
+def _operator_overlay_ok():
+    """Manual data entry (docs/33): the form is applied consistently, or it fails.
+
+    Three states, deliberately different:
+      * no form at all  -> True with "placeholders in force" (this is the honest
+        baseline: the project reports corridors, nothing is claimed);
+      * form present but INVALID -> False: a half-applied datasheet is worse than
+        no datasheet, so model/config.py refuses to apply it and we say so loudly;
+      * form applied -> True only if every entered value is actually visible in the
+        loaded config (i.e. the overlay really reached the model), and the count is
+        reported so nobody mistakes "entered" for "independently verified".
+    """
+    import json
+    import os
+    from .operator_data import FORM_PATH          # one place decides the path
+    form = FORM_PATH
+    if not os.path.exists(form):
+        return True, ("no operator form (data/operator_inputs.json) - the model "
+                      "reports corridors and its placeholders stay flagged "
+                      "[ДОПУЩЕНИЕ]/[ЧАСТИЧНО]; docs/33 is the entry point")
+    try:
+        with open(form, encoding="utf-8") as fh:
+            doc = json.load(fh)
+    except Exception as exc:
+        return False, "operator_inputs.json unreadable (%s)" % exc
+    from .operator_data import validate, adjust_map, BY_ID
+    errors, warnings, clean = validate(doc)
+    if errors:
+        return False, ("operator form REJECTED, nothing applied: "
+                       + "; ".join(errors[:4])
+                       + (" (+%d more)" % (len(errors) - 4) if len(errors) > 4 else ""))
+    adj, model_over = adjust_map(clean)
+    from .config import load_config
+    cfg = load_config(product="ammonia")
+    applied = [fid for fid, e in clean.items() if e.get("applied")]
+    bad = []
+    for fid in applied:
+        f, want = BY_ID[fid], clean[fid]["value"]
+        for path, scale in f["targets"]:
+            if path.startswith("model.") or path.startswith("__"):
+                continue
+            node = cfg.raw
+            ok = True
+            for part in path.split("."):
+                if not (isinstance(node, dict) and part in node):
+                    ok = False
+                    break
+                node = node[part]
+            if ok and isinstance(want, (int, float)) and not isinstance(want, bool):
+                got = node
+                if scale == "C2K":
+                    got = got - 273.15
+                elif isinstance(scale, float) and scale:
+                    got = got / scale if scale != 1.0 else got
+                if abs(float(got) - float(want)) > 1e-6 * max(1.0, abs(float(want))):
+                    bad.append("%s: config %s = %r, форма = %r" % (fid, path, node, want))
+    meta = (cfg.raw.get("operator_overlay") or {})
+    if not meta.get("applied"):
+        return False, "operator form exists but the config overlay was not applied"
+    n_ver = len(meta.get("provenance") or {}) and sum(
+        1 for p in (meta.get("provenance") or {}).values() if p.get("independently_verified"))
+    info = ("%d fields applied (config paths: %d), %d independently verified, "
+            "%d warnings; overlay visible in cfg.raw['operator_overlay']; %s"
+            % (len(applied), len(meta.get("config_paths") or []), n_ver,
+               len(meta.get("validation_warnings") or []),
+               "config matches the form" if not bad else "MISMATCH: " + "; ".join(bad[:3])))
+    return (not bad), info
 
 
 def _activity_band_ok():
@@ -561,6 +636,33 @@ def loop5_validation(designs, cfg=None):
     haz = hazop_report()
     band_ok, band_info = _band_robust()
     act_ok5, act_info5 = _activity_band_ok()
+    op_ok5, op_info5 = _operator_overlay_ok()
+    _ovl = {}
+    try:                                   # LIVE form state, not the last run's
+        from .operator_data import status as _op_status
+        _ovl = _op_status() or {}
+    except Exception:
+        _ovl = {}
+    if not _ovl.get("n_fields"):           # module unusable -> fall back to artifact
+        try:
+            _p = os.path.join(ROOT, "results_v2", "operator_data_report.json")
+            if os.path.exists(_p):
+                with open(_p, encoding="utf-8") as _fh:
+                    _ovl = json.load(_fh)
+        except Exception:
+            _ovl = {}
+    _applied = set(_ovl.get("applied_ids") or
+                   [fid for g in (_ovl.get("groups") or []) for fid in g.get("applied", [])])
+    _ver = set(_ovl.get("verified_ids") or [])
+
+    def _opc(*fids):
+        """operator-recorded state of a gap: closed / partial / open"""
+        got = [f for f in fids if f in _applied]
+        if not got:
+            return "open", None
+        if set(fids) <= set(_ver):
+            return "closed_verified", got
+        return "single_source", got
     vbf_ok, vbf_info = _vbf_adiabatic_ok()
 
     # --- kinetic synthesis benchmark checks -------------------------------
@@ -629,7 +731,16 @@ def loop5_validation(designs, cfg=None):
          "note": "100 h coking data and 500 h Rh data only"},
         {"check": "commercial Ni/MgAl2O4 CATALYST datasheet",
          "passed": ext["commercial_datasheet"]["catalyst_datasheet_found"],
-         "note": "4 commercial MgAl2O4 SUPPORT powders found instead"},
+         "note": ("4 commercial MgAl2O4 SUPPORT powders found instead"
+                  if _opc("loaded_density", "Ni_wt_pct", "crush_N", "catalyst_life_y")[0]
+                  == "open" else
+                  "литературного даташита нет; значения Ni/плотность/прочность/ресурс "
+                  "внесены оператором (%s) - состояние %s, независимой сверки "
+                  "документа модель не делала"
+                  % (",".join(_opc("loaded_density", "Ni_wt_pct", "crush_N",
+                                    "catalyst_life_y")[1]),
+                     _opc("loaded_density", "Ni_wt_pct", "crush_N",
+                          "catalyst_life_y")[0]))},
         {"check": "methanol VBF per-pass conversion in opened 25-30% (+0.2 pp)",
          "passed": next((r["per_pass_in_range"] for r in kin_rows
                          if r["product"] == "methanol"), False)},
@@ -707,9 +818,33 @@ def loop5_validation(designs, cfg=None):
                                     - 1.0) <= 0.05,
          "value": cd.get("converter_vs_loop_NH3_ratio")},
         {"check": "ammonia converter geometry / ceiling confirmed by vendor "
-                  "datasheet", "passed": False,
-         "note": "no vendor converter datasheet; bed-T ceiling is an assumption "
-                 "(docs/28_v5_vendor_rfi.md asks for it)"},
+                  "datasheet",
+         "passed": _opc("nh3_bed_T_max_C", "nh3_GHSV_basis", "nh3_GHSV_h1",
+                        "nh3_dP_loop_bar", "nh3_rho_bulk", "pellet_d_eq_mm")[0]
+         in ("closed_verified",),
+         "value": _opc("nh3_bed_T_max_C", "nh3_GHSV_basis", "nh3_GHSV_h1",
+                       "nh3_dP_loop_bar", "nh3_rho_bulk", "pellet_d_eq_mm")[1],
+         "note": ("bed-T ceiling / GHSV basis / dP / bulk density entered by the "
+                  "operator and USED by model/activity_uncertainty.py "
+                  "(docs/33 form fields)"
+                  if _opc("nh3_bed_T_max_C", "nh3_GHSV_basis", "nh3_GHSV_h1",
+                          "nh3_dP_loop_bar", "nh3_rho_bulk", "pellet_d_eq_mm")[0]
+                  != "open" else
+                  "no vendor converter datasheet; bed-T ceiling is an assumption "
+                  "(docs/28_v5_vendor_rfi.md asks for it; the entry point is now "
+                  "data/operator_inputs.json)")},
+        {"check": "catalyst ACTIVITY pinned by operator data (corridor collapses to "
+                  "a point only with provenance; the V5.2 literature band is still "
+                  "printed next to it)",
+         "passed": "nh3_activity_k_scale" in _applied,
+         "value": (_ovl.get("model_only") or {}).get("nh3_k_scale"),
+         "note": ("single-source: reported as point + corridor, status [ЧАСТИЧНО]"
+                  if "nh3_activity_k_scale" in _applied and
+                  "nh3_activity_k_scale" not in _ver else
+                  "не введено - отчёт обязан оставаться коридорным (docs/32)")},
+        {"check": "operator data entry validated and consistently applied "
+                  "(docs/33; a rejected form is a FAILURE, not a silent no-op)",
+         "passed": bool(op_ok5), "value": op_info5},
         {"check": "pilot campaign file ingested and validated against the "
                   "contract", "passed": _ingest_ready(),
          "note": "contract data/pilot_schema.json + harness model/data_ingest.py "
@@ -728,8 +863,20 @@ def loop5_validation(designs, cfg=None):
         {"check": "independent HYSYS / DWSIM run", "passed": False,
          "note": "not installed; Python equivalent confirmed by user answer 11"},
     ]
+    _anno = {
+        "Measured packed-bed pressure drop": ("dP_measured_bar",),
+        "200-1000 h Ni particle-size": ("Ni_particle_nm_after", "Ni_hours_after"),
+        "Commercial Ni/MgAl2O4 reforming CATALYST datasheet":
+            ("loaded_density", "Ni_wt_pct", "crush_N", "catalyst_life_y"),
+        "Ammonia converter vendor data": ("nh3_bed_T_max_C", "nh3_GHSV_h1",
+                                          "nh3_dP_loop_bar", "nh3_rho_bulk"),
+        "Certified HAZOP team": ("hazop_certified",),
+        "regional price quotes": ("gas_price", "electricity_price",
+                                  "catalyst_price_USD_per_kg", "Ni_price"),
+        "Pilot campaign at 20-31 bar": ("campaign_file",),
+    }
     n_pass = sum(1 for c in subchecks if c["passed"])
-    unchecked = [
+    unchecked_raw = [
         "HYSYS / DWSIM / COCO steady-state run (not installed; user answer 11 confirms Python equivalent)",
         "Pilot campaign at 20-31 bar with 15 wt% Ni/MgAl2O4: X_CH4 vs T, p, S/C, CO2/C",
         "Measured packed-bed pressure drop at design velocity (Ergun is a correlation)",
@@ -751,6 +898,21 @@ def loop5_validation(designs, cfg=None):
         "Certified HAZOP / LOPA / SIL verification, API 520/521 PSV full text, Ni(CO)4 kinetics",
         "API 530 / ASME certified tube creep calculation; regional price quotes; GOST 5542 full text",
     ]
+    # V5.3: items the operators have since recorded are ANNOTATED, not deleted -
+    # "entered with provenance" is a different epistemic state from "verified".
+    unchecked = []
+    for item in unchecked_raw:
+        hit = [key for key in _anno if key in item]
+        fids = [f for key in hit for f in _anno[key]]
+        state, got = _opc(*fids) if fids else ("open", None)
+        if state == "open" or not got:
+            unchecked.append(item)
+        elif state == "single_source":
+            unchecked.append(item + "  == внесено оператором (" + ", ".join(sorted(got))
+                             + "), независимая сверка документа не выполнена")
+        else:
+            unchecked.append(item + "  == ЗАКРЫТО вводом оператора с второй "
+                             "подписью (" + ", ".join(sorted(got)) + ")")
     return {
         "passed": False,
         "status": "FAILED (now evidence-based, not just absence-of-data)",

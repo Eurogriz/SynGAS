@@ -2,11 +2,11 @@
   "loops": {
     "1_sources": {
       "passed": true,
-      "n_claims": 90,
+      "n_claims": 96,
       "by_status": {
-        "[ПОДТВЕРЖДЕНО]": 31,
-        "[ЧАСТИЧНО]": 40,
-        "[ДОПУЩЕНИЕ]": 14,
+        "[ПОДТВЕРЖДЕНО]": 35,
+        "[ЧАСТИЧНО]": 41,
+        "[ДОПУЩЕНИЕ]": 15,
         "[НЕ ПОДТВЕРЖДЕНО]": 5
       },
       "problems": [],
@@ -369,6 +369,7 @@
       "passed": true,
       "layout_scan_note": "12/12 layouts meet the 803 K ceiling, 6 also the opened 15-20% per-pass band; best outlet NH3 13.21 mol% at 802.6 K peak; best row is the true maximum among ceiling-meeting layouts",
       "activity_band_note": "factor x2.362 over 5 activities: X 25.35..30.01%, V_needed 22.4..52.9 m3, T_peak 845.34..845.42 K; edge reproduces the design (dV 0.07%, dX 0.0e+00); monotone True/True; loop closed at every activity True; INTERNAL CONSISTENCY ONLY - the band itself is uncertainty, not validation",
+      "operator_overlay_note": "no operator form (data/operator_inputs.json) - the model reports corridors and its placeholders stay flagged [ДОПУЩЕНИЕ]/[ЧАСТИЧНО]; docs/33 is the entry point",
       "reaction_enthalpies": {
         "SMR": {
           "shomate": 226.7847886174016,
@@ -579,7 +580,8 @@
         "dP": true,
         "NH3_Ka_vs_NIST": true,
         "NH3_layout_scan": true,
-        "NH3_activity_band": true
+        "NH3_activity_band": true,
+        "operator_overlay": true
       },
       "note": "Q*Kphi/K = 1 is the real-gas equilibrium condition; the residual is <0.01%. Shomate/NASA7 reaction enthalpies agree within 5 kJ/mol."
     },
@@ -694,7 +696,19 @@
         {
           "check": "ammonia converter geometry / ceiling confirmed by vendor datasheet",
           "passed": false,
-          "note": "no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.md asks for it)"
+          "value": null,
+          "note": "no vendor converter datasheet; bed-T ceiling is an assumption (docs/28_v5_vendor_rfi.md asks for it; the entry point is now data/operator_inputs.json)"
+        },
+        {
+          "check": "catalyst ACTIVITY pinned by operator data (corridor collapses to a point only with provenance; the V5.2 literature band is still printed next to it)",
+          "passed": false,
+          "value": null,
+          "note": "не введено - отчёт обязан оставаться коридорным (docs/32)"
+        },
+        {
+          "check": "operator data entry validated and consistently applied (docs/33; a rejected form is a FAILURE, not a silent no-op)",
+          "passed": true,
+          "value": "no operator form (data/operator_inputs.json) - the model reports corridors and its placeholders stay flagged [ДОПУЩЕНИЕ]/[ЧАСТИЧНО]; docs/33 is the entry point"
         },
         {
           "check": "pilot campaign file ingested and validated against the contract",
@@ -722,8 +736,8 @@
           "note": "not installed; Python equivalent confirmed by user answer 11"
         }
       ],
-      "subchecks_passed": 11,
-      "subchecks_total": 26,
+      "subchecks_passed": 12,
+      "subchecks_total": 28,
       "external_data": {
         "n_records_total": 30,
         "n_numeric_X_CH4_comparable": 6,

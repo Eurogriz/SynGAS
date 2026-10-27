@@ -4,6 +4,16 @@
     "k_scale_lo": 0.21339984916320956,
     "k_scale_hi": 0.5039665850488267,
     "factor": 2.3616070349861866,
+    "literature_band": [
+      0.21339984916320956,
+      0.5039665850488267,
+      2.3616070349861866
+    ],
+    "pinned_by_operator": false,
+    "single_source_pin": false,
+    "k_center_entered": null,
+    "guaranteed_factor_entered": null,
+    "GHSV_status": "[ДОПУЩЕНИЕ] проектное GHSV, базис normal задан моделью",
     "k0_published": 65000000000000.0,
     "source_of_band": "model/converter.py calibrate_k0: k_lo hits the opened per-pass band midpoint, k_hi hits the opened 13 mol% outlet benchmark; the two opened industrial data disagree by this factor",
     "status": "[ЧАСТИЧНО] both anchors are opened literature values; the factor itself is a measured inconsistency of the sources, not a fitted spread"
@@ -20,13 +30,16 @@
     "p_bar": 200.0,
     "bed_inlet_T_K": 703.15,
     "n_beds": 3,
+    "volume_basis": "catalyst",
     "note": "the design sits at the LOW edge of the band, so its catalyst volume is the optimistic (small) end and its peak temperature is the pessimistic end of the physical corridor"
   },
+  "literature_reference_rows": [],
   "rows": [
     {
       "k_scale": 0.21339984916320956,
       "k0_effective_kmol_m3cat_h": 13870990195608.621,
-      "position_in_band": "lower edge (= calibrated design point)",
+      "row_kind": "literature_corridor",
+      "position_in_band": "нижний край полосы",
       "at_fixed_geometry": {
         "catalyst_volume_m3": 52.90884710390271,
         "per_pass_N2_pct": 25.353163160321223,
@@ -53,6 +66,8 @@
         "delta_V_pct": 0.1,
         "catalyst_mass_t": 94.0,
         "inventory_cost_USD": 3759000.0,
+        "annual_replacement_cost_USD_y": null,
+        "bed_volume_m3_if_basis_is_bed": 105.9,
         "vessel_scale_factor_capex_exponent_0p7": 1.0005,
         "converged": true,
         "iterations": 13,
@@ -93,7 +108,8 @@
     {
       "k_scale": 0.2645428430331417,
       "k0_effective_kmol_m3cat_h": 17195284797154.209,
-      "position_in_band": "interior",
+      "row_kind": "literature_corridor",
+      "position_in_band": "внутренняя точка полосы",
       "at_fixed_geometry": {
         "catalyst_volume_m3": 52.90884710390271,
         "per_pass_N2_pct": 26.668443490798865,
@@ -120,6 +136,8 @@
         "delta_V_pct": -19.3,
         "catalyst_mass_t": 75.8,
         "inventory_cost_USD": 3032000.0,
+        "annual_replacement_cost_USD_y": null,
+        "bed_volume_m3_if_basis_is_bed": 85.4,
         "vessel_scale_factor_capex_exponent_0p7": 0.8607,
         "converged": true,
         "iterations": 14,
@@ -160,7 +178,8 @@
     {
       "k_scale": 0.3279426676001729,
       "k0_effective_kmol_m3cat_h": 21316273394011.24,
-      "position_in_band": "interior",
+      "row_kind": "literature_corridor",
+      "position_in_band": "внутренняя точка полосы",
       "at_fixed_geometry": {
         "catalyst_volume_m3": 52.90884710390271,
         "per_pass_N2_pct": 27.951517407647884,
@@ -187,6 +206,8 @@
         "delta_V_pct": -34.9,
         "catalyst_mass_t": 61.1,
         "inventory_cost_USD": 2445000.0,
+        "annual_replacement_cost_USD_y": null,
+        "bed_volume_m3_if_basis_is_bed": 68.87,
         "vessel_scale_factor_capex_exponent_0p7": 0.7403,
         "converged": true,
         "iterations": 14,
@@ -227,7 +248,8 @@
     {
       "k_scale": 0.40653677113179026,
       "k0_effective_kmol_m3cat_h": 26424890123566.367,
-      "position_in_band": "interior",
+      "row_kind": "literature_corridor",
+      "position_in_band": "внутренняя точка полосы",
       "at_fixed_geometry": {
         "catalyst_volume_m3": 52.90884710390271,
         "per_pass_N2_pct": 29.092562022052377,
@@ -254,6 +276,8 @@
         "delta_V_pct": -47.5,
         "catalyst_mass_t": 49.3,
         "inventory_cost_USD": 1974000.0,
+        "annual_replacement_cost_USD_y": null,
+        "bed_volume_m3_if_basis_is_bed": 55.59,
         "vessel_scale_factor_capex_exponent_0p7": 0.6373,
         "converged": true,
         "iterations": 14,
@@ -294,7 +318,8 @@
     {
       "k_scale": 0.5039665850488267,
       "k0_effective_kmol_m3cat_h": 32757828028173.74,
-      "position_in_band": "upper edge",
+      "row_kind": "literature_corridor",
+      "position_in_band": "верхний край полосы",
       "at_fixed_geometry": {
         "catalyst_volume_m3": 52.90884710390271,
         "per_pass_N2_pct": 30.008305601493124,
@@ -321,6 +346,8 @@
         "delta_V_pct": -57.7,
         "catalyst_mass_t": 39.8,
         "inventory_cost_USD": 1591000.0,
+        "annual_replacement_cost_USD_y": null,
+        "bed_volume_m3_if_basis_is_bed": 44.81,
         "vessel_scale_factor_capex_exponent_0p7": 0.548,
         "converged": true,
         "iterations": 15,
@@ -359,6 +386,26 @@
       }
     }
   ],
+  "spans_literature_reference": {
+    "per_pass_N2_pct": [
+      null,
+      null
+    ],
+    "T_peak_K": [
+      null,
+      null
+    ],
+    "outlet_NH3_molpct": [
+      null,
+      null
+    ],
+    "catalyst_volume_to_hold_design_m3": [
+      null,
+      null
+    ],
+    "note": "края литературной полосы V5.2, пересчитанные при ТОМ ЖЕ целевом X, которое задал оператор: это сравнение 'насколько оптимистичен ввод', а не новый коридор проекта"
+  },
+  "band_kind": "literature_corridor (recommended form)",
   "spans": {
     "per_pass_N2_pct": [
       25.353163160321223,
@@ -393,10 +440,14 @@
       1591000.0
     ],
     "price_used": 40.0,
-    "price_status": "[ДОПУЩЕНИЕ] PRICES['catalyst_USD_per_kg'] is the project's screening price for Ni/MgAl2O4 reforming catalyst; no promoted-iron ammonia-catalyst price was opened (docs/28 asks for it), and no catalyst LIFE for the NH3 bed was opened either, so annual replacement cost is deliberately NOT computed",
+    "price_status": "[ДОПУЩЕНИЕ] PRICES['catalyst_USD_per_kg'] is the project's screening price; no promoted-iron ammonia-catalyst price was opened (docs/28 asks for it) - it can be entered in data/operator_inputs.json",
+    "life_years_used": null,
+    "annual_replacement_cost_USD_y": null,
     "density_used_kg_m3": 1775.0,
-    "density_status": "[ЧАСТИЧНО] 1775 kg/m3 is the VBF Cu/ZnO bulk density reused as a placeholder; the NH3 catalyst value is exactly what docs/28 item 12 asks for",
-    "vessel_scaling": "(V/V_ref)^[CAPEX_scale_exponent] with the project's own exponent 0.7; the converter's SHARE of the 281.4 M USD screening CAPEX is not resolved by the model, so only the relative factor is reported",
+    "density_status": "[ЧАСТИЧНО] 1775 kg/m3 is the VBF Cu/ZnO bulk density reused as a placeholder; the NH3 catalyst value is exactly what docs/28 item 12 asks for (field nh3_rho_bulk in the operator form)",
+    "capex_share_pct_used": null,
+    "converter_CAPEX_delta_USD": null,
+    "vessel_scaling": "(V/V_ref)^[CAPEX_scale_exponent] with the project's own exponent 0.7; the converter's SHARE of the 281.4 M USD screening CAPEX is not resolved by the model, so only the relative factor is reported (field converter_capex_share in the form)",
     "recycle_compressor": {
       "power_by_loop_dP": [
         {
@@ -424,6 +475,13 @@
       "note": "estimate for the recycle loop only, at the assumed loop pressure drops listed per row; the project's compressor model is [ASSUMPTION] (k, eta; catalogue curves not opened), so this is a bracket for a re-rating decision, not a purchase figure"
     }
   },
+  "data_entry": {
+    "overrides_used": {},
+    "provenance": {},
+    "verified_ids": [],
+    "corridor_recommended": true,
+    "rule": "коридор остаётся рекомендованной формой отчёта, пока размер не введён с провенансом; одиночный ввод фиксирует точку, но литературная полоса показана рядом"
+  },
   "not_covered": [
     "catalyst price and life for promoted iron (docs/28 p. 12-13) - so no annualised catalyst cost line",
     "converter vendor layout and quench control (docs/28 p. 14-18)",
@@ -431,5 +489,5 @@
     "deactivation over the run: no 200-1000 h series for this catalyst",
     "the band is an activity band only; feed/temperature uncertainty is quantified separately in model/uncertainty.py (docs/30)"
   ],
-  "how_to_use": "report the corridor in every ammonia answer: catalyst volume, peak temperature and outlet NH3 as ranges over the factor; single numbers may be quoted only together with the k_scale they belong to\nthe corridor is NOT plant validation and NOT a vendor guarantee; it stays a model band until docs/27 (activity at our conditions) and docs/28 (vendor layout, density, ceiling) are closed\nthe band is activity-only: feed and temperature uncertainty is quantified separately in model/uncertainty.py (docs/30), where 0 of 6 pilot points fall inside the model band - that disagreement is NOT covered by this corridor and is not fixed by it"
+  "how_to_use": "report the corridor in every ammonia answer: catalyst volume, peak temperature and outlet NH3 as ranges over the factor; single numbers may be quoted only together with the k_scale they belong to\nthe corridor is NOT plant validation and NOT a vendor guarantee; it stays a model band until docs/27 (activity at our conditions) and docs/28 (vendor layout, density, ceiling) are closed\nthe band is activity-only: feed and temperature uncertainty is quantified separately in model/uncertainty.py (docs/30), where 0 of 6 pilot points fall inside the model band - that disagreement is NOT covered by this corridor and is not fixed by it\nвведите недостающие числа через data/operator_inputs.json (или вкладку «Ручной ввод данных» панели) - тогда коридор сузится ровно на столько, на сколько позволяет провенанс"
 }

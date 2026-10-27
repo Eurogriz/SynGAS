@@ -234,10 +234,34 @@ CERTIFICATION_GAPS = [
 def hazop_report():
     rows = build_worksheet()
     high = [r for r in rows if r["risk_score"] >= 6]
+    # V5.3: a real HAZOP is a human act; the operator form is how its RECORD
+    # enters this project. Nothing here certifies anything by itself - the flag
+    # only flips when facilitator + date + report reference were all entered, and
+    # the provenance is printed next to it.
+    rec = {"certified": False, "source": "no operator record", "verified": False}
+    try:
+        from .operator_data import runtime_overlay
+        ov = runtime_overlay() or {}
+        if ov.get("hazop_certified"):
+            rec = {"certified": True,
+                   "source": {"facilitator": ov.get("hazop_facilitator"),
+                              "date": ov.get("hazop_date"),
+                              "report_ref": ov.get("hazop_ref")},
+                   "verified": "hazop_certified" in (ov.get("_verified_ids") or []),
+                   "provenance": (ov.get("_provenance") or {}).get("hazop_certified")}
+    except Exception as exc:                            # pragma: no cover
+        rec = {"certified": False, "source": "operator overlay unreadable (%r)" % exc,
+               "verified": False}
     return {
+        "operator_record": rec,
         "standard_basis": "IEC 61882:2016 Hazard and operability (HAZOP) studies - application guide (structure only; full text NOT opened)",
-        "certified": False,
-        "certification_status": "[НЕ ПОДТВЕРЖДЕНО] NOT A CERTIFIED HAZOP",
+        "certified": bool(rec["certified"]),
+        "certification_status": (
+            "[ЧАСТИЧНО] запись внесена оператором (facilitator/дата/номер отчёта "
+            "есть), независимой проверки документа в модели нет"
+            if rec["certified"] else
+            "[НЕ ПОДТВЕРЖДЕНО] NOT A CERTIFIED HAZOP"),
+        "certification_record": rec,
         "worksheet_rows": len(rows),
         "nodes": len(NODES), "guidewords": len(GUIDEWORDS),
         "high_risk_rows": len(high),

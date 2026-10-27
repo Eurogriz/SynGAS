@@ -270,6 +270,205 @@ def api_quality():
     return jsonify(to_jsonable(out))
 
 
+
+def _operator_placeholder_table():
+    """What the model substitutes while the operator has not entered a value.
+
+    Read LIVE from load_config() (which already applies a valid overlay) plus the
+    corridor-only placeholders, so this table can never show a stale number after
+    a save. Every row is labelled with its provenance: an operator-entered value
+    says so and names who entered it. Nothing here is a new number.
+    """
+    from model.config import load_config
+    from model.operator_data import runtime_overlay
+    cfg = load_config(product="ammonia")
+    ov = runtime_overlay() or {}
+    applied = set(ov.get("_applied_ids") or [])
+    prov = ov.get("_provenance") or {}
+    cat, kin = cfg.catalyst, cfg.raw["kinetics"]["ammonia"]
+    eq, ec = cfg.raw["equipment"], cfg.raw["economics"]
+    try:
+        from model.economics import PRICES
+    except Exception:
+        PRICES = {}
+
+    def note(fid, value, model_key=None):
+        src = "заполнитель модели [ДОПУЩЕНИЕ]"
+        if value is None and model_key:
+            value = ov.get(model_key)
+        if fid in applied and value is not None:
+            p = prov.get(fid) or {}
+            src = ("введено оператором: %s, %s%s" % (p.get("entered_by") or "?",
+                                                      p.get("received_date") or "?",
+                                                      ", проверено независимо"
+                                                      if fid in set(ov.get("_verified_ids") or [])
+                                                      else " — ОДИН источник"))
+        if value is None:
+            return "нет данных — коридор обязателен"
+        if isinstance(value, float):
+            value = ("%.6g" % value)
+        return "%s · %s" % (value, src)
+
+    band = {}
+    qp = os.path.join(ROOT, "results_v2", "activity_uncertainty.json")
+    if os.path.exists(qp):
+        try:
+            band = (json.load(open(qp, encoding="utf-8")) or {}).get("activity_band", {})
+        except Exception:
+            band = {}
+    k_lo, k_hi, fac = band.get("k_scale_lo"), band.get("k_scale_hi"), band.get("factor")
+    k_show = ("коридор %s … %s (×%s)" % ("%.5f" % k_lo, "%.5f" % k_hi, "%.3f" % fac)
+              if k_lo and k_hi else "нет results_v2/activity_uncertainty.json")
+    out = {
+        "Ni в катализаторе риформинга (Ni_wt_pct)":
+            note("Ni_wt_pct", cat.get("Ni_wt_pct_metal")),
+        "Плотность загрузки риформинга (loaded_density)":
+            note("loaded_density", cat.get("commercial_proxy_loaded_density_kg_m3")),
+        "Ресурс катализатора риформинга, лет (catalyst_life_y)":
+            note("catalyst_life_y", cat.get("life_years")),
+        "Цена катализатора, USD/т (config) / USD/кг (PRICES)":
+            "%s / %s · %s" % (cat.get("catalyst_price_USD_per_t"),
+                              PRICES.get("catalyst_USD_per_kg"),
+                              ("синхронизировано вводом оператора"
+                               if "catalyst_price_USD_per_kg" in applied
+                               else "ДВЕ РАЗНЫЕ ЦЕНЫ — см. docs/33, поле "
+                                    "catalyst_price_USD_per_kg")),
+        "Потолок температуры слоя NH3, K (nh3_bed_T_max_C)":
+            note("nh3_bed_T_max_C", kin.get("bed_T_max_K")),
+        "GHSV конвертора NH3, 1/ч (nh3_GHSV_h1)":
+            note("nh3_GHSV_h1", kin.get("GHSV_h1")),
+        "Базис GHSV (nh3_GHSV_basis)":
+            note("nh3_GHSV_basis", kin.get("GHSV_basis", "normal (задано моделью)")),
+        "Δp контура на компрессор, бар (nh3_dP_loop_bar)":
+            note("nh3_dP_loop_bar", eq.get("dP_max_bar")),
+        "Полоса активности k_scale (nh3_activity_k_scale)":
+            "%s · %s" % (k_show, "закреплена вводом оператора"
+                         if "nh3_activity_k_scale" in applied
+                         else "не закреплена — рекомендованная форма отчёта"),
+        "Плотность катализатора NH3, кг/м3 (nh3_rho_bulk)":
+            note("nh3_rho_bulk", None, model_key="nh3_rho_kg_m3"),
+        "Ресурс катализатора NH3, лет (nh3_catalyst_life_y)":
+            note("nh3_catalyst_life_y", None, model_key="nh3_catalyst_life_years"),
+        "Цена газа, USD/MMBtu (gas_price)": note("gas_price", ec.get("gas_USD_per_MMBtu")),
+        "Цена электричества, USD/МВт·ч (electricity_price)":
+            note("electricity_price", ec.get("electricity_USD_per_MWh")),
+        "Цена CO2, USD/т (CO2_price)": note("CO2_price", ec.get("CO2_USD_per_t")),
+        "Пар, USD/т (steam_price)": note("steam_price", ec.get("steam_USD_per_t")),
+        "Оборотная вода, USD/м3 (water_price)":
+            note("water_price", ec.get("cooling_water_USD_per_m3")),
+        "Никель, USD/т (Ni_price)": note("Ni_price", cat.get("Ni_price_USD_per_t")),
+        "CAPEX, USD/кВт H2 (LHV) (CAPEX_per_kW)":
+            note("CAPEX_per_kW", ec.get("CAPEX_USD_per_kW_H2_LHV")),
+        "Часов в году (hours_per_year)": note("hours_per_year", ec.get("operating_hours_per_year")),
+        "Ставка дисконтирования (discount_rate)": note("discount_rate", ec.get("discount_rate")),
+        "Срок службы установки, лет (plant_life_y)": note("plant_life_y", ec.get("plant_life_years")),
+    }
+    pinned = ov.get("nh3_k_scale")
+    if pinned is not None:
+        out["Полоса активности k_scale (nh3_activity_k_scale)"] = (
+            "точка оператора %s%s · для сравнения литературная полоса %s … %s"
+            % ("%.5f" % float(pinned),
+               " (есть вторая подпись)" if "nh3_activity_k_scale" in set(
+                   ov.get("_verified_ids") or []) else " (ОДИН источник)",
+               "%.5f" % k_lo if k_lo else "?", "%.5f" % k_hi if k_hi else "?"))
+    if band.get("GHSV_status"):
+        out["GHSV: как читает коридор"] = band["GHSV_status"]
+    if band.get("source_of_band"):
+        out["откуда полоса активности"] = band["source_of_band"]
+    return out
+
+
+@app.get("/api/operator")
+def api_operator():
+    """V5.3 manual data entry: the form spec, the saved document and the state.
+
+    Nothing here invents a number: the form ships EMPTY, and every field carries
+    the model's CURRENT placeholder in its label so the operator can see what is
+    being replaced. While a field is empty the model keeps reporting the V5.2
+    corridor (docs/32) - that is the recommendation, and it is also printed in
+    `status.recommendation`."""
+    from model.operator_data import (FIELDS, GROUPS, template_doc, status,
+                                     recommendation, FORM_PATH, validate)
+    doc = None
+    if os.path.exists(FORM_PATH):
+        try:
+            with open(FORM_PATH, encoding="utf-8") as fh:
+                doc = json.load(fh)
+        except Exception as exc:
+            return jsonify({"error": "data/operator_inputs.json: %s" % exc}), 500
+    errors, warnings, _clean = validate(doc) if doc else ([], [], {})
+    spec = [{k: f[k] for k in ("id", "group", "label", "unit", "type", "lo", "hi",
+                              "options", "rfi", "pins", "warn")} for f in FIELDS]
+    return jsonify(to_jsonable({
+        "fields": spec, "groups": GROUPS,
+        "doc": doc or template_doc(), "has_saved_form": bool(doc),
+        "validation_errors": errors, "validation_warnings": warnings,
+        "status": status(), "recommendation": recommendation(),
+        "placeholder_now": _operator_placeholder_table()}))
+
+
+@app.post("/api/operator")
+def api_operator_post():
+    """Validate / save / clear the operator form, or recompute the corridor.
+
+    action=validate : check only, nothing written
+    action=save     : write data/operator_inputs.json (only if it validates)
+    action=clear    : remove the form (model returns to pure corridor mode)
+    action=recompute: run the ammonia corridor with the entered data and return it
+    """
+    from model.operator_data import (FORM_PATH, ROOT as _R, save, clear, status,
+                                     validate, write_template, activity_overrides)
+    a = request.get_json(force=True, silent=True) or {}
+    action = a.get("action", "validate")
+    if action == "clear":
+        gone = clear()
+        _CACHE.pop("quality", None)
+        return jsonify({"cleared": gone, "status": status()})
+    if action == "template":
+        j, c, n = write_template()
+        return jsonify({"template": os.path.relpath(j, ROOT), "csv": os.path.relpath(c, ROOT),
+                        "n_fields": n})
+    if action == "recompute":
+        try:
+            from model.activity_uncertainty import band
+            res = band()
+        except Exception as exc:
+            return jsonify({"error": "коридор не пересчитан: %r" % exc}), 500
+        try:
+            with open(os.path.join(ROOT, "results_v2",
+                                   "activity_uncertainty.json"), "w",
+                      encoding="utf-8") as fh:
+                json.dump(res, fh, indent=1, ensure_ascii=False, default=float)
+        except Exception:
+            pass
+        _CACHE.pop("quality", None)
+        return jsonify(to_jsonable(res))
+    doc = a.get("doc")
+    if not isinstance(doc, dict):
+        return jsonify({"error": "тело должно содержать 'doc' - форму из "
+                                 "data/operator_inputs.json"}), 400
+    errors, warnings, clean = validate(doc)
+    if errors:
+        return jsonify({"saved": False, "validation_errors": errors,
+                        "validation_warnings": warnings,
+                        "note": ("ничего не записано: полуприменённый даташит "
+                                 "хуже, чем его отсутствие")}), 422
+    if action == "save":
+        path = save(doc)
+        _CACHE.pop("quality", None)
+        shown = path if not path.startswith(ROOT + os.sep) else os.path.relpath(path, ROOT)
+        return jsonify(to_jsonable({"saved": True, "path": shown,
+                                    "n_applied": len([1 for e in clean.values()
+                                                      if e.get("applied")]),
+                                    "status": status(),
+                                    "overrides": activity_overrides()}))
+    return jsonify(to_jsonable({"saved": False, "validation_errors": [],
+                                "validation_warnings": warnings,
+                                "n_applied": len([1 for e in clean.values()
+                                                  if e.get("applied")]),
+                                "overrides": activity_overrides()}))
+
+
 @app.post("/api/ingest")
 def api_ingest():
     """Validate a pilot campaign file against data/pilot_schema.json and rerun
@@ -418,7 +617,8 @@ a{color:var(--acc)}
 <button onclick="tab('t9',this)">Безопасность</button>
 <button onclick="tab('t10',this)">Кинетика / контур 5</button>
 <button onclick="tab('t11',this);conv()">Конвертор NH₃ (V5)</button>
-<button onclick="tab('t12',this);qual()">Качество модели (V5.1–V5.2)</button></div>
+<button onclick="tab('t12',this);qual()">Качество модели (V5.1–V5.2)</button>
+<button onclick="tab('t13',this);opd()">Ручной ввод данных (V5.3)</button></div>
 <div id="t1"></div><div id="t2" class="hidden"></div><div id="t3" class="hidden"></div>
 <div id="t4" class="hidden"></div><div id="t5" class="hidden"></div>
 <div id="t6" class="hidden"></div><div id="t7" class="hidden"><pre id="raw"></pre></div>
@@ -426,6 +626,7 @@ a{color:var(--acc)}
 <div id="t10" class="hidden"></div>
 <div id="t11" class="hidden"></div>
 <div id="t12" class="hidden"></div>
+<div id="t13" class="hidden"></div>
 </main></div>
 <script>
 let CFG=null, LAST=null;
@@ -434,7 +635,7 @@ const fmt=(x,n=3)=>x===null||x===undefined||Number.isNaN(+x)?'—':(+x).toFixed(
 const tbl=(head,rows)=>'<table><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+
  rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
 const say=(m,bad=false)=>{$('status').textContent=m;$('status').style.borderLeftColor=bad?'#f85149':'#d29922'};
-function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+function tab(id,btn){['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
 async function init(){CFG=(await (await fetch('/api/config')).json());
  const P=CFG.raw.products, A=CFG.raw.active, C=CFG.raw.catalyst, E=CFG.raw.economics, PR=CFG.raw.process;
  const fill=(id,arr,val)=>{$(id).innerHTML=arr.map(x=>`<option ${x===val?'selected':''}>${x}</option>`).join('')};
@@ -711,6 +912,133 @@ async function ing(){const f=$('ingfile').value;say('ингестировани�
  say('пригодных записей: '+(j.n_records_usable||0)+' из '+(j.n_records_read||0)+
   '; ошибок контракта: '+(j.n_errors||0)+'; подпроверок контура 5 закрыто этими данными: '+
   (j.loop5_subchecks_passed_from_this_data||0)+'/3', (j.n_errors||0)>0);}
+
+let OP=null;
+const opid=(f,k)=>'op_'+f+'__'+k;
+function opField(f,e){
+ const id=opid(f.id,'v');
+ let inp;
+ if(f.type==='choice'){inp='<select id="'+id+'"><option value="">—</option>'+
+   f.options.map(o=>'<option '+(o===e.value?'selected':'')+'>'+o+'</option>').join('')+'</select>';}
+ else if(f.type==='bool'){inp='<select id="'+id+'"><option value="">—</option>'+
+   ['true','false'].map(o=>'<option value="'+o+'" '+((e.value===true&&o==='true')||(e.value===false&&o==='false')?'selected':'')+'>'+o+'</option>').join('')+'</select>';}
+ else if(f.type==='list'){inp='<input id="'+id+'" size="22" value="'+(Array.isArray(e.value)?e.value.join(', '):'')+'" placeholder="через запятую">';}
+ else {inp='<input id="'+id+'" type="text" value="'+(e.value==null?'':e.value)+'"'+
+   (f.lo!=null?' placeholder="'+f.lo+' … '+f.hi+'"':'')+'>';}
+ const range=f.type==='number'||f.type==='int'||f.type==='list'?('допустимо '+f.lo+' … '+f.hi):(f.type==='choice'?('одно из: '+f.options.join(' / ')):'текст');
+ return '<tr><td><b>'+f.label+'</b><br><span class="u">'+f.id+(f.rfi?' · RFI '+f.rfi:'')+' · '+range+
+  (f.pins?'<br>закрепляет: '+f.pins:'')+(f.warn?'<br><span class="warn">⚠ '+f.warn+'</span>':'')+
+  '</span></td><td>'+inp+'</td>'+
+  '<td><input id="'+opid(f.id,'unit')+'" value="'+(e.unit||'')+'" placeholder="'+(f.unit||'')+'"></td>'+
+  '<td><input id="'+opid(f.id,'method')+'" value="'+(e.method||'')+'" placeholder="метод измерения"></td>'+
+  '<td><input id="'+opid(f.id,'source')+'" value="'+(e.source||'')+'" placeholder="документ/письмо/протокол"></td>'+
+  '<td><input id="'+opid(f.id,'date')+'" value="'+(e.received_date||'')+'" placeholder="2026-10-05"></td>'+
+  '<td><input id="'+opid(f.id,'by')+'" value="'+(e.entered_by||'')+'" placeholder="ФИО"></td>'+
+  '<td style="text-align:center"><input type="checkbox" id="'+opid(f.id,'applied')+'" '+(e.applied?'checked':'')+' style="width:auto"></td>'+
+  '<td style="text-align:center"><input type="checkbox" id="'+opid(f.id,'ver')+'" '+(e.independently_verified?'checked':'')+' style="width:auto"></td></tr>';
+}
+function opCollect(){
+ const doc={version:1,selftest:false,note:'внесено через панель',entries:{}};
+ OP.fields.forEach(f=>{const g={};const v=$(opid(f.id,'v'));
+  g.value=v.value.trim()===''?null:v.value.trim();
+  ['unit','method','source','date','by'].forEach(k=>{g[k]=$(opid(f.id,k)).value.trim();});
+  g.received_date=g.date; delete g.date; g.entered_by=g.by; delete g.by;
+  g.applied=$(opid(f.id,'applied')).checked; g.independently_verified=$(opid(f.id,'ver')).checked;
+  if(g.independently_verified){g.verified_by=($('op_verified_by')||{value:''}).value.trim();}
+  doc.entries[f.id]=g;});
+ return doc;
+}
+async function opPost(body,txt){say(txt||'оператор: запрос …');
+ const r=await fetch('/api/operator',{method:'POST',headers:{'Content-Type':'application/json'},
+  body:JSON.stringify(body)});
+ const j=await r.json(); if(j.error){say(j.error,true);return j;} say('готово'); return j;}
+async function opd(){
+ say('ручной ввод: форма …');
+ OP=await (await fetch('/api/operator')).json();
+ if(OP.error){$('t13').innerHTML='<h2>Ручной ввод</h2><div class="fail">'+OP.error+'</div>';return;}
+ const doc=OP.doc, st=OP.status||{}, rec=OP.recommendation||{};
+ let h='<h2>Ручной ввод недостающих данных (V5.3)</h2>'+
+  '<div class="note"><b>Правило:</b> пока поле не введено с полным провенансом (единицы, метод, документ, дата, кто внёс), '+
+  'отчёт обязан оставаться <b>коридорным</b> (docs/32). Введённое по одному источнику фиксирует точку, но коридор печатается рядом; '+
+  'вторая подпись (<i>независимо проверено</i>) снимает коридор только по своему полю; по остальным открытым размерам отчёт остаётся коридорным. Форму не принимают частично: при любой ошибке не применяется ни одного поля. '+
+  'Контур 5 от ввода данных не проходит.</div>'+
+  '<div class="cards"><div class="card"><div class="k">полей введено</div><div class="v">'+(st.n_applied||0)+
+   '</div><div class="u">из '+st.n_fields+'</div></div>'+
+   '<div class="card"><div class="k">независимо проверено</div><div class="v">'+(st.n_verified||0)+'</div><div class="u">вторая подпись</div></div>'+
+   '<div class="card"><div class="k">ошибок валидации</div><div class="v '+(st.validation_errors&&st.validation_errors.length?'fail':'ok')+'">'+
+    ((st.validation_errors||[]).length)+'</div><div class="u">'+(OP.has_saved_form?'сохранённая форма':'формы ещё нет')+'</div></div>'+
+   '<div class="card"><div class="k">размеров требуют коридора</div><div class="v warn">'+rec.n_corridor_required+'</div>'+
+    '<div class="u">рекомендовано: '+rec.recommended_form+'</div></div></div>'+
+  '<div class="row"><button class="primary" onclick="opSave()">Проверить и сохранить</button>'+
+   '<button onclick="opSave(true)">Только проверить</button>'+
+   '<button onclick="opRecompute()">Пересчитать коридор по введённому</button>'+
+   '<button onclick="opClear()">Удалить форму (вернуться к коридору)</button>'+
+   '<input id="op_verified_by" size="18" placeholder="проверил (вторая подпись)"></div>'+
+  '<pre id="opout"></pre>';
+ OP.groups.forEach(gp=>{
+  h+='<h2>'+gp+'</h2><table><tr><th style="width:26%">поле</th><th>значение</th><th>единица</th>'+
+     '<th>метод</th><th>документ/источник</th><th>дата получения</th><th>внёс</th><th>применено</th><th>независимо</th></tr>';
+  OP.fields.filter(f=>f.group===gp).forEach(f=>{h+=opField(f,(doc.entries||{})[f.id]||{});});
+  h+='</table>';});
+ h+='<h2>Что сейчас подставляют модель (пока данных нет)</h2>'+
+    tbl(['ключ','текущее значение (метка)'],Object.entries(OP.placeholder_now).map(([k,v])=>[k,String(v)]))+
+    '<h2>Состояние по размерам</h2>'+
+    tbl(['размер','в модели','введено оператором','состояние','как докладывать'],
+      (rec.rows||[]).map(r=>[r.quantity,r.model_value_now,r.operator_value==null?'—':r.operator_value,
+       '<span class="'+(r.state==='corridor_required'?'warn':'pass')+'">'+r.state+'</span>',r.report_as]))+
+    '<div class="note">'+(rec.note||'')+'</div>'+
+    '<h2>Провенанс сохранённой формы</h2><pre id="opprov">'+
+     ((st.groups||[]).length?JSON.stringify(st.groups.map(g=>({group:g.group,внесено:g.n_applied,открыто:g.open.length})),null,1).slice(0,4000):'формы ещё нет - бланк data/operator_inputs_TEMPLATE.json')+
+    '</pre><div id="opcorr"></div>';
+ $('t13').innerHTML=h;
+ say('ручной ввод: '+((st.n_applied||0)+' полей введено, '+(st.validation_errors||[]).length+' ошибок'));
+}
+async function opSave(validateOnly){
+ const doc=opCollect();
+ const j=await opPost(validateOnly?{action:'validate',doc:doc}:{action:'save',doc:doc},
+   validateOnly?'проверка формы …':'сохранение формы …');
+ const err=j.validation_errors||[];
+ $('opout').innerHTML=err.length?('<span class="fail">ОТКЛАНЕНО ('+err.length+'):</span><ul><li>'+err.join('</li><li>')+'</li></ul>'):
+  ('<span class="pass">ПРИНЯТО</span>; применено полей: '+(j.n_applied!=null?j.n_applied:'—')+
+   (j.saved?'; записано в '+j.path:' (не сохранено)')+
+   ((j.validation_warnings||[]).length?'; предупреждения:<ul><li>'+j.validation_warnings.join('</li><li>')+'</li></ul>':''));
+ if(j.status){$('opprov').textContent=JSON.stringify((j.status.groups||[]).map(g=>({group:g.group,внесено:g.n_applied,открыто:g.open.length})),null,1);}
+ if(j.saved) say('форма сохранена — пересчитайте контур/коридор');
+}
+function bandNote(ab){
+ if(ab.pinned_by_operator){
+  let s='полоса активности закреплена вводом оператора: центр '+fmt(ab.k_center_entered,4);
+  if(ab.guaranteed_factor_entered!=null){s+=', гарантированный разброс ×'+fmt(ab.guaranteed_factor_entered,3);}
+  if(ab.single_source_pin){s+=' — ОДИН источник: литературная полоса печатается рядом (таблица ниже)';}
+  return s;
+ }
+ return 'полоса активности не закреплена — рекомендованная форма отчёта: КОРИДОР k_scale '+
+        fmt(ab.k_scale_lo,4)+' … '+fmt(ab.k_scale_hi,4)+' (×'+fmt(ab.factor,3)+')';
+}
+async function opRecompute(){
+ say('пересчёт коридора: полный прогон дизайна NH3, 2-5 минут …');
+ const j=await opPost({action:'recompute'},'пересчёт коридора …');
+ if(j.error){$('opcorr').innerHTML='<div class="fail">'+j.error+'</div>';return;}
+ const ab=j.activity_band||{}, rows=j.rows||[], sp=j.spans||{};
+ $('opcorr').innerHTML='<h2>Коридор после ввода: '+(j.band_kind||'')+'</h2>'+
+  '<div class="note">'+bandNote(ab)+'</div>'+
+  tbl(['k_scale','тип строки','положение','X за проход','выход NH3','T пик','V под проектную X','масса','инвентарь USD'],
+   rows.map(r=>{const f=r.at_fixed_geometry||{},v=r.volume_to_hold_design_conversion||{};
+    return [fmt(r.k_scale,4),r.row_kind,r.position_in_band,fmt(f.per_pass_N2_pct,2)+' %',fmt(f.outlet_NH3_molpct,2)+' мол.%',
+      fmt(f.T_peak_K,1)+' K',fmt(v.V_m3,2)+' м³',fmt(v.catalyst_mass_t,1)+' т',v.inventory_cost_USD==null?'—':fmt(v.inventory_cost_USD/1e6,2)+' M'];}))+
+  ((j.literature_reference_rows||[]).length?'<h2>Рядом: литературная полоса V5.2 (не данные оператора)</h2>'+
+   tbl(['k_scale','X за проход','выход NH3','T пик','V под проектную X'],
+     j.literature_reference_rows.map(r=>[fmt(r.k_scale,4),fmt(r.per_pass_N2_pct,2)+' %',fmt(r.outlet_NH3_molpct,2)+' мол.%',
+      fmt(r.T_peak_K,1)+' K',fmt(r.V_to_hold_design_m3,2)+' м³'])):'')+
+  '<div class="note">эконом-блок: '+JSON.stringify({price_used:j.money.price_used,density:j.money.density_used_kg_m3,
+    life:j.money.life_years_used,annual:j.money.annual_replacement_cost_USD_y,capex_delta:j.money.converter_CAPEX_delta_USD})+
+   '<br>провенанс: '+JSON.stringify((j.data_entry||{}).provenance||{}).slice(0,1200)+'</div>';
+ say('коридор пересчитан: строк '+rows.length);
+}
+async function opClear(){say('удаление формы …');
+ const j=await opPost({action:'clear'},'удаление …');
+ $('opout').textContent=j.cleared?'форма удалена — модель снова отчитывается коридором':'формы не было';
+ opd();}
 async function verify(){const j=await call('/api/verify',{});
  if(j.summary){$('t6').innerHTML='<h2>Пять циклов проверки</h2>'+tbl(['цикл','статус'],
   Object.entries(j.summary).map(([k,v])=>[k,'<span class="'+(v?'pass':'fail')+'">'+(v?'PASS':'FAIL')+'</span>']))

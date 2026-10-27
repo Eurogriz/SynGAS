@@ -163,6 +163,24 @@ def load_config(path=DEFAULT_PATH, overrides=None, product=None):
     if isinstance(path, dict):
         overrides, path = {**path, **(overrides or {})}, DEFAULT_PATH
     cfg = Config.load(path)
+    # V5.3: audited operator overlay (data/operator_inputs.json). No file, no
+    # change; a form that fails validation is never half-applied. See
+    # model/operator_data.overlay_adjust and docs/33.
+    try:
+        from .operator_data import overlay_adjust
+        adj, meta = overlay_adjust()
+    except Exception:                                   # pragma: no cover
+        adj, meta = {}, None
+    if adj:
+        raw = copy.deepcopy(cfg.raw)
+        appr = adj.pop("__approach_K_all__", None)
+        if appr is not None:            # one entry fans out to every product
+            for P in (raw.get("products") or {}).values():
+                P.setdefault("knobs", {})["approach_K"] = appr
+        raw["adjust"] = {**(raw.get("adjust") or {}), **adj}
+        cfg = Config(raw, path)
+    if meta:
+        cfg.raw["operator_overlay"] = meta
     if overrides:
         cfg.apply(overrides)
     return cfg.resolve(product)

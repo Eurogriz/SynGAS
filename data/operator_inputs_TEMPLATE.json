@@ -1,0 +1,617 @@
+{
+ "version": 1,
+ "selftest": false,
+ "note": "Заполняется ЧЕЛОВЕКОМ. applied=true без unit/method/source/received_date/entered_by отклоняется валидатором; числа вне диапазона отклоняются, а не обрезаются. Модель при отсутствии значения продолжает показывать коридор (docs/32), а не точку.",
+ "entries": {
+  "Ni_wt_pct": {
+   "value": null,
+   "unit": "wt%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "NiO_wt_pct": {
+   "value": null,
+   "unit": "wt%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "loaded_density": {
+   "value": null,
+   "unit": "kg/m3",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "support_note": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "crush_N": {
+   "value": null,
+   "unit": "N/табл.",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "attrition_pct": {
+   "value": null,
+   "unit": "%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "pellet_d_eq_mm": {
+   "value": null,
+   "unit": "mm",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "bed_voidage": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "reformer_T_max_C": {
+   "value": null,
+   "unit": "degC",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "deactivation_pct_1000h": {
+   "value": null,
+   "unit": "%/1000h",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "catalyst_life_y": {
+   "value": null,
+   "unit": "y",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "catalyst_price_USD_per_kg": {
+   "value": null,
+   "unit": "USD/kg",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_activity_k_scale": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_activity_factor": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_bed_T_max_C": {
+   "value": null,
+   "unit": "degC",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_light_off_K": {
+   "value": null,
+   "unit": "K",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_GHSV_basis": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_GHSV_h1": {
+   "value": null,
+   "unit": "1/h",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_volume_basis": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_rho_bulk": {
+   "value": null,
+   "unit": "kg/m3",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_catalyst_price": {
+   "value": null,
+   "unit": "USD/kg",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_catalyst_life_y": {
+   "value": null,
+   "unit": "y",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_dP_loop_bar": {
+   "value": null,
+   "unit": "bar",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "nh3_impurity_limit": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "campaign_file": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "dP_measured_bar": {
+   "value": null,
+   "unit": "bar",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "Ni_particle_nm_after": {
+   "value": null,
+   "unit": "nm",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "Ni_hours_after": {
+   "value": null,
+   "unit": "h",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "T_wall_measured_C": {
+   "value": null,
+   "unit": "degC",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "gas_price": {
+   "value": null,
+   "unit": "USD/MMBtu",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "electricity_price": {
+   "value": null,
+   "unit": "USD/MWh",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "CO2_price": {
+   "value": null,
+   "unit": "USD/t",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "steam_price": {
+   "value": null,
+   "unit": "USD/t",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "water_price": {
+   "value": null,
+   "unit": "USD/m3",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "Ni_price": {
+   "value": null,
+   "unit": "USD/t",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "CAPEX_per_kW": {
+   "value": null,
+   "unit": "USD/kW",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "converter_capex_share": {
+   "value": null,
+   "unit": "%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "discount_rate": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "plant_life_y": {
+   "value": null,
+   "unit": "y",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "hours_per_year": {
+   "value": null,
+   "unit": "h/y",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "hazop_certified": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "hazop_facilitator": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "hazop_date": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "hazop_ref": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "psv_set_factor": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "NiCO4_kinetics": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_CH4": {
+   "value": null,
+   "unit": "mol%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_C2H6": {
+   "value": null,
+   "unit": "mol%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_C3H8": {
+   "value": null,
+   "unit": "mol%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_CO2": {
+   "value": null,
+   "unit": "mol%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_N2": {
+   "value": null,
+   "unit": "mol%",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_H2S": {
+   "value": null,
+   "unit": "ppmv",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_p_bar": {
+   "value": null,
+   "unit": "bar(a)",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "feed_T_C": {
+   "value": null,
+   "unit": "degC",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "n_beds": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "T_in_bed_K": {
+   "value": null,
+   "unit": "K",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "cold_shot": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "recycle_ratio": {
+   "value": null,
+   "unit": "",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "pinch_dT": {
+   "value": null,
+   "unit": "K",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "steam_p_bar": {
+   "value": null,
+   "unit": "bar(a)",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  },
+  "approach_K": {
+   "value": null,
+   "unit": "K",
+   "applied": false,
+   "independently_verified": false,
+   "method": "",
+   "source": "",
+   "received_date": "",
+   "entered_by": ""
+  }
+ }
+}

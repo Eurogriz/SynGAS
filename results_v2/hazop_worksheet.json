@@ -1,7 +1,17 @@
 {
+  "operator_record": {
+    "certified": false,
+    "source": "no operator record",
+    "verified": false
+  },
   "standard_basis": "IEC 61882:2016 Hazard and operability (HAZOP) studies - application guide (structure only; full text NOT opened)",
   "certified": false,
   "certification_status": "[НЕ ПОДТВЕРЖДЕНО] NOT A CERTIFIED HAZOP",
+  "certification_record": {
+    "certified": false,
+    "source": "no operator record",
+    "verified": false
+  },
   "worksheet_rows": 110,
   "nodes": 10,
   "guidewords": 11,

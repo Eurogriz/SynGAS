@@ -1,0 +1,100 @@
+{
+  "form_present": false,
+  "n_fields": 61,
+  "n_applied": 0,
+  "n_verified": 0,
+  "groups": [],
+  "applied_ids": [],
+  "verified_ids": [],
+  "validation_errors": [],
+  "validation_warnings": [],
+  "how_to_start": "скопируйте data/operator_inputs_TEMPLATE.json в data/operator_inputs.json и заполните значения+провенанс, либо введите через панель (вкладка «Ручной ввод данных»); до этого модель обязана показывать коридор (docs/32)",
+  "recommendation": {
+    "rows": [
+      {
+        "field": "nh3_activity_k_scale",
+        "quantity": "центр полосы активности k_scale",
+        "model_value_now": "коридор 0,2134…0,5040 (×2,362)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_activity_factor",
+        "quantity": "ширина полосы активности",
+        "model_value_now": "×2,362 от двух источников",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_bed_T_max_C",
+        "quantity": "потолок T постели конвертора",
+        "model_value_now": "803,15 K [ДОПУЩЕНИЕ]",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_light_off_K",
+        "quantity": "минимум входа секции (light-off)",
+        "model_value_now": "600 K в бисекции",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_rho_bulk",
+        "quantity": "плотность катализатора NH₃",
+        "model_value_now": "1775 кг/м³ (заполнитель VBF)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_catalyst_price",
+        "quantity": "цена катализатора NH₃",
+        "model_value_now": "40 USD/kg (скрининг Ni/MgAl₂O₄)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_catalyst_life_y",
+        "quantity": "ресурс слоя конвертора",
+        "model_value_now": "нет — годовая замена не считается",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_dP_loop_bar",
+        "quantity": "Δp контура рецикла",
+        "model_value_now": "1 / 2 / 3 бар (предположение)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_GHSV_h1",
+        "quantity": "GHSV (объём слоя)",
+        "model_value_now": "10 000 ч⁻¹ (проект)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_GHSV_basis",
+        "quantity": "базис GHSV",
+        "model_value_now": "normal (проект)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      }
+    ],
+    "n_corridor_required": 10,
+    "n_pinned": 0,
+    "recommended_form": "corridor",
+    "note": "пока хотя бы один размер не введён с провенансом, отчёт обязан быть коридорным; введённое по одному источнику фиксирует точку, но коридор остаётся в скобках"
+  }
+}

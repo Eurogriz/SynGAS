@@ -404,6 +404,177 @@ def activity_summary_17():
            dop))
 
 
+def write_operator_doc():
+    """docs/33: the manual data-entry form, generated from the schema itself.
+
+    The document IS the form: every field, its unit, its plausible range, where
+    the value lands in the model and which open item it pins. Nothing in it is
+    invented - there are no example numbers, only the model's current
+    placeholder (labelled) and the rules the validator enforces.
+    """
+    from .operator_data import (FIELDS, GROUPS, FORM_PATH, recommendation,
+                                corridor_fields)
+    rec = recommendation()
+    cf = ", ".join("`%s`" % i for i in corridor_fields())   # never drifts
+    L = ["# 33. Ручной ввод недостающих данных (форма оператора) и правило коридора",
+         "",
+         "Сгенерировано `model/run_v2.py` из `model/operator_data.py`. Файл формы: "
+         "`data/operator_inputs.json`; пустой бланк: "
+         "`data/operator_inputs_TEMPLATE.json` и `.csv` (для таблицы).",
+         "",
+         "## 33.1 Правило",
+         "",
+         "**Пока хотя бы один размер не введён с полным провенансом, отчёт обязан "
+         "быть коридорным (docs/32), а не точечным.** Введённое значение фиксирует "
+         "точку, но: (а) требует единицы, метода, документа, даты и подписи "
+         "внесшего — числа без этого валидатор отклоняет; (б) при отсутствии "
+         "**второй** подписи (`independently_verified` + `verified_by`) статус "
+         "остаётся [ЧАСТИЧНО], и коридор печатается рядом. Контур 5 от ввода данных "
+         "НЕ проходит: ввод — это данные, а не валидация модели.",
+         "",
+         "## 33.2 Как вносить",
+         "",
+         "1. Вкладка **«Ручной ввод данных»** в панели (`python -m web.app`) — "
+         "быстрее всего: проверка на лету, сохранение в `data/operator_inputs.json`, "
+         "кнопка пересчёта коридора.",
+         "2. Или правкой `data/operator_inputs_TEMPLATE.csv` → "
+         "`PYTHONPATH=. python -m model.operator_data --validate`.",
+         "3. Или от руки в JSON: `{entries: {<id>: {value, unit, method, source, "
+         "received_date, entered_by, applied, independently_verified, verified_by}}}`.",
+         "",
+         "`model/config.py` подхватывает форму при каждом `load_config()` как "
+         "`adjust`-запись; в `cases/config.json` ничего не записывается. Отказ "
+         "полуприменения: если в файле есть хотя бы одна ошибка, **не применяется "
+         "ни одно поле** (контур 4 это ловит проверкой `operator_overlay`).",
+         "",
+         "## 33.3 Поля формы (%d)" % len(FIELDS),
+         ""]
+    for g in GROUPS:
+        L += ["### " + g, "",
+              "| id | что вписать | единица | тип | допустимо | куда идёт | что закрепляет |",
+              "|---|---|---|---|---|---|---|"]
+        for f in [x for x in FIELDS if x["group"] == g]:
+            rng = ("\u2014" if f["lo"] is None
+                   else "{} \u2026 {}".format(f["lo"], f["hi"]))
+            if f["options"]:
+                rng = " / ".join(f["options"])
+            tgt = ", ".join(p for p, _ in f["targets"]) or "—"
+            pin = f["pins"] or "—"
+            if f["rfi"]:
+                pin = pin + " (RFI " + f["rfi"] + ")"
+            L.append("| `%s` | %s | %s | %s | %s | `%s` | %s |"
+                     % (f["id"], f["label"], f["unit"], f["type"], rng, tgt, pin))
+            if f["warn"]:
+                L.append("| | ⚠ %s | | | | | |" % f["warn"])
+        L.append("")
+    L += ["## 33.4 Что коридор, а что уже закреплено", "",
+          "| размер | сейчас в модели | значение оператора | состояние | как докладывать |",
+          "|---|---|---|---|---|"]
+    for r in rec["rows"]:
+        L.append("| %s | %s | %s | %s | %s |"
+                 % (r["quantity"], r["model_value_now"],
+                    "—" if r["operator_value"] is None else r["operator_value"],
+                    r["state"], r["report_as"]))
+    L += ["",
+          "Итого: **%d из %d** размеров всё ещё требуют коридора; рекомендованная "
+          "форма отчёта — `%s`. %s"
+          % (rec["n_corridor_required"], len(rec["rows"]), rec["recommended_form"],
+             rec["note"]), "",
+          "## 33.5 Чего форма НЕ делает", "",
+          "* не меняет реестр утверждений `data/v2_claims.json` (статусы правит "
+          "человек, прочитавший документ);",
+          "* не закрывает контур 5 — подпроверки двигаются только по факту "
+          "полноценного провенанса и помечаются как «внесено оператором»;",
+          "* счётчики `n_applied`/`n_verified` означают «в силе», а не «набрано»: "
+          "при отклонённой форме они обнуляются, и в отчётах появляется "
+          "`form REJECTED` — модель не рекламирует данные, которые она игнорирует;",
+                    "* не изобретает отсутствующее: поле без значения остаётся пустым, а "
+          "модель продолжает показывать полосу;",
+          "* не заменяет кампанию по `docs/27`: для неё есть отдельный контракт "
+          "`data/pilot_schema.json` и приёмник `model/data_ingest.py` (строже "
+          "этой формы), а `campaign_file` в форме — только ссылка и дата.", "",
+          "## 33.6 Прикладной эффект для аммиачного коридора", "",
+          "Поля " + cf + " подхватываются `model/activity_uncertainty.py` напрямую: они "
+          "непосредственно задают центр и ширину полосы активности, потолок "
+          "температуры, пересчёт объём→масса, цену и годовую замену, Δp контура и "
+          "долю конвертора в CAPEX. Остальные поля идут через `cases/config.json` "
+          "→ `adjust`, т.е. через весь проект.", "",
+          "---", "",
+          "> Форма: `%s` (поле `selftest: true` помечает пробные прогоны; такие "
+          "файлы не должны попадать в репозиторий)."
+          % os.path.relpath(FORM_PATH, ROOT), ""]
+    open(os.path.join(DOCS, "33_v5_manual_data_entry.md"), "w",
+         encoding="utf-8").write("\n".join(L))
+    return True
+
+
+def operator_summary_17():
+    """docs/17 section 17.9: state of manual data entry, from the saved report."""
+    path = os.path.join(OUT, "operator_data_report.json")
+    if not os.path.exists(path):
+        return ("not computed in this run (`model/operator_data.py` did not write "
+                "results_v2/operator_data_report.json)")
+    d = json.load(open(path, encoding="utf-8"))
+    rec = d.get("recommendation") or {}
+    n = d.get("n_applied", 0)
+    try:                                   # group count is structural, not state
+        from .operator_data import GROUPS as _OG
+        ngroups = len(_OG)
+    except Exception:
+        ngroups = len(d.get("groups") or [])
+    return (
+        "Every open numeric item is now enterable by a human, and the model is "
+        "strict about it: the form has %d fields across %d groups "
+        "(`model/operator_data.py`, docs/33), and an entry is accepted only with "
+        "unit + measurement method + source document + date + who entered it "
+        "(docs/28 sec. 28.4). Out-of-range or implausible values are REJECTED, not "
+        "clamped; a form with any error applies NOTHING (half-applied datasheets "
+        "are worse than none), which loop 4 now checks as `operator_overlay`.\n\n"
+        "State after this run: %s A corridor is still the REQUIRED form of the "
+        "answer for %d of %d ammonia quantities (recommended form: `%s`); a "
+        "single-source entry pins the point but the literature band stays printed "
+        "next to it (`literature_reference_rows` in "
+        "results_v2/activity_uncertainty.json). Loop 5 does not move on data entry: "
+        "entering a vendor number is data, not validation of the model."
+        % (d.get("n_fields") or 0,
+           ngroups,
+           ("no form yet - the model runs on its labelled placeholders."
+            if not d.get("form_present") else
+            ("form REJECTED (%d validation error(s)): %d field(s) typed but %d "
+             "applied - nothing is in force, the corridors stand"
+             % (len(d.get("validation_errors") or []), d.get("n_typed_applied", 0), n)
+             if d.get("rejected") else
+             "%d field(s) applied, %d independently verified, "
+             "%d validation error(s)"
+             % (n, d.get("n_verified", 0), len(d.get("validation_errors") or [])))),
+           rec.get("n_corridor_required", "?"), len(rec.get("rows") or []),
+           rec.get("recommended_form", "corridor")))
+
+
+def _band_data_entry_note(d):
+    """One generated line for docs/32 from the live operator-form state."""
+    rep = os.path.join(OUT, "operator_data_report.json")
+    if not os.path.exists(rep):
+        return ("По состоянию на этот прогон форма оператора не заполнена: "
+                "`results_v2/operator_data_report.json` не создан, все десять "
+                "размеров остаются коридорными.")
+    try:
+        o = json.load(open(rep, encoding="utf-8"))
+        r = o.get("recommendation") or {}
+        return ("По состоянию на этот прогон: полей в форме {n_fields}, внесено и "
+                "прошло валидацию {n_applied}; из десяти размеров закреплено "
+                "точкой {n_pinned}, коридор обязателен ещё для {n_corr}. Форма "
+                "заполнена: {present}. Требуемая форма отчёта: `{form}`.".format(
+                    n_fields=o.get("n_fields"), n_applied=o.get("n_applied"),
+                    n_pinned=r.get("n_pinned", 0),
+                    n_corr=r.get("n_corridor_required"),
+                    present=bool(o.get("form_present")),
+                    form=r.get("recommended_form", "corridor")))
+    except Exception as exc:          # never let a report file break the doc
+        return ("Форма оператора есть, но состояние не прочитано (%r) — "
+                "коридор остаётся формой отчёта по умолчанию." % exc)
+
+
 def write_activity_band_doc():
     """docs/32: the activity-uncertainty corridor (model/activity_uncertainty.py).
 
@@ -542,6 +713,17 @@ def write_activity_band_doc():
           "Список — это открытые вопросы, а не замечания к расчёту; каждый из них "
           "уже учтён статусом петлей проверки.", "",
           "\n".join("* " + x for x in d["not_covered"]), "", "---", "",
+          "## 32.8 Чем и как закрывается этот коридор (ручной ввод данных)", "",
+          "Ни один из десяти размеров не закрывается рассуждением: только вводом "
+          "человека с провенансом. Форма — `model/operator_data.py` (61 поле), "
+          "правила и таблица полей — `docs/33`, живой ввод — "
+          "`data/operator_inputs.json` или вкладка «Ручной ввод данных (V5.3)» "
+          "панели (`/api/operator`). Внесённое с единицей, методом, документом и "
+          "подписью закрепляет точку вместо коридора; без второй подписи статус "
+          "остаётся [ЧАСТИЧНО], а полоса продолжает печататься рядом "
+          "(`literature_reference_rows`). Контур 5 от этого не проходит: ввод "
+          "закрывает отсутствие данных, а не независимую валидацию.", "",
+          _band_data_entry_note(d), "",
           "> Примечания. Источник полосы — `model/converter.py:calibrate_k0`: "
           "нижний край бьёт в середину открытого коридора захода N₂ за проход, "
           "верхний — в открытый ориентир 13,0 мол.% NH₃ на выходе; обе точки — "
@@ -1329,7 +1511,11 @@ datasheet and a certified HAZOP exist.
 
 ## 17.8 V5.2 state (the activity disagreement became a corridor)
 
-""" + activity_summary_17() + "\n"
+""" + activity_summary_17() + """
+
+## 17.9 V5.3 state (operators can now close the gaps themselves)
+
+""" + operator_summary_17() + "\n"
     open(os.path.join(DOCS, "17_v2_final_report.md"), "w", encoding="utf-8").write(txt)
 
     # 18 synthesis loops ----------------------------------------------------
@@ -2037,6 +2223,14 @@ def main():
         dump_json(os.path.join(OUT, "methanol_adiabatic_check.json"), meth_report())
     except Exception as exc:
         print("[v5.1] methanol adiabatic benchmark FAILED:", repr(exc))
+    try:                                     # operator data-entry status
+        from .operator_data import status as op_status, write_template
+        if not os.path.exists(os.path.join(ROOT, "data",
+                                           "operator_inputs_TEMPLATE.json")):
+            write_template()
+        dump_json(os.path.join(OUT, "operator_data_report.json"), op_status())
+    except Exception as exc:
+        print("[v5.3] operator data status FAILED:", repr(exc))
     try:                                     # activity corridor for loop 4
         from .activity_uncertainty import band as activity_band
         dump_json(os.path.join(OUT, "activity_uncertainty.json"),
@@ -2148,9 +2342,10 @@ def main():
     write_uncertainty_doc()
     write_methanol_adiabatic_doc()
     write_activity_band_doc()
+    write_operator_doc()
     print(f"[v2] DONE in {time.time()-t0:.1f} s -> results_v2/, docs/12..26 "
           f"(V5 handover packs: docs/27..29; V5.1: docs/30..31; "
-          f"V5.2 activity corridor: docs/32)")
+          f"V5.2 activity corridor: docs/32; V5.3 manual data entry: docs/33)")
     print("[v2] verification:", v["summary"])
     return 0
 

@@ -80,8 +80,8 @@ CLOSED (docs/20); stoichiometric
 synthesis loops (docs/18) are now complemented by VBF/Graaf and
 Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
 (docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
-loop 5 was rerun and remains FAILED with 11 of
-26 subchecks passing (docs/25, docs/26).
+loop 5 was rerun and remains FAILED with 12 of
+28 subchecks passing (docs/25, docs/26).
 
 ## 17.6 V5 state
 
@@ -129,7 +129,7 @@ Three gaps that did **not** need new data were closed on the model side:
    validity window. This is model-to-model verification of the implementation -
    NOT pilot or plant validation, and loop 5 is still open because of that.
 
-Loop 5 after V5.1: 11 of 26
+Loop 5 after V5.1: 12 of 28
 subchecks pass; the status is FAILED by design until the campaign, the vendor
 datasheet and a certified HAZOP exist.
 
@@ -144,3 +144,9 @@ The x2.362 disagreement between the two opened NH3 benchmarks is no longer a foo
 * money: catalyst inventory 1.59e+06 -> 3.76e+06 USD and vessel factor (V/V0)^0.7 -> 0.548, while the recycle compressor changes by <= 3.2e+04 USD/y -> an inventory/CAPEX question, not an OPEX one. Density and price remain placeholders (docs/28 items 12-13).
 
 Not touched by the corridor: equilibrium (Ka, outlet ceiling), the feed and temperature envelope of docs/30, loop stoichiometry, catalyst price/life, and loop 5, which stays FAILED - a corridor is an honest spread, not validation.
+
+## 17.9 V5.3 state (operators can now close the gaps themselves)
+
+Every open numeric item is now enterable by a human, and the model is strict about it: the form has 61 fields across 7 groups (`model/operator_data.py`, docs/33), and an entry is accepted only with unit + measurement method + source document + date + who entered it (docs/28 sec. 28.4). Out-of-range or implausible values are REJECTED, not clamped; a form with any error applies NOTHING (half-applied datasheets are worse than none), which loop 4 now checks as `operator_overlay`.
+
+State after this run: no form yet - the model runs on its labelled placeholders. A corridor is still the REQUIRED form of the answer for 10 of 10 ammonia quantities (recommended form: `corridor`); a single-source entry pins the point but the literature band stays printed next to it (`literature_reference_rows` in results_v2/activity_uncertainty.json). Loop 5 does not move on data entry: entering a vendor number is data, not validation of the model.
