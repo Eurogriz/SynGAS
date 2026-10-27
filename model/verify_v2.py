@@ -636,6 +636,11 @@ def loop5_validation(designs, cfg=None):
     haz = hazop_report()
     band_ok, band_info = _band_robust()
     act_ok5, act_info5 = _activity_band_ok()
+    # opened per-pass bands come from the config, not from literals here, so the
+    # two NH3 benchmark checks cannot drift apart from the source they cite
+    _B = ((cfg.raw.get("kinetics") or {}).get("ammonia_benchmark") or {})
+    _wide_band = tuple(_B.get("per_pass_conversion_range_wide")
+                       or _B.get("per_pass_conversion_range") or (0.15, 0.20))
     op_ok5, op_info5 = _operator_overlay_ok()
     _ovl = {}
     try:                                   # LIVE form state, not the last run's
@@ -730,6 +735,7 @@ def loop5_validation(designs, cfg=None):
     cd = conv.get("design") or {}
     cb = conv.get("benchmark_validation") or {}
     cc = conv.get("calibration") or {}
+    bcx = conv.get("benchmark_consistency") or {}
     subchecks = [
         {"check": "external numeric pilot comparisons", "passed": True,
          "value": ext["n_numeric_X_CH4_comparable"],
@@ -786,8 +792,10 @@ def loop5_validation(designs, cfg=None):
          "value": (cc.get("calibrated") or {}).get("per_pass_N2_conversion"),
          "note": "true BY CONSTRUCTION (the fit target is that number) - it "
                  "validates the calibration procedure, not the design point"},
-        {"check": "converter design point inside the wider opened 15-25% band",
-         "passed": bool(cd) and 0.15 <= cd.get("per_pass_N2_conversion", 0) <= 0.25,
+        {"check": "converter design point inside the wider opened %d-%d%% band"
+                  % tuple(int(100 * x) for x in _wide_band),
+         "passed": bool(cd) and _wide_band[0] <= cd.get("per_pass_N2_conversion",
+                                                        -1) <= _wide_band[1],
          "value": cd.get("per_pass_N2_conversion"),
          "note": "200 bar design point sits slightly above the opened band; the "
                  "band belongs to another plant/catalyst, and no design-point "
@@ -802,6 +810,28 @@ def loop5_validation(designs, cfg=None):
                  % (cc.get("k_scale", 1.0),
                     (cc.get("alternative_objective") or {}).get("k_scale_needed")
                     or 1.0, cc.get("k0_uncertainty_factor") or 0.0)},
+        {"check": "the two opened NH3 benchmarks agree once BOTH are reduced to "
+                  "a per-pass conversion at one loop closure (tolerance = the "
+                  "opened band, fixed before the run)",
+         "passed": bool(bcx.get("mutually_consistent_on_a_common_basis")),
+         "value": ("outlet figure implies %.2f %% per-pass vs %.1f %% target; gap "
+                   "%.2f pp inside the opened %.0f-%.0f %% band; the %.3f-decade "
+                   "activity difference is worth %.2f pp (slope closes it to %.0f %%)"
+                   % (bcx.get("outlet_figure_implies_per_pass_pct", 0.0),
+                      100.0 * (cc.get("target_per_pass_conversion") or 0.0),
+                      bcx.get("per_pass_gap_pp", 0.0),
+                      100 * (bcx.get("band_used_for_the_verdict") or (0, 0))[0],
+                      100 * (bcx.get("band_used_for_the_verdict") or (0, 0))[1],
+                      bcx.get("activity_disagreement_decades", 0.0),
+                      bcx.get("per_pass_gap_predicted_from_sensitivity_pp", 0.0),
+                      bcx.get("sensitivity_explains_gap_pct", 0.0)))
+         if bcx.get("computed") else "benchmark_consistency not computed",
+         "note": (bcx.get("note", "") + "  " + bcx.get("verdict_rule", "") +
+                  "  MODEL-INTERNAL comparison of two literature figures: it "
+                  "reduces how badly the sources disagree, it does NOT validate "
+                  "the model and it closes no item of docs/28; the x2.36 corridor "
+                  "subcheck above stays as it was.") if bcx.get("computed")
+         else "run model/converter.py:benchmark_consistency via the converter block"},
         {"check": "activity corridor (x%.3f on k_scale) propagated through "
                   "catalyst volume, peak T, duty and recycle - as corridors, not "
                   "points" % ((cc or {}).get("k0_uncertainty_factor") or 0.0),

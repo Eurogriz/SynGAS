@@ -1,525 +1,525 @@
 {
- "form_present": false,
- "n_fields": 64,
- "n_applied": 0,
- "n_verified": 0,
- "groups": [],
- "applied_ids": [],
- "verified_ids": [],
- "validation_errors": [],
- "validation_warnings": [],
- "how_to_start": "скопируйте data/operator_inputs_TEMPLATE.json в data/operator_inputs.json и заполните значения+провенанс, либо введите через панель (вкладка «Ручной ввод данных»); до этого модель обязана показывать коридор (docs/32)",
- "recommendation": {
-  "rows": [
-   {
-    "field": "nh3_activity_k_scale",
-    "quantity": "центр полосы активности k_scale",
-    "model_value_now": "коридор 0,2134…0,5040 (×2,362)",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_activity_factor",
-    "quantity": "ширина полосы активности",
-    "model_value_now": "×2,362 от двух источников",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_bed_T_max_C",
-    "quantity": "потолок T постели конвертора",
-    "model_value_now": "803,15 K [ДОПУЩЕНИЕ]",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_light_off_K",
-    "quantity": "минимум входа секции (light-off)",
-    "model_value_now": "600 K в бисекции",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_rho_bulk",
-    "quantity": "плотность катализатора NH₃",
-    "model_value_now": "1775 кг/м³ (заполнитель VBF)",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_catalyst_price",
-    "quantity": "цена катализатора NH₃",
-    "model_value_now": "40 USD/kg (скрининг Ni/MgAl₂O₄)",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_catalyst_life_y",
-    "quantity": "ресурс слоя конвертора",
-    "model_value_now": "нет — годовая замена не считается",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_dP_loop_bar",
-    "quantity": "Δp контура рецикла",
-    "model_value_now": "1 / 2 / 3 бар (предположение)",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_GHSV_h1",
-    "quantity": "GHSV (объём слоя)",
-    "model_value_now": "10 000 ч⁻¹ (проект)",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   },
-   {
-    "field": "nh3_GHSV_basis",
-    "quantity": "базис GHSV",
-    "model_value_now": "normal (проект)",
-    "operator_value": null,
-    "state": "corridor_required",
-    "report_as": "ТОЛЬКО коридор (рекомендуется)"
-   }
-  ],
-  "n_corridor_required": 10,
-  "n_pinned": 0,
-  "recommended_form": "corridor",
-  "note": "пока хотя бы один размер не введён с провенансом, отчёт обязан быть коридорным; введённое по одному источнику фиксирует точку, но коридор остаётся в скобках"
- },
- "rfi_coverage": {
-  "source": "docs/28_v5_vendor_rfi.md",
-  "n_items": 18,
-  "n_with_field": 16,
-  "n_answered": 0,
-  "n_answered_verified": 0,
-  "n_open": 16,
-  "n_not_answerable": 2,
-  "rows": [
-   {
-    "item": 1,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "Ni, wt% (Ni и NiO, метод)",
-    "model_uses_it_for": "инвентарь Ni, масса кат. слоя",
-    "fields": [
-     {
-      "id": "Ni_wt_pct",
-      "label": "Содержание Ni (металл), после восстановления",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "NiO_wt_pct",
-      "label": "Содержание NiO (паспорт партии)",
-      "in_force": false,
-      "verified": false
-     }
+  "form_present": false,
+  "n_fields": 64,
+  "n_applied": 0,
+  "n_verified": 0,
+  "groups": [],
+  "applied_ids": [],
+  "verified_ids": [],
+  "validation_errors": [],
+  "validation_warnings": [],
+  "how_to_start": "скопируйте data/operator_inputs_TEMPLATE.json в data/operator_inputs.json и заполните значения+провенанс, либо введите через панель (вкладка «Ручной ввод данных»); до этого модель обязана показывать коридор (docs/32)",
+  "recommendation": {
+    "rows": [
+      {
+        "field": "nh3_activity_k_scale",
+        "quantity": "центр полосы активности k_scale",
+        "model_value_now": "коридор 0,2134…0,5040 (×2,362)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_activity_factor",
+        "quantity": "ширина полосы активности",
+        "model_value_now": "×2,362 от двух источников",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_bed_T_max_C",
+        "quantity": "потолок T постели конвертора",
+        "model_value_now": "803,15 K [ДОПУЩЕНИЕ]",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_light_off_K",
+        "quantity": "минимум входа секции (light-off)",
+        "model_value_now": "600 K в бисекции",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_rho_bulk",
+        "quantity": "плотность катализатора NH₃",
+        "model_value_now": "1775 кг/м³ (заполнитель VBF)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_catalyst_price",
+        "quantity": "цена катализатора NH₃",
+        "model_value_now": "40 USD/kg (скрининг Ni/MgAl₂O₄)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_catalyst_life_y",
+        "quantity": "ресурс слоя конвертора",
+        "model_value_now": "нет — годовая замена не считается",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_dP_loop_bar",
+        "quantity": "Δp контура рецикла",
+        "model_value_now": "1 / 2 / 3 бар (предположение)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_GHSV_h1",
+        "quantity": "GHSV (объём слоя)",
+        "model_value_now": "10 000 ч⁻¹ (проект)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      },
+      {
+        "field": "nh3_GHSV_basis",
+        "quantity": "базис GHSV",
+        "model_value_now": "normal (проект)",
+        "operator_value": null,
+        "state": "corridor_required",
+        "report_as": "ТОЛЬКО коридор (рекомендуется)"
+      }
     ],
-    "n_fields": 2,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 2,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "насыпная (загружаемая) плотность, кг/м³",
-    "model_uses_it_for": "`catalyst_density` — сейчас 900 как [ДОПУЩЕНИЕ], масса и объём слоя меняются линейно",
-    "fields": [
-     {
-      "id": "loaded_density",
-      "label": "Насыпная (загружаемая) плотность",
-      "in_force": false,
-      "verified": false
-     }
+    "n_corridor_required": 10,
+    "n_pinned": 0,
+    "recommended_form": "corridor",
+    "note": "пока хотя бы один размер не введён с провенансом, отчёт обязан быть коридорным; введённое по одному источнику фиксирует точку, но коридор остаётся в скобках"
+  },
+  "rfi_coverage": {
+    "source": "docs/28_v5_vendor_rfi.md",
+    "n_items": 18,
+    "n_with_field": 16,
+    "n_answered": 0,
+    "n_answered_verified": 0,
+    "n_open": 16,
+    "n_not_answerable": 2,
+    "rows": [
+      {
+        "item": 1,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "Ni, wt% (Ni и NiO, метод)",
+        "model_uses_it_for": "инвентарь Ni, масса кат. слоя",
+        "fields": [
+          {
+            "id": "Ni_wt_pct",
+            "label": "Содержание Ni (металл), после восстановления",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "NiO_wt_pct",
+            "label": "Содержание NiO (паспорт партии)",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 2,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 2,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "насыпная (загружаемая) плотность, кг/м³",
+        "model_uses_it_for": "`catalyst_density` — сейчас 900 как [ДОПУЩЕНИЕ], масса и объём слоя меняются линейно",
+        "fields": [
+          {
+            "id": "loaded_density",
+            "label": "Насыпная (загружаемая) плотность",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 3,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "состав и фаза носителя, MgO/Al₂O₃ мольн., фазы (MgAl₂O₄ spinel, free MgO?)",
+        "model_uses_it_for": "щелочность → скорость коксования; стойкость к гидролизу при 20 % H₂O",
+        "fields": [
+          {
+            "id": "support_note",
+            "label": "Фаза носителя, MgO/Al₂O₃ мольн., свободная MgO",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 4,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "предел прочности на раздавливание, Н/табл. (средн., min, 10 %-квантиль)",
+        "model_uses_it_for": "унос и Δp слоя; сейчас Δp только по Эргану",
+        "fields": [
+          {
+            "id": "crush_N",
+            "label": "Прочность на раздавливание, средняя",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 5,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "истираемость, %",
+        "model_uses_it_for": "то же + эрозия",
+        "fields": [
+          {
+            "id": "attrition_pct",
+            "label": "Истираемость",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 6,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "геометрия: размер и форма (табл., цилиндр, сфера), d_eq, мм",
+        "model_uses_it_for": "`pellet_d_eq_mm` в Δp и в числе Вейса–Пратера",
+        "fields": [
+          {
+            "id": "pellet_d_eq_mm",
+            "label": "Эквивалентный диаметр гранулы",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "bed_voidage",
+            "label": "Порозность слоя",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 2,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 7,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "порозность носителя и среднее расстояние частиц Ni (fresh)",
+        "model_uses_it_for": "перенос внутри частиц; текущий экранный расчёт τ = 3,5, r_pore = 50 нм — допущение",
+        "fields": [
+          {
+            "id": "pellet_tortuosity",
+            "label": "Извилистость пор носителя τ",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "pellet_pore_radius_nm",
+            "label": "Средний радиус пор носителя",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "pellet_porosity",
+            "label": "Порозность зерна (не слоя)",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 3,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 8,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "максимальная рабочая температура постели, °C, и допустимый подъём за смену",
+        "model_uses_it_for": "ограничивает T_out реформера (сейчас 1123,15 K) и допустимый режим",
+        "fields": [
+          {
+            "id": "reformer_T_max_C",
+            "label": "Максимальная рабочая температура постели",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 9,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "минимальная температура восстановления и программа",
+        "model_uses_it_for": "воспроизводимость активности",
+        "fields": [],
+        "n_fields": 0,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "not_answerable_by_form",
+        "state_note": "форма не отвечает: ответ на этот пункт - документ, кривая или условие гарантии, а не число, которое модель читает"
+      },
+      {
+        "item": 10,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "TPR/TPO профиль (пик 725 °C в открытых данных — сверка)",
+        "model_uses_it_for": "прочность взаимодействия Ni–носителя → склонность к спеканию",
+        "fields": [],
+        "n_fields": 0,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "not_answerable_by_form",
+        "state_note": "форма не отвечает: ответ на этот пункт - документ, кривая или условие гарантии, а не число, которое модель читает"
+      },
+      {
+        "item": 11,
+        "section": "28.1",
+        "block": "катализатор риформинга",
+        "text": "гарантия по активности и по деактивации: потеря %/1000 ч при T, S/C, CO₂/C",
+        "model_uses_it_for": "прямо заменяет срок службы 4 года [ДОПУЩЕНИЕ]",
+        "fields": [
+          {
+            "id": "deactivation_pct_1000h",
+            "label": "Гарантированная потеря активности",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "catalyst_life_y",
+            "label": "Гарантийный ресурс слоя",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 2,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 12,
+        "section": "28.2",
+        "block": "конвертор NH3 / катализатор синтеза",
+        "text": "максимальная температура постели, °C (непрерывно / кратко)",
+        "model_uses_it_for": "сейчас `bed_T_max_K = 803,15` помечен как [ДОПУЩЕНИЕ]; пик модели 845 K → вывод «EXCEEDED» зависит только от этого числа",
+        "fields": [
+          {
+            "id": "nh3_bed_T_max_C",
+            "label": "Максимальная температура постели конвертора",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 13,
+        "section": "28.2",
+        "block": "конвертор NH3 / катализатор синтеза",
+        "text": "минимум температуры входа в первую секцию (по «light-off»)",
+        "model_uses_it_for": "определяет, возможен ли рекомендуемый вход 644 K",
+        "fields": [
+          {
+            "id": "nh3_light_off_K",
+            "label": "Минимальная температура входа (light-off)",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 14,
+        "section": "28.2",
+        "block": "конвертор NH3 / катализатор синтеза",
+        "text": "базис GHSV: нормальные или фактические м³; объём катализатора или объём слоя",
+        "model_uses_it_for": "V4 дал ×58-ю ошибку именно на базисе; без ответа расчёт объёма катализатора (52,9 м³) не подтвердить",
+        "fields": [
+          {
+            "id": "nh3_GHSV_basis",
+            "label": "Базис GHSV у поставщика",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "nh3_GHSV_h1",
+            "label": "GHSV (в том базисе, что указан выше)",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "nh3_volume_basis",
+            "label": "Что поставщик называет объёмом",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 3,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 15,
+        "section": "28.2",
+        "block": "конвертор NH3 / катализатор синтеза",
+        "text": "гарантийная активность (норма объёмной скорости при X = … , p = …)",
+        "model_uses_it_for": "заменяет подгоночный `k_scale = 0,213`",
+        "fields": [
+          {
+            "id": "nh3_activity_k_scale",
+            "label": "Гарантийная активность: множитель k₀ (относительно 6,5e13 кмоль/(м³·ч))",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "nh3_activity_factor",
+            "label": "Гарантированный разброс активности (±множитель)",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "nh3_catalyst_life_y",
+            "label": "Ресурс слоя конвертора",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 3,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 16,
+        "section": "28.2",
+        "block": "конвертор NH3 / катализатор синтеза",
+        "text": "предел содержания O₂, H₂O, CO, CO₂, серы в газе (ppm)",
+        "model_uses_it_for": "отравление; в модели задан предел 5 ppm (CO+CO₂) после метанатора, фактически считается 2,6 ppm каждого [ЧАСТИЧНО]",
+        "fields": [
+          {
+            "id": "nh3_impurity_limit",
+            "label": "Предел примесей (O₂, H₂O, CO, CO₂, S) — текстом",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 17,
+        "section": "28.2",
+        "block": "конвертор NH3 / катализатор синтеза",
+        "text": "сопротивление слоя (Δp при GHSV, T, p) или фактор формы",
+        "model_uses_it_for": "Δp-чек конвертора сейчас не делается вовсе",
+        "fields": [
+          {
+            "id": "bed_voidage",
+            "label": "Порозность слоя",
+            "in_force": false,
+            "verified": false
+          },
+          {
+            "id": "nh3_dP_loop_bar",
+            "label": "Сопротивление слоя / Δp контура рецикла",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 2,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      },
+      {
+        "item": 18,
+        "section": "28.2",
+        "block": "конвертор NH3 / катализатор синтеза",
+        "text": "размер гранул/кольца + насыпная плотность",
+        "model_uses_it_for": "то же, что 2 и 6, для другой секции flowsheet",
+        "fields": [
+          {
+            "id": "nh3_rho_bulk",
+            "label": "Насыпная плотность катализатора синтеза NH₃",
+            "in_force": false,
+            "verified": false
+          }
+        ],
+        "n_fields": 1,
+        "n_applied": 0,
+        "n_verified": 0,
+        "state": "open",
+        "state_note": "ждёт ввода оператора"
+      }
     ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 3,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "состав и фаза носителя, MgO/Al₂O₃ мольн., фазы (MgAl₂O₄ spinel, free MgO?)",
-    "model_uses_it_for": "щелочность → скорость коксования; стойкость к гидролизу при 20 % H₂O",
-    "fields": [
-     {
-      "id": "support_note",
-      "label": "Фаза носителя, MgO/Al₂O₃ мольн., свободная MgO",
-      "in_force": false,
-      "verified": false
-     }
+    "unresolved_field_refs": [],
+    "fields_without_item": [],
+    "other_sources": [
+      "27",
+      "27 §Δp",
+      "27 §спекание"
     ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 4,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "предел прочности на раздавливание, Н/табл. (средн., min, 10 %-квантиль)",
-    "model_uses_it_for": "унос и Δp слоя; сейчас Δp только по Эргану",
-    "fields": [
-     {
-      "id": "crush_N",
-      "label": "Прочность на раздавливание, средняя",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 5,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "истираемость, %",
-    "model_uses_it_for": "то же + эрозия",
-    "fields": [
-     {
-      "id": "attrition_pct",
-      "label": "Истираемость",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 6,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "геометрия: размер и форма (табл., цилиндр, сфера), d_eq, мм",
-    "model_uses_it_for": "`pellet_d_eq_mm` в Δp и в числе Вейса–Пратера",
-    "fields": [
-     {
-      "id": "pellet_d_eq_mm",
-      "label": "Эквивалентный диаметр гранулы",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "bed_voidage",
-      "label": "Порозность слоя",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 2,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 7,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "порозность носителя и среднее расстояние частиц Ni (fresh)",
-    "model_uses_it_for": "перенос внутри частиц; текущий экранный расчёт τ = 3,5, r_pore = 50 нм — допущение",
-    "fields": [
-     {
-      "id": "pellet_tortuosity",
-      "label": "Извилистость пор носителя τ",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "pellet_pore_radius_nm",
-      "label": "Средний радиус пор носителя",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "pellet_porosity",
-      "label": "Порозность зерна (не слоя)",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 3,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 8,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "максимальная рабочая температура постели, °C, и допустимый подъём за смену",
-    "model_uses_it_for": "ограничивает T_out реформера (сейчас 1123,15 K) и допустимый режим",
-    "fields": [
-     {
-      "id": "reformer_T_max_C",
-      "label": "Максимальная рабочая температура постели",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 9,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "минимальная температура восстановления и программа",
-    "model_uses_it_for": "воспроизводимость активности",
-    "fields": [],
-    "n_fields": 0,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "not_answerable_by_form",
-    "state_note": "форма не отвечает: ответ на этот пункт - документ, кривая или условие гарантии, а не число, которое модель читает"
-   },
-   {
-    "item": 10,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "TPR/TPO профиль (пик 725 °C в открытых данных — сверка)",
-    "model_uses_it_for": "прочность взаимодействия Ni–носителя → склонность к спеканию",
-    "fields": [],
-    "n_fields": 0,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "not_answerable_by_form",
-    "state_note": "форма не отвечает: ответ на этот пункт - документ, кривая или условие гарантии, а не число, которое модель читает"
-   },
-   {
-    "item": 11,
-    "section": "28.1",
-    "block": "катализатор риформинга",
-    "text": "гарантия по активности и по деактивации: потеря %/1000 ч при T, S/C, CO₂/C",
-    "model_uses_it_for": "прямо заменяет срок службы 4 года [ДОПУЩЕНИЕ]",
-    "fields": [
-     {
-      "id": "deactivation_pct_1000h",
-      "label": "Гарантированная потеря активности",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "catalyst_life_y",
-      "label": "Гарантийный ресурс слоя",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 2,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 12,
-    "section": "28.2",
-    "block": "конвертор NH3 / катализатор синтеза",
-    "text": "максимальная температура постели, °C (непрерывно / кратко)",
-    "model_uses_it_for": "сейчас `bed_T_max_K = 803,15` помечен как [ДОПУЩЕНИЕ]; пик модели 845 K → вывод «EXCEEDED» зависит только от этого числа",
-    "fields": [
-     {
-      "id": "nh3_bed_T_max_C",
-      "label": "Максимальная температура постели конвертора",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 13,
-    "section": "28.2",
-    "block": "конвертор NH3 / катализатор синтеза",
-    "text": "минимум температуры входа в первую секцию (по «light-off»)",
-    "model_uses_it_for": "определяет, возможен ли рекомендуемый вход 644 K",
-    "fields": [
-     {
-      "id": "nh3_light_off_K",
-      "label": "Минимальная температура входа (light-off)",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 14,
-    "section": "28.2",
-    "block": "конвертор NH3 / катализатор синтеза",
-    "text": "базис GHSV: нормальные или фактические м³; объём катализатора или объём слоя",
-    "model_uses_it_for": "V4 дал ×58-ю ошибку именно на базисе; без ответа расчёт объёма катализатора (52,9 м³) не подтвердить",
-    "fields": [
-     {
-      "id": "nh3_GHSV_basis",
-      "label": "Базис GHSV у поставщика",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "nh3_GHSV_h1",
-      "label": "GHSV (в том базисе, что указан выше)",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "nh3_volume_basis",
-      "label": "Что поставщик называет объёмом",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 3,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 15,
-    "section": "28.2",
-    "block": "конвертор NH3 / катализатор синтеза",
-    "text": "гарантийная активность (норма объёмной скорости при X = … , p = …)",
-    "model_uses_it_for": "заменяет подгоночный `k_scale = 0,213`",
-    "fields": [
-     {
-      "id": "nh3_activity_k_scale",
-      "label": "Гарантийная активность: множитель k₀ (относительно 6,5e13 кмоль/(м³·ч))",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "nh3_activity_factor",
-      "label": "Гарантированный разброс активности (±множитель)",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "nh3_catalyst_life_y",
-      "label": "Ресурс слоя конвертора",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 3,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 16,
-    "section": "28.2",
-    "block": "конвертор NH3 / катализатор синтеза",
-    "text": "предел содержания O₂, H₂O, CO, CO₂, серы в газе (ppm)",
-    "model_uses_it_for": "отравление; в модели задан предел 5 ppm (CO+CO₂) после метанатора, фактически считается 2,6 ppm каждого [ЧАСТИЧНО]",
-    "fields": [
-     {
-      "id": "nh3_impurity_limit",
-      "label": "Предел примесей (O₂, H₂O, CO, CO₂, S) — текстом",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 17,
-    "section": "28.2",
-    "block": "конвертор NH3 / катализатор синтеза",
-    "text": "сопротивление слоя (Δp при GHSV, T, p) или фактор формы",
-    "model_uses_it_for": "Δp-чек конвертора сейчас не делается вовсе",
-    "fields": [
-     {
-      "id": "bed_voidage",
-      "label": "Порозность слоя",
-      "in_force": false,
-      "verified": false
-     },
-     {
-      "id": "nh3_dP_loop_bar",
-      "label": "Сопротивление слоя / Δp контура рецикла",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 2,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   },
-   {
-    "item": 18,
-    "section": "28.2",
-    "block": "конвертор NH3 / катализатор синтеза",
-    "text": "размер гранул/кольца + насыпная плотность",
-    "model_uses_it_for": "то же, что 2 и 6, для другой секции flowsheet",
-    "fields": [
-     {
-      "id": "nh3_rho_bulk",
-      "label": "Насыпная плотность катализатора синтеза NH₃",
-      "in_force": false,
-      "verified": false
-     }
-    ],
-    "n_fields": 1,
-    "n_applied": 0,
-    "n_verified": 0,
-    "state": "open",
-    "state_note": "ждёт ввода оператора"
-   }
-  ],
-  "unresolved_field_refs": [],
-  "fields_without_item": [],
-  "other_sources": [
-   "27",
-   "27 §Δp",
-   "27 §спекание"
-  ],
-  "note": "сопоставление построено разборкой таблицы docs/28: форма ссылается на номера пунктов, а их формулировки читаются из самого запроса, поэтому новый пункт RFI сразу виден как незакрытый"
- }
+    "note": "сопоставление построено разборкой таблицы docs/28: форма ссылается на номера пунктов, а их формулировки читаются из самого запроса, поэтому новый пункт RFI сразу виден как незакрытый"
+  }
 }

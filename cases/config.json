@@ -547,6 +547,12 @@
     0.15,
     0.2
    ],
+   "per_pass_conversion_range_wide": [
+    0.15,
+    0.25
+   ],
+   "per_pass_conversion_range_wide_source": "RSC Energy Environ. Sci. 2020 (opened, already cited in the 'source' key above): 15-25 % per pass; the narrow 15-20 % band is the Humphreys 2021 statement. Both bands are literature ranges from other plants, not validation data.",
+   "per_pass_conversion_range_wide_status": "[ЧАСТИЧНО] opened band, used as the tolerance for comparing the two opened benchmarks - it is not a design requirement",
    "outlet_NH3_molpct_benchmark": 13.0,
    "source": "Humphreys et al., Adv. Energy Sustainability Res. 2021 (opened): 15-20 % per-pass at 425 C / 150 bar / SV 10 000-30 000 h-1; RSC EES 2020 (opened): 15-25 % per pass; COMSOL/Rase benchmark 13 mol % NH3 at converter outlet (opened)",
    "status": "[ПОДТВЕРЖДЕНО] numbers read in the opened sources"

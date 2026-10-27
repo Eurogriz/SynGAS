@@ -1001,6 +1001,26 @@
    "url": "local:docs/33_v5_manual_data_entry.md",
    "status": "[ПОДТВЕРЖДЕНО]",
    "used_in_result": true
+  },
+  {
+   "id": "C100",
+   "name": "The two opened NH3 benchmarks disagree by points of conversion, not by a factor of activity",
+   "value": "reducing the opened outlet figure (13 mol% NH3) to the same quantity as the opened conversion band gives a per-pass N2 conversion of 22.30 % at one loop closure (3 beds, 698.15 K, 150 bar, SV 20 000 h-1 normal, H2:N2=3, 0.5 mol% NH3 in feed), i.e. 4.80 pp above the 17.5 % midpoint and inside the opened 15-25 % band; the x2.362 k_scale disagreement between the two objectives is worth 5.52 pp at the local slope of 14.79 pp of per-pass conversion per decade of k_scale, so the linearised slope explains the gap to 15 % || model-internal comparison of two literature figures in THIS reactor configuration: it is not external validation, it closes no docs/28 item, and the loop-5 activity-scale subcheck stays FAILED with the same x2.36 number || scope: this is an arithmetic reduction of two opened numbers to one basis in THIS configuration; it is not external validation, and the literature pair itself (C62, C63) stays [ЧАСТИЧНО]",
+   "unit": "-",
+   "source": "model/converter.py benchmark_consistency (this model, no fitted quantity) + opened bands cited in cases/config.json kinetics.ammonia_benchmark",
+   "url": "local:results_v2/converter_ammonia.json",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
+  },
+  {
+   "id": "C101",
+   "name": "The tolerance for comparing the NH3 benchmarks is a config value, not a literal",
+   "value": "kinetics.ammonia_benchmark.per_pass_conversion_range_wide = [0.15, 0.25] (RSC Energy Environ. Sci. 2020, opened) is now read by both loop-5 checks (design point inside the wider opened band; benchmarks consistent on a common basis), so the band that a subcheck uses cannot silently differ from the band the source says; the narrow Humphreys band 0.15-0.20 stays the calibration midpoint source || the band itself is a literature range from other plants (C62/C63, [ЧАСТИЧНО]); the confirmed part of this claim is that the checks read it from the config rather than from literals typed into the verification code",
+   "unit": "-",
+   "source": "cases/config.json kinetics.ammonia_benchmark + model/verify_v2.py loop5_validation",
+   "url": "local:docs/26_v5_converter.md",
+   "status": "[ПОДТВЕРЖДЕНО]",
+   "used_in_result": true
   }
  ]
 }

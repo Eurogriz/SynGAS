@@ -14,6 +14,7 @@ actually answered:
 import json
 import math
 import os
+import re
 
 import pytest
 
@@ -175,7 +176,10 @@ def test_layout_scan_verdict_is_reported_in_doc26():
     txt = open(path, encoding="utf-8").read()
     assert "26.6 Поиск компоновки" in txt
     assert "холод. вброс" in txt
-    assert "26.8 Следующий шаг" in txt
+    # the section NUMBER is not pinned: later increments insert sections and
+    # renumber the tail of the document (V5.3.2 added 26.7). What must hold is
+    # that a numbered "next step" section still follows the scan.
+    assert re.search(r"## 26\.\d+ Следующий шаг", txt), "no numbered next-step section"
 
 
 # ------------------------------------------------- methanol adiabatic march --

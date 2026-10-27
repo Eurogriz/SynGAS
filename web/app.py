@@ -801,7 +801,7 @@ async function conv(){
  say('конвертор NH3: расчёт (может занять ~20 с, если нет сохранённого прогона) ...');
  const c=await (await fetch('/api/converter')).json();
  if(c.error){$('t11').innerHTML='<h2>Конвертор NH3</h2><div class="note">ошибка: '+c.error+'</div>';say(c.error,true);return;}
- const d=c.design||{},k=c.calibration||{},b=c.benchmark_validation||{},rm=c.peak_temperature_remedy||{},eq=c.equilibrium_check||{},rc=d.recycle_closure||{};
+ const d=c.design||{},k=c.calibration||{},b=c.benchmark_validation||{},rm=c.peak_temperature_remedy||{},eq=c.equilibrium_check||{},rc=d.recycle_closure||{},bc=c.benchmark_consistency||{};
  const st=x=>'<span class="'+(x==='OK'?'pass':'fail')+'">'+(x==='OK'?'в пределах':'ПРЕВЫШЕН')+'</span>';
  $('t11').innerHTML='<h2>Многосекционный адиабатический конвертор NH3 (V5)</h2>'+
   '<div class="note">3 адиабатические секции с промежуточным охлаждением; закон Темкина–Пызева; '+
@@ -827,7 +827,10 @@ async function conv(){
    ['k0 опубликовано → эффективно',(k.k0_published_kmol_m3cat_h||0).toExponential(3)+' → '+(k.k0_effective_kmol_m3cat_h||0).toExponential(3),'кмоль/(м3кат·ч)'],
    ['до калибровки',fmt(100*((k.uncalibrated||{}).per_pass_N2_conversion||0),2)+' %','отклонение от цели '+fmt(k.deviation_before_pct,1)+' %'],
    ['после калибровки',fmt(100*((k.calibrated||{}).per_pass_N2_conversion||0),2)+' %','верно по построению: это проверка процедуры, не аппарата'],
-   ['расхождение двух открытых бенчмарков','×'+fmt(k.k0_uncertainty_factor,2),'17,5 % за проход против 13 мол.% NH3'],
+   ['расхождение двух открытых бенчмарков','×'+fmt(k.k0_uncertainty_factor,2),'17,5 % за проход против 13 мол.% NH3 (это про кривую, см. две строки ниже)'],
+   ['13 мол.% на выходе — это сколько за проход?', bc.computed? fmt(bc.B_per_pass_pct,2)+' % X(N2)' : 'нет данных (пересобрать прогон)', bc.computed? ('открытый узкий коридор 15–20 %: '+(bc.inside_opened_band?'попадает':'мимо')+'; широкий 15–25 %: '+(bc.inside_wider_opened_band?'попадает':'мимо')) : 'нужен results_v2/converter_ammonia.json'],
+   ['наклон «активность → результат»', bc.computed? fmt(bc.sensitivity_per_pass_pp_per_decade,1)+' п.п. X на декаду k_scale' : '—', bc.computed? ('×'+fmt(bc.activity_disagreement_factor,2)+' = '+fmt(bc.activity_disagreement_decades,3)+' декады → '+fmt(bc.per_pass_gap_predicted_from_sensitivity_pp,1)+' п.п. против фактических '+fmt(bc.per_pass_gap_pp,1)+' п.п.') : '—'],
+   ['согласованность ориентиров на общей базе', bc.computed? (bc.mutually_consistent_on_a_common_basis?'ЕСТЬ':'НЕТ') : '—', 'правило зафиксировано до прогона (коридор + наклон в пределах 50 %); это сравнение двух литературных чисел, не валидация модели, и подпроверка контура 5 про ×2,36 остаётся проваленной'],
   ])+
   '<div class="note">'+(k.what_this_is||'')+'</div>'+
   '<h2>Сетка на открытой бенчмарк-точке (150 бар, 698 K, без подгонки)</h2>'+

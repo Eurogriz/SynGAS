@@ -80,8 +80,8 @@ CLOSED (docs/20); stoichiometric
 synthesis loops (docs/18) are now complemented by VBF/Graaf and
 Temkin-Pyzhev kinetics (docs/23); real pilot data were collected and compared
 (docs/22); a HAZOP worksheet was produced but is NOT certified (docs/24);
-loop 5 was rerun and remains FAILED with 13 of
-29 subchecks passing (docs/25, docs/26).
+loop 5 was rerun and remains FAILED with 14 of
+30 subchecks passing (docs/25, docs/26).
 
 ## 17.6 V5 state
 
@@ -129,7 +129,7 @@ Three gaps that did **not** need new data were closed on the model side:
    validity window. This is model-to-model verification of the implementation -
    NOT pilot or plant validation, and loop 5 is still open because of that.
 
-Loop 5 after V5.1: 13 of 29
+Loop 5 after V5.1: 14 of 30
 subchecks pass; the status is FAILED by design until the campaign, the vendor
 datasheet and a certified HAZOP exist.
 

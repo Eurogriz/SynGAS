@@ -108,7 +108,8 @@
     "alternative_objective": {
       "outlet_NH3_molpct": 13.0,
       "k_scale_needed": 0.5039665850488267,
-      "per_pass_conversion_at_that_factor": null
+      "per_pass_conversion_at_that_factor": 0.22301774358532342,
+      "note": "what the SAME model gives for the per-pass conversion when it is fitted to the outlet figure instead - this is the number the two benchmarks have to be compared on (see benchmark_consistency)"
     },
     "benchmark_conditions": {
       "target_per_pass_conversion": 0.175,
@@ -152,6 +153,49 @@
     "k0_uncertainty_factor": 2.3616070349861866,
     "what_this_is": "a single fitted activity multiplier reconciling published rate constants with a published plant benchmark. It is NOT pilot validation: the benchmark comes from another plant, another catalyst and another internals design, so loop 5 stays open until pilot data at design conditions exist.",
     "status": "[ЧАСТИЧНО] relative rate calibrated on one opened industrial benchmark; absolute catalyst life and deactivation unconfirmed"
+  },
+  "benchmark_consistency": {
+    "objective_a": "per-pass N2 conversion 17.5 % (opened band 15-20 %)",
+    "objective_b": "converter outlet 13.0 mol % NH3 (single figure, [ЧАСТИЧНО])",
+    "common_basis": "per-pass N2 conversion at the benchmark loop closure (3 beds, 698.15 K, 150 bar, SV 20 000 h^-1 normal, H2:N2 = 3, 0.5 mol % NH3 in the combined feed)",
+    "status_expected": "model-internal comparison of two literature figures; NOT external validation, and it does not close any open item of docs/28",
+    "computed": true,
+    "A_per_pass_pct": 17.500000000002743,
+    "A_outlet_molpct": 10.052814738998665,
+    "A_equilibrium_ceiling_molpct": 21.691928026957953,
+    "A_approach_to_ceiling_pct": 46.34357410049206,
+    "B_per_pass_pct": 22.30177435853234,
+    "B_outlet_molpct": 13.00000000000888,
+    "B_equilibrium_ceiling_molpct": 20.30309371907777,
+    "B_approach_to_ceiling_pct": 64.02965075117321,
+    "per_pass_gap_pp": 4.801774358529598,
+    "approach_gap_pp": 17.686076650681144,
+    "activity_disagreement_factor": 2.3616070349861866,
+    "activity_disagreement_decades": 0.3732076338637853,
+    "sensitivity_outlet_molpct_per_decade": 8.83875505989522,
+    "sensitivity_per_pass_pp_per_decade": 14.788266666389797,
+    "per_pass_gap_predicted_from_sensitivity_pp": 5.519094011510024,
+    "sensitivity_explains_gap_pct": 114.93863724992033,
+    "outlet_figure_implies_per_pass_pct": 22.30177435853234,
+    "inside_opened_band": false,
+    "inside_wider_opened_band": true,
+    "band_used_for_the_verdict": [
+      0.15,
+      0.25
+    ],
+    "band_source": "kinetics.ammonia_benchmark.per_pass_conversion_range_wide",
+    "mutually_consistent_on_a_common_basis": true,
+    "verdict_word": "согласованы на общей базе",
+    "band_narrow_word": "снаружи",
+    "band_wide_word": "внутри",
+    "verdict_rule": "decided BEFORE the run, from the opened sources only: the pair counts as mutually consistent if (i) the per-pass conversion implied by the outlet figure lies inside the union of the opened per-pass bands (15-20 % Humphreys, 15-25 % RSC EES -> 15-25 %) and (ii) the local slope of the rate->outcome curve predicts the gap to within 50 % (|predicted/actual - 1| <= 0.5), i.e. the activity factor is a consequence of the near-pinch sensitivity rather than an independent contradiction in the data",
+    "consistency_criteria_met": {
+      "band": true,
+      "slope_within_50pct": true,
+      "measured_slope_closeness_pct": 14.938637249920333
+    },
+    "note": "matching the outlet figure needs a per-pass conversion of 22.30 %, which is outside the narrow opened band (15-20 %) and inside the wider opened band (15-25 %); the 0.373-decade activity difference between the two objectives is worth 5.52 pp of per-pass conversion at this operating point, and the actual gap is 4.80 pp (linearised estimate is off by 15 % because the curve is concave near the pinch). So the two sources disagree by a few points of conversion, not by a factor of 2.36 in activity: the large factor is the model's own near-pinch sensitivity, and a corridor (docs/32) is the only honest way to report the design.",
+    "status": "[ПОДТВЕРЖДЕНО] both figures reduced to one basis, tolerance taken from the opened bands"
   },
   "equilibrium_check": {
     "reaction": "N2 + 3H2 -> 2NH3 (Kp in bar^-2, ideal-gas reference state 1 bar)",
